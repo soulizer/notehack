@@ -1,0 +1,30 @@
+import { chromium } from '@playwright/test';
+import { EMAIL, PASSWORD } from './config.mjs';
+const email=process.env.NH_ADMIN_EMAIL ?? process.env.NH_TEST_EMAIL ?? '';
+const password=process.env.NH_ADMIN_PASSWORD ?? process.env.NH_TEST_PASSWORD ?? '';
+const browser=await chromium.launch({headless:true});
+const ctx=await browser.newContext({viewport:{width:1440,height:980},locale:'zh-CN'});
+await ctx.addInitScript(()=>localStorage.setItem('nh-locale','zh-CN'));
+const page=await ctx.newPage();
+const errs=[]; page.on('pageerror',e=>errs.push('PAGE:'+e.message)); page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('401'))errs.push('CONSOLE:'+m.text())});
+await page.goto('https://notehack.com/',{waitUntil:'networkidle'});
+await page.screenshot({path:'/tmp/prod-landing.png',fullPage:true});
+await page.goto('https://notehack.com/login',{waitUntil:'networkidle'});
+await page.screenshot({path:'/tmp/prod-login.png',fullPage:true});
+await page.fill('#login-email',email); await page.fill('#login-password',password); await page.click('button[type=submit]'); await page.waitForTimeout(2500);
+console.log('url',page.url());
+await page.screenshot({path:'/tmp/prod-app.png',fullPage:true});
+console.log('body', (await page.locator('body').innerText()).slice(0,800));
+await page.click('.note-item'); await page.waitForTimeout(1500);
+await page.screenshot({path:'/tmp/prod-editor.png',fullPage:true});
+console.log('editor title', await page.locator('.note-title-input').inputValue());
+// open info panel
+await page.click('.topbar-actions button[title="显示信息面板"]'); await page.waitForTimeout(600);
+await page.screenshot({path:'/tmp/prod-context.png',fullPage:true});
+// PWA check
+const manifest = await page.evaluate(async()=>{const r=await fetch('/manifest.webmanifest');return await r.json()});
+console.log('manifest', manifest.name, manifest.icons?.length, manifest.shortcuts?.length, manifest.share_target?.action);
+const reg = await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();return !!r});
+console.log('sw', reg);
+console.log('errors',errs.slice(0,20));
+await browser.close();

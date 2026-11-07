@@ -1,0 +1,375 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper-100);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'lnum';
+  -webkit-font-smoothing: antialiased;
+  font-synthesis-style: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--blue) 22%, transparent);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+}
+
+ul,
+ol {
+  margin: 0;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+::placeholder {
+  opacity: 1;
+}
+
+/* Scrollbars: quiet, warm, never a visual event. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text-tertiary) 28%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-tertiary) 26%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text-tertiary) 45%, transparent);
+  background-clip: content-box;
+}
+
+.app-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Focus ring used on custom interactive surfaces. */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Standard spinner. */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex: none;
+}
+
+.spinner-lg {
+  width: 26px;
+  height: 26px;
+  border-width: 2.5px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.animate-rise {
+  animation: rise-in var(--dur-slow) var(--ease) both;
+}
+
+.animate-fade {
+  animation: fade-in var(--dur) var(--ease) both;
+}
+
+/* Form primitives */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > label,
+.field-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-soft);
+  letter-spacing: -0.01em;
+}
+
+.field-hint {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-size: var(--text-md);
+  color: var(--text);
+  transition: border-color var(--dur), box-shadow var(--dur), background var(--dur);
+  box-shadow: var(--shadow-xs);
+}
+
+.input:hover,
+.textarea:hover,
+.select:hover {
+  border-color: color-mix(in srgb, var(--line-strong) 70%, var(--text-tertiary));
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: var(--shadow-focus);
+}
+
+.input:disabled,
+.textarea:disabled,
+.select:disabled {
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.input-lg {
+  padding: 11px 13px;
+  font-size: var(--text-lg);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 92px;
+  line-height: 1.6;
+}
+
+.select {
+  appearance: none;
+  padding-right: 32px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-tertiary) 50%),
+    linear-gradient(135deg, var(--text-tertiary) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: var(--text-md);
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+  accent-color: var(--blue);
+}
+
+.helper-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-error {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.form-success {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: var(--text-sm);
+}
+
+/* Accessibility: reduced motion handled by theme attribute and media query. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

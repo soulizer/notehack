@@ -1,0 +1,22 @@
+import { chromium } from '@playwright/test';
+import { EMAIL, PASSWORD } from './config.mjs';
+const browser = await chromium.launch({headless:true});
+const ctx = await browser.newContext({viewport:{width:1440,height:980},locale:'zh-CN'});
+await ctx.addInitScript(()=>localStorage.setItem('nh-locale','zh-CN'));
+const page = await ctx.newPage();
+const errs=[]; page.on('pageerror',e=>errs.push('PAGE:'+e.message)); page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('401'))errs.push('CONSOLE:'+m.text())});
+await page.goto('http://127.0.0.1:8787/login',{waitUntil:'networkidle'});
+await page.fill('#login-email',EMAIL); await page.fill('#login-password',PASSWORD); await page.click('button[type=submit]'); await page.waitForTimeout(1500);
+await page.goto('http://127.0.0.1:8787/app/settings/data',{waitUntil:'networkidle'}); await page.waitForTimeout(1000);
+await page.click('.setting-card button[aria-label="恢复预览"]');
+await page.waitForTimeout(1500);
+await page.screenshot({path:'/tmp/backup-preview.png',fullPage:true});
+console.log((await page.locator('.modal').innerText()).slice(0,800));
+// execute merge restore
+await page.click('text=确认恢复');
+await page.waitForTimeout(9000);
+console.log('after restore modal count', await page.locator('.modal').count());
+console.log((await page.locator('.settings-inner').innerText()).slice(-700));
+await page.screenshot({path:'/tmp/backup-after.png',fullPage:true});
+console.log('errors',errs.slice(0,10));
+await browser.close();

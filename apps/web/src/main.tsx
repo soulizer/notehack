@@ -1,0 +1,25 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/layout.css';
+import './styles/components.css';
+import './styles/editor.css';
+import './styles/pages.css';
+import './styles/responsive.css';
+import App from './App';
+import { initializeTheme } from './lib/theme';
+
+initializeTheme();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+);

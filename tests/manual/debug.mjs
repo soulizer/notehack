@@ -1,0 +1,14 @@
+import { chromium } from '@playwright/test';
+import { EMAIL, PASSWORD } from './config.mjs';
+const browser = await chromium.launch({ headless: true });
+const ctx = await browser.newContext({ viewport:{width:1440,height:980}, locale:'zh-CN' });
+const page = await ctx.newPage();
+page.on('console',m=>console.log('console',m.type(),m.text().slice(0,300)));
+page.on('pageerror',e=>console.log('pageerror',e.message));
+const resp = await page.goto('http://127.0.0.1:8787/login',{waitUntil:'networkidle'});
+console.log('status',resp.status());
+await page.waitForTimeout(1000);
+console.log('url',page.url());
+console.log((await page.locator('body').innerText()).slice(0,1000));
+await page.screenshot({path:'/tmp/debug.png',fullPage:true});
+await browser.close();

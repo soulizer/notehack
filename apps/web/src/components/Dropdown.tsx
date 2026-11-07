@@ -1,0 +1,116 @@
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { cn } from '../lib/utils';
+
+export function Dropdown({
+  trigger,
+  children,
+  align = 'end',
+  width = 210,
+  className,
+}: {
+  trigger: ReactNode;
+  children: (close: () => void) => ReactNode;
+  align?: 'start' | 'end';
+  width?: number;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [style, setStyle] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const panelHeight = panelRef.current?.offsetHeight ?? 260;
+    const top = rect.bottom + 6 + panelHeight > window.innerHeight - 12 ? Math.max(12, rect.top - panelHeight - 6) : rect.bottom + 6;
+    const left = align === 'end' ? Math.max(12, rect.right - width) : Math.min(rect.left, window.innerWidth - width - 12);
+    setStyle({ top, left });
+  }, [open, align, width]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (panelRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    const onScroll = () => setOpen(false);
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [open]);
+
+  const close = () => setOpen(false);
+
+  return (
+    <>
+      <span
+        ref={triggerRef}
+        onClick={(event) => {
+          event.stopPropagation();
+          setOpen((value) => !value);
+        }}
+        style={{ display: 'inline-flex' }}
+        aria-expanded={open}
+      >
+        {trigger}
+      </span>
+      {open &&
+        createPortal(
+          <div
+            ref={panelRef}
+            className={cn('popover', className)}
+            style={{ top: style.top, left: style.left, width }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {children(close)}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+export function MenuItem({
+  icon,
+  children,
+  shortcut,
+  detail,
+  danger = false,
+  onClick,
+  disabled,
+}: {
+  icon?: ReactNode;
+  children: ReactNode;
+  shortcut?: ReactNode;
+  detail?: ReactNode;
+  danger?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn('menu-item', danger && 'danger')}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {icon}
+      <span>{children}</span>
+      {shortcut && <span className="menu-shortcut">{shortcut}</span>}
+      {detail && <span className="menu-detail">{detail}</span>}
+    </button>
+  );
+}

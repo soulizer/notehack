@@ -1,0 +1,32 @@
+import { chromium } from '@playwright/test';
+const email=process.env.NH_ADMIN_EMAIL, password=process.env.NH_ADMIN_PASSWORD;
+const browser=await chromium.launch({headless:true});
+const ctx=await browser.newContext({viewport:{width:1440,height:980},locale:'zh-CN'});
+await ctx.addInitScript(()=>localStorage.setItem('nh-locale','zh-CN'));
+const page=await ctx.newPage(); const errs=[]; page.on('pageerror',e=>errs.push(e.message)); page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('401'))errs.push(m.text())});
+await page.goto('https://notehack.com/login',{waitUntil:'networkidle'});
+await page.fill('#login-email',email); await page.fill('#login-password',password); await page.click('button[type=submit]'); await page.waitForTimeout(2200);
+await page.screenshot({path:'/tmp/final-app.png',fullPage:true});
+console.log('sidebar workspace', (await page.locator('.workspace-switcher').innerText()).replace(/\n/g,' | '));
+console.log('sidebar user', (await page.locator('.sidebar-user').innerText()).replace(/\n/g,' | '));
+await page.click('.note-item'); await page.waitForTimeout(1400);
+await page.screenshot({path:'/tmp/final-editor.png',fullPage:true});
+// dark
+await page.evaluate(()=>{localStorage.setItem('nh-theme','dark'); document.documentElement.dataset.theme='dark';});
+await page.waitForTimeout(300); await page.screenshot({path:'/tmp/final-dark.png',fullPage:true});
+// mobile new context
+const m=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,locale:'zh-CN'});
+await m.addInitScript(()=>localStorage.setItem('nh-locale','zh-CN'));
+const mp=await m.newPage();
+await mp.goto('https://notehack.com/login',{waitUntil:'networkidle'});
+await mp.fill('#login-email',email); await mp.fill('#login-password',password); await mp.click('button[type=submit]'); await mp.waitForTimeout(2000);
+await mp.screenshot({path:'/tmp/final-mobile-list.png',fullPage:true});
+await mp.click('.list-actions .mobile-menu-btn').catch(()=>{});
+await mp.waitForTimeout(400);
+await mp.screenshot({path:'/tmp/final-mobile-menu.png',fullPage:true});
+await mp.click('.sidebar-scrim').catch(()=>{});
+await mp.click('.note-item'); await mp.waitForTimeout(1200);
+await mp.screenshot({path:'/tmp/final-mobile-editor.png',fullPage:true});
+console.log('mobile quickbar', await mp.locator('.mobile-quickbar').count());
+console.log('errors',errs);
+await browser.close();

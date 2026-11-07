@@ -1,0 +1,25 @@
+import { chromium } from '@playwright/test';
+import { EMAIL, PASSWORD } from './config.mjs';
+const browser = await chromium.launch({ headless: true });
+const ctx = await browser.newContext({ viewport:{width:1440,height:980}, locale:'zh-CN' });
+await ctx.addInitScript(()=>localStorage.setItem('nh-locale','zh-CN'));
+const page = await ctx.newPage();
+const errs=[]; page.on('pageerror',e=>errs.push(e.message)); page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('401'))errs.push(m.text())});
+await page.goto('http://127.0.0.1:8787/login',{waitUntil:'networkidle'});
+await page.fill('#login-email',EMAIL); await page.fill('#login-password',PASSWORD);
+await page.click('button[type=submit]'); await page.waitForTimeout(2000);
+await page.click('.note-item'); await page.waitForTimeout(1500);
+await page.screenshot({path:'/tmp/editor2.png',fullPage:true});
+// edit content
+const pm = page.locator('.ProseMirror');
+await pm.click();
+await page.keyboard.press('Control+End');
+await page.keyboard.type('\n\n这是自动保存测试。');
+await page.waitForTimeout(2200);
+console.log('save status', await page.locator('.topbar-save').innerText());
+await page.reload({waitUntil:'networkidle'}); await page.waitForTimeout(1800);
+const bodyText = await page.locator('.ProseMirror').innerText();
+console.log('persisted', bodyText.includes('这是自动保存测试'));
+await page.screenshot({path:'/tmp/editor3.png',fullPage:true});
+console.log('errors',errs.slice(0,10));
+await browser.close();

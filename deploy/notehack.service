@@ -1,0 +1,28 @@
+[Unit]
+Description=NoteHack API
+Documentation=https://notehack.com
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=notehack
+Group=notehack
+WorkingDirectory=/opt/notehack
+EnvironmentFile=/etc/notehack/notehack.env
+ExecStart=/usr/local/bin/node apps/server/dist/index.js
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/notehack
+ReadOnlyPaths=/opt/notehack /etc/notehack
+LimitNOFILE=65535
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
