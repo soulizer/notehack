@@ -84,9 +84,13 @@ async function pdfFromHtml(html: string, title: string): Promise<Buffer> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'notehack-pdf-'));
   const htmlPath = path.join(dir, 'note.html');
   const pdfPath = path.join(dir, 'note.pdf');
+  const home = path.join(dir, 'home');
+  const profile = path.join(dir, 'profile');
+  await fs.mkdir(home, { recursive: true });
+  await fs.mkdir(profile, { recursive: true });
   try {
     await fs.writeFile(htmlPath, html, 'utf8');
-    const candidates = ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable'];
+    const candidates = [process.env.CHROMIUM_PATH, '/usr/bin/chromium', 'chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable'].filter(Boolean) as string[];
     let lastError: unknown = null;
     for (const binary of candidates) {
       try {
@@ -99,10 +103,20 @@ async function pdfFromHtml(html: string, title: string): Promise<Buffer> {
             '--disable-dev-shm-usage',
             '--no-pdf-header-footer',
             '--print-to-pdf-no-header',
+            `--user-data-dir=${profile}`,
             `--print-to-pdf=${pdfPath}`,
             `file://${htmlPath}`,
           ],
-          { timeout: 60_000, maxBuffer: 16 * 1024 * 1024 },
+          {
+            timeout: 60_000,
+            maxBuffer: 16 * 1024 * 1024,
+            env: {
+              ...process.env,
+              HOME: home,
+              XDG_CONFIG_HOME: path.join(home, '.config'),
+              XDG_CACHE_HOME: path.join(home, '.cache'),
+            },
+          },
         );
         const pdf = await fs.readFile(pdfPath);
         if (pdf.length > 100) return pdf;

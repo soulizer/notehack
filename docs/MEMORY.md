@@ -140,8 +140,44 @@ apps/web/src/styles/tokens.css        设计 token
 
 ---
 
-## 2026-11-08（待更新）
+## 2026-11-08 · 生产上线
 
-- 部署/生产验证结果：
-- 问题与修复：
-- 版本/变更：
+### 部署结果
+
+- 域名：`https://notehack.com`（`www` 301 到 apex）；HTTP 301 到 HTTPS。
+- TLS：Let's Encrypt，证书到期 2027-02-05；`certbot.timer` 已启用；无邮箱注册。
+- 服务：systemd `notehack.service` 运行 `/opt/notehack/apps/server/dist/index.js`，`127.0.0.1:8787`；Nginx 终止 TLS。
+- 数据库：PostgreSQL 本地；生产库已重置为干净状态。
+- 数据目录：`/var/lib/notehack`（0700）；env：`/etc/notehack/notehack.env`（0600）。
+- 最终状态：1 个管理员、3 篇种子笔记、0 会话、0 分享、0 备份、0 附件、0 团队空间；管理员与恢复密钥保存在 `/root/notehack-admin-initial.txt`（0600），生产密钥备份在 `/root/notehack-secrets-backup.txt`（0600，应复制到离线后删除）。
+- 未配置 AI、未配置 S3 异地；注册模式 `open`。
+- Git：`main` 已推送到 `github.com:soulizer/notehack`（deploy key 已添加）。
+
+### 最终验证
+
+- HTTPS 健康检查通过；CSP/HSTS/XFO DENY/Permissions-Policy 存在；`www` 重定向。
+- PWA：manifest 3 icons、2 shortcuts、share_target `/clip`；service worker 已控制；离线刷新/编辑/联网合并通过。
+- 桌面/移动/暗色/设置/分享弹窗/实例管理页无 JS 错误。
+- 分享密码/错误密码/解锁/撤销 404；公开页渲染正常。
+- 2FA 开启/登录/关闭、TOTP 防重放；恢复密钥机制。
+- 备份创建/下载/预览/合并/替换；pre-restore 生成；S3 兼容异地备份在 s3rver 验证后清理。
+- 导入 Markdown ZIP、ENEX（修复 XML prolog 后）、OCR 图片；搜索/附件命中。
+- API token read-only：GET 200、POST 403、auth 403；撤销后 401。
+- 10k 笔记基准：列表 8.7ms、搜索 55ms。
+- 单元测试：server 7、web 3；typecheck/build 通过。
+- npm audit：0 high/critical；5 moderate（archiver 7 → readdir-glob → minimatch DoS；ZIP 输入由本应用控制，记录待上游修复）。
+
+### 上线后事故与修复
+
+- 尝试升级 `archiver@8` 以消除 moderate audit：其 ESM 无 default export，导致服务启动失败（502）。快速回滚到 `archiver@7.0.1`，重新构建/部署，健康恢复。教训：依赖 major 升级必须在独立 staging 启动验证；本次已记录。
+- PDF 在生产 501：systemd 非 root 下 Chromium 需要可写 HOME/XDG 目录与 `--user-data-dir`；已修复 `pdfFromHtml`，PDF 导出恢复（311KB/2 页验证）。静态首页/导出/备份不受影响。
+- 当前生产会话已清理；管理员需重新登录。
+
+### 未完成/后续
+
+- 全库离线预取仅最近 120 篇；附件离线不可上传。
+- 无 E2EE、无实时协同/CRDT、无 @提及/Webhook/MCP。
+- 英文 UI 暂不开放。
+- 异地备份无应用内远端浏览/直接恢复。
+- 5 万笔记性能、自动备份定时实跑、恢复演练自动化待补。
+- 管理员初始密码需用户登录后修改；恢复密钥需离线保存。

@@ -108,6 +108,12 @@ node tests/manual/totp-test.mjs
 
 已记录的手工/自动化验证见 [`docs/MEMORY.md`](docs/MEMORY.md) 与 [`docs/QUALITY.md`](docs/QUALITY.md)。
 
+```bash
+npm test
+```
+
+`npm audit` 当前为 0 high / 0 critical；5 个 moderate 来自 archiver 7 → readdir-glob → minimatch（ZIP 构建输入由本应用控制）。
+
 ---
 
 ## 文档索引
