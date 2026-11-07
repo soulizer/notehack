@@ -20,6 +20,14 @@ function requiredInProduction(name: string): string {
   return value ?? '';
 }
 
+let appVersion = '0.0.0';
+try {
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')) as { version?: string };
+  appVersion = pkg.version ?? appVersion;
+} catch {
+  // Version is only informational; a missing package.json must not block startup.
+}
+
 const dataDir = process.env.NOTEHACK_DATA_DIR || path.join(repoRoot, 'storage');
 export const config = {
   env: process.env.NODE_ENV || 'development',
@@ -46,7 +54,7 @@ export const config = {
   },
   ocrEnabled: bool(process.env.OCR_ENABLED, false),
   backupRetentionDays: Number(process.env.BACKUP_RETENTION_DAYS || 30),
-  version: '0.1.0',
+  version: appVersion,
 };
 
 export const paths = {

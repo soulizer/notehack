@@ -67,19 +67,19 @@ export default function DataSettings() {
             <FileText size={17} style={{ color: 'var(--blue)', marginBottom: 10 }} />
             <div className="setting-row-title">{t('Markdown + 附件')}</div>
             <div className="setting-note" style={{ marginTop: 4 }}>{t('保留文件夹层级、标签与时间戳。默认推荐。')}</div>
-            <div style={{ marginTop: 10, fontSize: 10.5, color: 'var(--blue)' }}>{exporting === 'md' ? t('正在导出…') : t('下载 ZIP')}</div>
+            <div style={{ marginTop: 10, fontSize: 13, color: 'var(--blue)' }}>{exporting === 'md' ? t('正在导出…') : t('下载 ZIP')}</div>
           </button>
           <button type="button" className="setting-card" style={{ textAlign: 'left', cursor: 'pointer' }} onClick={() => void exportWorkspace('html')} disabled={Boolean(exporting)}>
             <FileCode2 size={17} style={{ color: 'var(--violet)', marginBottom: 10 }} />
             <div className="setting-row-title">{t('HTML 站点')}</div>
             <div className="setting-note" style={{ marginTop: 4 }}>{t('可直接浏览或托管的静态页面，保留链接与附件。')}</div>
-            <div style={{ marginTop: 10, fontSize: 10.5, color: 'var(--blue)' }}>{exporting === 'html' ? t('正在导出…') : t('下载 ZIP')}</div>
+            <div style={{ marginTop: 10, fontSize: 13, color: 'var(--blue)' }}>{exporting === 'html' ? t('正在导出…') : t('下载 ZIP')}</div>
           </button>
           <button type="button" className="setting-card" style={{ textAlign: 'left', cursor: 'pointer' }} onClick={() => void exportWorkspace('json')} disabled={Boolean(exporting)}>
             <FileJson size={17} style={{ color: 'var(--green)', marginBottom: 10 }} />
             <div className="setting-row-title">{t('JSON 数据')}</div>
             <div className="setting-note" style={{ marginTop: 4 }}>{t('完整元数据与 Markdown 正文，适合迁移与自建工具。')}</div>
-            <div style={{ marginTop: 10, fontSize: 10.5, color: 'var(--blue)' }}>{exporting === 'json' ? t('正在导出…') : t('下载 ZIP')}</div>
+            <div style={{ marginTop: 10, fontSize: 13, color: 'var(--blue)' }}>{exporting === 'json' ? t('正在导出…') : t('下载 ZIP')}</div>
           </button>
         </div>
         <div className="info-line" style={{ marginTop: 10 }}>

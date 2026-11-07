@@ -148,10 +148,17 @@ certbot certonly --webroot -w /var/www/html \
   --agree-tos --register-unsafely-without-email
 systemctl list-timers | grep certbot || true
 
-# 3) 切换到完整 TLS 配置
+# 3) 静态错误页（API 挂掉时替代 Nginx 默认 502）
+mkdir -p /var/www/notehack-errors
+cp deploy/errors/maintenance.html /var/www/notehack-errors/maintenance.html
+chmod 644 /var/www/notehack-errors/maintenance.html
+
+# 4) 切换到完整 TLS 配置
 cp deploy/nginx-notehack.conf /etc/nginx/sites-available/notehack
 nginx -t && systemctl reload nginx
 ```
+
+> 完整 TLS 配置由 Nginx 直接提供 SPA 静态文件，只有 `/api/` 与 `/health` 反代到 Node。因此 API 重启时登录页不会变成 502；`502/503/504` 统一显示 `maintenance.html`。每次部署修改 `deploy/errors/` 后，记得同步到 `/var/www/notehack-errors/`。
 
 > 如果证书路径不同（例如 `/etc/letsencrypt/live/www.notehack.com/`），修改 Nginx 配置中的 `ssl_certificate` 路径。首次配置不能引用尚不存在的证书，所以必须先 HTTP-only。
 
@@ -185,7 +192,7 @@ ss -tlnp
 
 ```bash
 curl -fsS https://notehack.com/health | jq .
-# {"ok":true,"version":"0.1.0","time":"...","database":true}
+# {"ok":true,"version":"0.1.1","time":"...","database":true}
 ```
 
 ---

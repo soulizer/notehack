@@ -106,8 +106,8 @@ export default function ApiSettings() {
               <div key={token.id} className="setting-card" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10 }}>
                 <KeyRound size={14} style={{ color: 'var(--text-tertiary)' }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 11.5, fontWeight: 560 }}>{token.name} <span className="mono" style={{ fontWeight: 400, color: 'var(--text-tertiary)', fontSize: 10 }}>{token.prefix}…</span></div>
-                  <div style={{ fontSize: 9.5, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                  <div style={{ fontSize: 13, fontWeight: 560 }}>{token.name} <span className="mono" style={{ fontWeight: 400, color: 'var(--text-tertiary)', fontSize: 13 }}>{token.prefix}…</span></div>
+                  <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 2 }}>
                     {token.revokedAt ? t('已撤销') : token.lastUsedAt ? `${t('最后使用')} ${formatRelativeShort(token.lastUsedAt)}` : t('尚未使用')} · {token.scopes.join(', ')}
                   </div>
                 </div>
@@ -151,19 +151,19 @@ export default function ApiSettings() {
         <div className="code-block" style={{ marginTop: 10 }}>{curlExample}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
           <div className="setting-card">
-            <div className="setting-row-title mono" style={{ fontSize: 10.5 }}>GET /api/notes</div>
+            <div className="setting-row-title mono" style={{ fontSize: 13 }}>GET /api/notes</div>
             <p className="setting-note">{t('列出笔记，支持 workspaceId、filter、q、limit、offset。')}</p>
           </div>
           <div className="setting-card">
-            <div className="setting-row-title mono" style={{ fontSize: 10.5 }}>POST /api/notes</div>
+            <div className="setting-row-title mono" style={{ fontSize: 13 }}>POST /api/notes</div>
             <p className="setting-note">{t('创建笔记，正文使用 Markdown。')}</p>
           </div>
           <div className="setting-card">
-            <div className="setting-row-title mono" style={{ fontSize: 10.5 }}>GET /api/search</div>
+            <div className="setting-row-title mono" style={{ fontSize: 13 }}>GET /api/search</div>
             <p className="setting-note">{t('全文搜索标题、正文、标签与附件名。')}</p>
           </div>
           <div className="setting-card">
-            <div className="setting-row-title mono" style={{ fontSize: 10.5 }}>GET /api/export</div>
+            <div className="setting-row-title mono" style={{ fontSize: 13 }}>GET /api/export</div>
             <p className="setting-note">{t('导出整个空间为 ZIP。')}</p>
           </div>
         </div>

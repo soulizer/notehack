@@ -56,7 +56,7 @@ export default function SettingsPage({ section }: { section: string }) {
           <ArrowLeft size={17} />
         </button>
         <h1>{t('设置')}</h1>
-        <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
           {workspace?.name ?? user?.displayName}
         </span>
         <div style={{ flex: 1 }} />
@@ -78,7 +78,7 @@ export default function SettingsPage({ section }: { section: string }) {
                     className={cn('settings-nav-item', current === entry.id && 'active')}
                     onClick={() => navigate(`/app/settings/${entry.id}`)}
                   >
-                    {Icon ? <Icon size={14} /> : <span style={{ width: 14, display: 'grid', placeItems: 'center', fontSize: 11 }}>ⓘ</span>}
+                    {Icon ? <Icon size={14} /> : <span style={{ width: 14, display: 'grid', placeItems: 'center', fontSize: 13 }}>ⓘ</span>}
                     {t(entry.label)}
                   </button>
                 );

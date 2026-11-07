@@ -35,7 +35,7 @@
 - **备份**：独立 `.nhbackup`（ZIP 加密存储）；自动/手动/pre-restore；合并/替换恢复；预览。
 - **团队**：workspace + 角色（owner/admin/editor/viewer）+ 邀请 + 审计。
 - **AI**：默认关闭；实例管理员配置 OpenAI 兼容接口；用户主动点击；不训练；加密笔记不发送。
-- **设计**：午夜侧栏 + 暖纸内容 + Signal Blue；Newsreader 衬线标题 + Inter UI；深色模式；三栏→单屏。
+- **设计**：午夜侧栏 + 暖纸内容 + Signal Blue；Inter/系统无衬线；深色模式；三栏→单屏。~~Newsreader 衬线标题~~ 已于 2026-11-08 废止，全站禁止衬线（见下方纠偏记录）。
 
 ### 已完成的主要实现
 
@@ -181,3 +181,41 @@ apps/web/src/styles/tokens.css        设计 token
 - 异地备份无应用内远端浏览/直接恢复。
 - 5 万笔记性能、自动备份定时实跑、恢复演练自动化待补。
 - 管理员初始密码需用户登录后修改；恢复密钥需离线保存。
+
+---
+
+## 2026-11-08 · 入口重构、视觉纠偏与“即时推送”铁律
+
+### 用户反馈（原意）
+
+- 首页非常丑：使用了宋体；部分文字小到离谱（“隐私政策”“服务条款”“忘记密码”）；hover 出现下划线/按钮上浮；相邻元素边框可能重叠；按钮缺少统一分级；logo 像 AI 生成；整页 AI 味重、风格割裂；报错方式本身也是错的。
+- 注册时出现 Nginx 502 原始 HTML；即使暂不可注册，也必须提供可用管理员账号先查看内容。
+- 相比营销首页，直接打开登录页/笔记页更好。
+- **每次更新都必须第一时间推送到 GitHub**，避免本服务器代码发生意外。
+
+### 已执行的纠正
+
+1. **移除营销首页**：`/` 直接重定向 `/app`，未登录显示登录页。删除 `LandingPage.tsx` 与营销样式；新增 `AuthLayout`：顶部仅文字品牌，中央登录表单，底部 14px 隐私/条款与版权。
+2. **全站去衬线**：移除 `@fontsource-variable/newsreader`、`--font-serif`、`.prose.serif`、编辑器“衬线”偏好；`tokens.css` 仅保留 Inter + 系统中文字体。登录、笔记标题、分享页、导出、503 页统一无衬线。
+3. **字号下限 13px**：全站 CSS/内联字号扫描并提升；`--text-xs` 改为 13px；隐私/条款/忘记密码/时间戳/错误说明不小于 13px；登录输入 44px、按钮 44px。
+4. **去掉廉价的 hover/active 效果**：删除全局 `a:hover { text-decoration: underline }`、按钮 `translateY/scale`、列表快捷操作上移、主题卡选中 ring、脑内链接下划线；hover 仅改颜色/背景。弹窗/抽屉/Toast 的进入动效保留。
+5. **边框纪律**：选中态不再叠加 `box-shadow: 0 0 0 1px`；菜单/列表/输入只保留一层 1px 边框；搜索行加 `min-width: 0`，修复新建按钮溢出；按钮统一 36px 标准/30px 小号/44px 大号，圆角 8/7px。
+6. **品牌重做**：放弃“圆角方块 + N 字形”的 AI 感图标，改为文字标识 **NoteHack.**（蓝色句点）；PWA/favicon 为同源 “N.”；折叠侧栏显示 “N.”。删除分享页/邀请页/剪藏页中的旧图形 mark。
+7. **错误体验**：Nginx 静态直出 SPA，API 反代；502/503/504 统一返回 `/var/www/notehack-errors/maintenance.html` 品牌 503 页；前端 `api.ts` 把网关错误转为可读中文，不再渲染 Nginx HTML。
+8. **502 根因与修复**：尝试 `archiver@8` 消除 moderate audit，但其 ESM 无 default export 导致 API 启动失败。回滚 `archiver@7.0.1`，重建部署，健康恢复。依赖 major 升级必须先 staging 启动验证，已写入运维教训。
+9. **注册验证**：临时账号 `temp-reg-check@notehack.com` 注册成功（HTTP 200），验证后删除；生产恢复为 1 管理员 + 3 篇种子笔记。
+10. **清理 AI 痕迹**：移除种子笔记中的 👋 emoji（避免无 emoji 字体环境出现豆腐块）；空状态改用书写图标 `PenLine`，不用 Sparkles/机器人；移除玻璃拟态/backdrop-filter（侧栏、顶栏、弹窗遮罩只保留实色）。
+
+### 铁律（后续必须遵守）
+
+- **每次代码/文档/部署变更完成后，立即 `git add -A && git commit && git push` 到 `github.com:soulizer/notehack`。** 不允许在本机积累多轮未推送改动；推送失败视为任务未完成。
+- 任何视觉改动必须先对照 `docs/DESIGN_SYSTEM.md`；新增字体、字号、按钮变体、图标风格都先更新规范。
+- 禁止：衬线/宋体、<13px 文字、hover 下划线/上浮/缩放、双边框/边框重叠、营销首页、AI 味 logo、服务器原始错误页。
+
+### 验收
+
+- `npm run typecheck`、`npm test`（server 14 + web 3）、`npm run build` 通过；生产 `/health` 200，版本 `0.1.1`。
+- Playwright 桌面/移动：登录、列表、编辑器、注册页无 JS 错误；搜索按钮不溢出；字体为 Inter/系统无衬线；“忘记密码？”14px，页脚链接 14px。
+- API 停止时：`/login` 静态页 200，`/api/*` 返回品牌 503 页。
+- 生产清理：1 管理员、3 篇种子笔记、0 会话、0 分享、0 备份、0 附件、0 通知、0 API token；临时注册账号已删除。
+- 本轮改动已 `git commit` 并推送到 GitHub；管理员首登改密、恢复密钥离线保存仍需用户完成。

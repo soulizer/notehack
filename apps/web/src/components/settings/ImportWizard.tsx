@@ -166,7 +166,7 @@ export function ImportWizard({ open, onClose, workspaceId }: { open: boolean; on
             onClick={() => fileRef.current?.click()}
           >
             <UploadCloud size={24} style={{ color: 'var(--text-tertiary)', margin: '0 auto 10px' }} />
-            <div style={{ fontSize: 12.5, fontWeight: 570 }}>{t('拖入文件或点击选择')}</div>
+            <div style={{ fontSize: 13, fontWeight: 570 }}>{t('拖入文件或点击选择')}</div>
             <div className="setting-note" style={{ marginTop: 4 }}>{t('支持 Markdown、HTML、Evernote、Notion、CSV、JSON 和 ZIP')}</div>
             <input
               ref={fileRef}
@@ -212,9 +212,9 @@ export function ImportWizard({ open, onClose, workspaceId }: { open: boolean; on
       {step === 'preview' && preview && (
         <div>
           <div className="import-counts" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 16 }}>
-            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{preview.noteCount}</div><div className="setting-note">{t('笔记')}</div></div>
-            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{preview.attachmentCount}</div><div className="setting-note">{t('附件')}</div></div>
-            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{preview.folders.length}</div><div className="setting-note">{t('文件夹')}</div></div>
+            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{preview.noteCount}</div><div className="setting-note">{t('笔记')}</div></div>
+            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{preview.attachmentCount}</div><div className="setting-note">{t('附件')}</div></div>
+            <div className="setting-card" style={{ padding: 12 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{preview.folders.length}</div><div className="setting-note">{t('文件夹')}</div></div>
           </div>
           <div className="setting-note" style={{ marginBottom: 10 }}>
             {t('来源')}：<span className="badge">{preview.source}</span> · {t('导入会创建新笔记，不会修改已有内容。')}
@@ -231,7 +231,7 @@ export function ImportWizard({ open, onClose, workspaceId }: { open: boolean; on
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 190, overflowY: 'auto' }}>
             {preview.samples.map((sample, index) => (
               <div key={index} style={{ padding: '7px 9px', borderRadius: 6, border: '1px solid var(--line)', background: 'var(--surface)' }}>
-                <div style={{ fontSize: 11.5, fontWeight: 550 }}>{sample.title}</div>
+                <div style={{ fontSize: 13, fontWeight: 550 }}>{sample.title}</div>
                 <div className="setting-note" style={{ marginTop: 2 }}>{sample.folder ? `${sample.folder} · ` : ''}{sample.excerpt}</div>
               </div>
             ))}

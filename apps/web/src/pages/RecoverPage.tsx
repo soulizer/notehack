@@ -42,7 +42,7 @@ export default function RecoverPage() {
 
   if (newKey) {
     return (
-      <AuthLayout quote={t('重新开始，')} caption={t('从这把新钥匙。')}>
+      <AuthLayout>
         <h1 className="auth-heading">{t('账户已恢复')}</h1>
         <p className="auth-sub">
           {t('密码已重置，所有旧会话与两步验证已失效。下面是新的恢复密钥，请重新保存。')}
@@ -72,7 +72,7 @@ export default function RecoverPage() {
   }
 
   return (
-    <AuthLayout quote={t('忘记密码时，')} caption={t('还有一把钥匙。')}>
+    <AuthLayout>
       <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigate('/login')} style={{ marginLeft: -10, marginBottom: 18 }}>
         <ArrowLeft size={13} /> {t('返回登录')}
       </button>

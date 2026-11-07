@@ -232,7 +232,7 @@ export default function TeamSettings() {
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, fontSize: 10.5, color: 'var(--text-tertiary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, fontSize: 13, color: 'var(--text-tertiary)' }}>
             <Users size={12} /> {t('{n} 位成员', { n: workspace?.memberCount ?? members.length })}
             <span className="dot" />
             {t('你的角色：{role}', { role: roleLabel(t, workspace?.role ?? '') })}
@@ -268,14 +268,14 @@ export default function TeamSettings() {
                   <Avatar name={member.displayName} color={member.avatarColor} size="sm" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontSize: 11.5, fontWeight: 560, color: 'var(--text)' }}>{member.displayName}</span>
+                      <span style={{ fontSize: 13, fontWeight: 560, color: 'var(--text)' }}>{member.displayName}</span>
                       {member.userId === user?.id && <span className="badge">{t('你')}</span>}
                       {member.role === 'owner' && <Crown size={11} style={{ color: 'var(--amber)' }} />}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{member.email} · {t('加入于 {date}', { date: formatRelativeShort(member.joinedAt) })}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{member.email} · {t('加入于 {date}', { date: formatRelativeShort(member.joinedAt) })}</div>
                   </div>
                   {canManage && member.role !== 'owner' ? (
-                    <select className="select" value={member.role} onChange={(event) => void changeRole(member, event.target.value)} style={{ height: 29, width: 100, fontSize: 10.5 }}>
+                    <select className="select" value={member.role} onChange={(event) => void changeRole(member, event.target.value)} style={{ height: 29, width: 100, fontSize: 13 }}>
                       {ROLES.map((role) => <option key={role} value={role}>{roleLabel(t, role)}</option>)}
                       {isOwner && <option value="owner">{t('转移所有权')}</option>}
                     </select>
@@ -318,8 +318,8 @@ export default function TeamSettings() {
                     <div key={invitation.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 9px', border: '1px solid var(--line)', borderRadius: 7, background: 'var(--surface)' }}>
                       <Shield size={13} style={{ color: 'var(--text-tertiary)' }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 11, color: 'var(--text)' }}>{invitation.email} <span className="badge" style={{ marginLeft: 5 }}>{roleLabel(t, invitation.role)}</span></div>
-                        <div style={{ fontSize: 9.5, color: 'var(--text-tertiary)' }}>{t('待接受')} · {formatRelativeShort(invitation.createdAt)}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text)' }}>{invitation.email} <span className="badge" style={{ marginLeft: 5 }}>{roleLabel(t, invitation.role)}</span></div>
+                        <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{t('待接受')} · {formatRelativeShort(invitation.createdAt)}</div>
                       </div>
                       {invitation.url && <button type="button" className="icon-btn icon-btn-sm" onClick={() => copy(invitation.url!, invitation.id)} aria-label={t('复制邀请链接')}>{copied === invitation.id ? <Check size={12} /> : <Copy size={12} />}</button>}
                       <button type="button" className="icon-btn icon-btn-sm" onClick={() => void revokeInvitation(invitation.id)} aria-label={t('撤销')}><Trash2 size={12} /></button>
@@ -341,7 +341,7 @@ export default function TeamSettings() {
                   <div className="context-empty">{t('暂无记录')}</div>
                 ) : (
                   audit.slice(0, 20).map((entry) => (
-                    <div key={entry.id} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--line-soft)', fontSize: 10.5 }}>
+                    <div key={entry.id} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--line-soft)', fontSize: 13 }}>
                       <span style={{ width: 110, flex: 'none', color: 'var(--text-tertiary)' }}>{formatFullDate(entry.createdAt)}</span>
                       <span style={{ width: 90, flex: 'none', color: 'var(--text-secondary)' }}>{entry.actorName ?? t('系统')}</span>
                       <span style={{ flex: 1, color: 'var(--text-secondary)' }}>{actionLabel(t, entry.action)}</span>
@@ -396,7 +396,7 @@ export default function TeamSettings() {
           </>
         }
       >
-        <p style={{ fontSize: 12 }}>{removeMember?.displayName} · {removeMember?.email}</p>
+        <p style={{ fontSize: 13 }}>{removeMember?.displayName} · {removeMember?.email}</p>
       </Modal>
 
       <Modal
@@ -412,7 +412,7 @@ export default function TeamSettings() {
           </>
         }
       >
-        <p style={{ fontSize: 12 }}>{workspace?.name}</p>
+        <p style={{ fontSize: 13 }}>{workspace?.name}</p>
       </Modal>
 
       <Modal
@@ -428,7 +428,7 @@ export default function TeamSettings() {
           </>
         }
       >
-        <p style={{ fontSize: 12 }}>{workspace?.name}</p>
+        <p style={{ fontSize: 13 }}>{workspace?.name}</p>
       </Modal>
     </>
   );

@@ -114,7 +114,6 @@ export function TipTapEditor({
   initialMarkdown,
   reloadKey,
   editable,
-  serif,
   spellcheck,
   onChange,
   onReady,
@@ -125,7 +124,6 @@ export function TipTapEditor({
   initialMarkdown: string;
   reloadKey: number;
   editable: boolean;
-  serif: boolean;
   spellcheck: boolean;
   onChange: (markdown: string) => void;
   onReady: (editor: Editor | null) => void;
@@ -185,7 +183,7 @@ export function TipTapEditor({
     content: markdownToEditorHtml(initialMarkdown),
     editorProps: {
       attributes: {
-        class: cn('prose', serif && 'serif'),
+        class: 'prose',
         spellcheck: spellcheck ? 'true' : 'false',
       },
       handlePaste(_view, event) {
@@ -248,12 +246,12 @@ export function TipTapEditor({
     editor.setOptions({
       editorProps: {
         attributes: {
-          class: cn('prose', serif && 'serif'),
+          class: 'prose',
           spellcheck: spellcheck ? 'true' : 'false',
         },
       },
     });
-  }, [editor, serif, spellcheck]);
+  }, [editor, spellcheck]);
 
   useEffect(() => {
     if (!slash) return;
@@ -361,7 +359,7 @@ export function TipTapEditor({
     <div style={{ position: 'relative' }}>
       <EditorContent editor={editor} />
       {uploading && (
-        <div style={{ position: 'absolute', right: 8, top: 8, display: 'flex', alignItems: 'center', gap: 6, padding: '5px 9px', borderRadius: 6, background: 'var(--surface)', border: '1px solid var(--line)', fontSize: 10.5, color: 'var(--text-tertiary)' }}>
+        <div style={{ position: 'absolute', right: 8, top: 8, display: 'flex', alignItems: 'center', gap: 6, padding: '5px 9px', borderRadius: 6, background: 'var(--surface)', border: '1px solid var(--line)', fontSize: 13, color: 'var(--text-tertiary)' }}>
           <span className="spinner" style={{ width: 12, height: 12 }} /> {t('正在上传…')}
         </div>
       )}

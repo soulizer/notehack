@@ -211,7 +211,7 @@ export function ShareDialog({ note, open, onClose }: { note: Note; open: boolean
                       {share.permission === 'view' ? t('只读') : share.permission === 'edit' ? t('可编辑') : t('可评论')}
                     </span>
                     {share.hasPassword && <LockKeyhole size={12} style={{ color: 'var(--text-tertiary)' }} />}
-                    <span style={{ flex: 1, minWidth: 0, fontSize: 10.5, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ flex: 1, minWidth: 0, fontSize: 13, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}>
                       <Globe2 size={11} />
                       {formatFullDate(share.createdAt)}
                       {share.expiresAt && <><Clock3 size={11} /> {formatFullDate(share.expiresAt)}</>}

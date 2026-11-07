@@ -5,7 +5,6 @@ import { useAuthStore } from './stores/auth';
 import { useAppStore } from './stores/app';
 import { ToastViewport } from './components/Toasts';
 import { LogoLockup } from './components/Logo';
-import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import RecoverPage from './pages/RecoverPage';
@@ -29,7 +28,7 @@ function Splash() {
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
         <LogoLockup inverse />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
           <span className="spinner" />
           正在加载 NoteHack…
         </div>
@@ -90,7 +89,7 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/app" replace />} />
         <Route path="/login" element={status === 'authenticated' ? <Navigate to="/app" replace /> : <LoginPage />} />
         <Route path="/register" element={status === 'authenticated' ? <Navigate to="/app" replace /> : <RegisterPage />} />
         <Route path="/recover" element={<RecoverPage />} />

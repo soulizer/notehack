@@ -191,7 +191,7 @@ export function ContextPanel() {
           {(['info', 'backlinks', 'comments', 'history'] as const).map((entry) => (
             <button key={entry} type="button" className={cn('context-tab', tab === entry && 'active')} onClick={() => setTab(entry)}>
               {entry === 'info' ? t('信息') : entry === 'backlinks' ? t('反向链接') : entry === 'comments' ? t('评论') : t('历史')}
-              {entry === 'comments' && comments.length > 0 && <span style={{ marginLeft: 3, fontSize: 9, color: 'var(--text-tertiary)' }}>{comments.length}</span>}
+              {entry === 'comments' && comments.length > 0 && <span style={{ marginLeft: 3, fontSize: 13, color: 'var(--text-tertiary)' }}>{comments.length}</span>}
             </button>
           ))}
         </div>
@@ -229,7 +229,7 @@ export function ContextPanel() {
                     onChange={(event) => setTagQuery(event.target.value)}
                     placeholder={t('搜索或创建标签…')}
                     autoFocus
-                    style={{ height: 29, fontSize: 11, marginBottom: 5 }}
+                    style={{ height: 29, fontSize: 13, marginBottom: 5 }}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') {
                         event.preventDefault();
@@ -239,12 +239,12 @@ export function ContextPanel() {
                     }}
                   />
                   {tagResults.map((tag) => (
-                    <button key={tag.id} type="button" className="menu-item" onClick={() => void addTag(tag.id)} disabled={addTagLoading} style={{ fontSize: 11 }}>
+                    <button key={tag.id} type="button" className="menu-item" onClick={() => void addTag(tag.id)} disabled={addTagLoading} style={{ fontSize: 13 }}>
                       <Tag size={12} /> {tag.name}
                     </button>
                   ))}
                   {tagQuery.trim() && !tagResults.some((tag) => tag.name.toLowerCase() === tagQuery.trim().toLowerCase()) && (
-                    <button type="button" className="menu-item" onClick={() => void createAndAddTag()} disabled={addTagLoading} style={{ fontSize: 11 }}>
+                    <button type="button" className="menu-item" onClick={() => void createAndAddTag()} disabled={addTagLoading} style={{ fontSize: 13 }}>
                       <Plus size={12} /> {t('创建“{name}”', { name: tagQuery.trim() })}
                     </button>
                   )}
@@ -396,7 +396,7 @@ export function ContextPanel() {
                 <div className="context-section-title">
                   <span>{t('版本预览')} · v{versionDetail.version}</span>
                 </div>
-                <div className="version-preview prose" style={{ fontSize: 11.5 }} dangerouslySetInnerHTML={{ __html: renderMarkdown(versionDetail.contentMd).html }} />
+                <div className="version-preview prose" style={{ fontSize: 13 }} dangerouslySetInnerHTML={{ __html: renderMarkdown(versionDetail.contentMd).html }} />
                 <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                   <button type="button" className={cn('btn btn-sm', confirmRestore === versionDetail.id ? 'btn-danger' : 'btn-secondary')} onClick={() => void doRestore(versionDetail)}>
                     <RotateCcw size={12} /> {confirmRestore === versionDetail.id ? t('再次点击确认恢复') : t('恢复此版本')}

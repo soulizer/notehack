@@ -3,6 +3,35 @@
 All notable changes to NoteHack are documented here.  
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions use [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] — 2026-11-08
+
+入口、视觉与错误体验纠偏。此版本没有新增功能，重点是去掉营销外壳与“AI 味”，把产品本身放到第一屏。
+
+### Changed
+
+- **入口即产品**：`/` 直接进入 `/app`；未登录显示登录页。删除营销首页及其样式。
+- **全站无衬线**：移除 Newsreader、宋体/衬线 token 与编辑器衬线偏好；登录、笔记标题、分享页、导出、错误页统一 Inter/系统无衬线。
+- **字号下限 13px**：隐私政策、服务条款、忘记密码、时间戳、错误说明等全部提升；“任何文字不得小于 13px”写入设计规范与验收清单。
+- **品牌改为文字标识**：`NoteHack.`（蓝色句点），PWA/favicon 为同源 `N.`；删除旧图形 logo。
+- **按钮统一**：标准 36px / 小号 30px / 大号 44px；圆角 8/7px；同一层级的边框、内边距、字体一致。
+- **去掉廉价交互**：删除 hover 下划线、按钮上浮/缩放、active 位移、选中态额外 ring；hover 只改变颜色或背景。
+- **边框纪律**：修复搜索/新建按钮溢出、选中态双边框、共享权限卡与设置导航的阴影描边；相邻元素保持单层 1px 边框。
+- **空状态与文案**：去掉 emoji 与 Sparkles 图标，改用书写类图标；种子笔记去掉 👋；降低“AI 生成”语气。
+- **错误体验**：Nginx 静态直出 SPA；502/503/504 显示 NoteHack 品牌 503 页；前端把网关错误转为可读中文，不再渲染 Nginx HTML。
+
+### Fixed
+
+- 注册 502：`archiver@8` ESM 启动失败导致 API 不可用；回滚 `archiver@7.0.1` 并重新部署。
+- API 重启时登录页不再整站 502：静态资源由 Nginx 提供。
+- `www` 与 HTTP 重定向、HSTS/CSP 保持。
+
+### Docs
+
+- `docs/DESIGN_SYSTEM.md` 升级 0.2：禁止衬线、13px 下限、禁止 hover 位移/下划线、按钮分级、边框规则、直接登录、错误页、反模式与验收清单。
+- `docs/MEMORY.md` 记录视觉纠偏与“每次更新立即推送 GitHub”铁律。
+
+---
+
 ## [0.1.0] — 2026-11-07
 
 首个可部署版本。目标：把“稳定记录、找得回来、多端可用、安全透明、可携带、可恢复”做扎实。

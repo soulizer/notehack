@@ -112,11 +112,11 @@ export function NotificationCenter() {
                     {notification.title}
                   </span>
                   {notification.body && (
-                    <span style={{ display: 'block', marginTop: 2, fontSize: 10.5, color: 'var(--text-tertiary)', lineHeight: 1.45 }}>
+                    <span style={{ display: 'block', marginTop: 2, fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.45 }}>
                       {notification.body}
                     </span>
                   )}
-                  <span style={{ display: 'block', marginTop: 4, fontSize: 9.5, color: 'var(--text-tertiary)' }}>
+                  <span style={{ display: 'block', marginTop: 4, fontSize: 13, color: 'var(--text-tertiary)' }}>
                     {formatRelativeShort(notification.createdAt)}
                   </span>
                 </span>

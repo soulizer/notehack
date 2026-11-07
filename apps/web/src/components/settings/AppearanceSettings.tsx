@@ -13,7 +13,6 @@ export default function AppearanceSettings() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const [theme, setTheme] = useState<ThemePreference>((user?.prefs?.theme as ThemePreference) ?? 'system');
-  const [font, setFont] = useState<'sans' | 'serif'>((user?.prefs?.editorFont as 'sans' | 'serif') ?? 'sans');
   const [width, setWidth] = useState<'narrow' | 'wide'>((user?.prefs?.editorWidth as 'narrow' | 'wide') ?? 'wide');
   const [reduceMotion, setReduceMotion] = useState(Boolean(user?.prefs?.reduceMotion));
 
@@ -62,7 +61,6 @@ export default function AppearanceSettings() {
                   borderRadius: 9,
                   border: `1px solid ${theme === option.id ? 'var(--blue)' : 'var(--line)'}`,
                   background: 'var(--surface)',
-                  boxShadow: theme === option.id ? '0 0 0 1px var(--blue)' : undefined,
                 }}
               >
                 <div
@@ -83,7 +81,7 @@ export default function AppearanceSettings() {
                     <div style={{ height: 3, width: '66%', borderRadius: 2, background: option.id === 'dark' ? '#3a4157' : '#ddd8ce', marginTop: 3 }} />
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: 'var(--text)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text)' }}>
                   <Icon size={13} /> {option.label}
                   {theme === option.id && <Check size={12} style={{ marginLeft: 'auto', color: 'var(--blue)' }} />}
                 </div>
@@ -114,18 +112,6 @@ export default function AppearanceSettings() {
         </div>
         <div className="setting-row">
           <div className="setting-row-main">
-            <div className="setting-row-title">{t('编辑器字体')}</div>
-            <div className="setting-row-desc">{t('衬线字体更适合长文阅读；无衬线更接近界面。')}</div>
-          </div>
-          <div className="setting-row-control">
-            <div className="segmented">
-              <button type="button" className={font === 'sans' ? 'active' : ''} onClick={() => { setFont('sans'); void persist({ editorFont: 'sans' }); }}>{t('无衬线')}</button>
-              <button type="button" className={font === 'serif' ? 'active' : ''} onClick={() => { setFont('serif'); void persist({ editorFont: 'serif' }); }} style={{ fontFamily: 'var(--font-serif)' }}>{t('衬线')}</button>
-            </div>
-          </div>
-        </div>
-        <div className="setting-row">
-          <div className="setting-row-main">
             <div className="setting-row-title">{t('编辑宽度')}</div>
             <div className="setting-row-desc">{t('窄栏约 700px，宽栏约 980px。')}</div>
           </div>
@@ -146,8 +132,7 @@ export default function AppearanceSettings() {
               border: '1px solid var(--line)',
               borderRadius: 8,
               background: 'var(--surface)',
-              fontFamily: font === 'serif' ? 'var(--font-serif)' : 'var(--font-ui)',
-              fontSize: font === 'serif' ? 15.5 : 14,
+              fontSize: 14,
               maxWidth: width === 'narrow' ? 430 : 560,
             }}
           >

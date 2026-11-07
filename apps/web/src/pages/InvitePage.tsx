@@ -4,7 +4,7 @@ import { ArrowLeft, Check, LogIn, UserPlus, X } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuthStore } from '../stores/auth';
 import { useT } from '../lib/i18n';
-import { LogoMark } from '../components/Logo';
+import { LogoLockup } from '../components/Logo';
 import { Avatar } from '../components/Avatar';
 import type { Invitation } from '@notehack/shared';
 
@@ -70,8 +70,7 @@ export default function InvitePage() {
       <div className="center-card animate-rise">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <LogoMark size={26} />
-            <span style={{ fontWeight: 650, letterSpacing: '-0.03em', color: 'var(--text)' }}>NoteHack</span>
+            <LogoLockup />
           </Link>
           <Link to="/app" className="btn btn-ghost btn-sm" style={{ padding: 0, height: 'auto' }}>
             <ArrowLeft size={12} /> {t('回到应用')}
@@ -114,7 +113,7 @@ export default function InvitePage() {
               <Avatar name={invitation.workspaceName ?? 'N'} color="#2f6feb" size="lg" />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 620, fontSize: 13, color: 'var(--text)' }}>{invitation.workspaceName}</div>
-                <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 2 }}>
                   {t('以 {email} 的身份接受', { email: user?.email ?? '' })}
                 </div>
               </div>
@@ -136,7 +135,7 @@ export default function InvitePage() {
           </>
         )}
         <div className="public-share-brand" style={{ marginTop: 24 }}>
-          <LogoMark size={15} /> {t('由 NoteHack 驱动')}
+          <span style={{ fontWeight: 650, color: 'var(--text)' }}>NoteHack.</span> {t('驱动')}
         </div>
       </div>
     </div>

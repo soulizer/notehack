@@ -212,13 +212,13 @@ export function BackupPanel({ workspaceId, canManage }: { workspaceId: string; c
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 11.5, fontWeight: 560 }}>{backup.kind === 'auto' ? t('自动备份') : backup.kind === 'pre-restore' ? t('恢复前安全备份') : t('手动备份')}</span>
+                  <span style={{ fontSize: 13, fontWeight: 560 }}>{backup.kind === 'auto' ? t('自动备份') : backup.kind === 'pre-restore' ? t('恢复前安全备份') : t('手动备份')}</span>
                   <span className="badge">{formatRelativeShort(backup.createdAt)}</span>
                   {backup.status === 'failed' && <span className="badge badge-red">{t('失败')}</span>}
                   {backup.offsite === 'uploaded' && <span className="badge badge-green">{t('异地已上传')}</span>}
                   {backup.offsite === 'failed' && <span className="badge badge-red">{t('异地上传失败')}</span>}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 3 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 3 }}>
                   {formatFullDate(backup.createdAt)} · {t('{n} 篇笔记', { n: backup.noteCount })} · {t('{n} 个附件', { n: backup.attachmentCount })} · {formatBytes(backup.size)}
                 </div>
               </div>
@@ -273,9 +273,9 @@ export function BackupPanel({ workspaceId, canManage }: { workspaceId: string; c
         {restoreTarget && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="restore-counts" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{restoreTarget.preview.counts.notes}</div><div className="setting-note">{t('笔记')}</div></div>
-              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{restoreTarget.preview.counts.attachments}</div><div className="setting-note">{t('附件')}</div></div>
-              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-serif)' }}>{restoreTarget.preview.counts.folders}</div><div className="setting-note">{t('文件夹')}</div></div>
+              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{restoreTarget.preview.counts.notes}</div><div className="setting-note">{t('笔记')}</div></div>
+              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{restoreTarget.preview.counts.attachments}</div><div className="setting-note">{t('附件')}</div></div>
+              <div className="setting-card" style={{ padding: 11 }}><div style={{ fontSize: 22, fontFamily: 'var(--font-ui)' }}>{restoreTarget.preview.counts.folders}</div><div className="setting-note">{t('文件夹')}</div></div>
             </div>
             <div className="setting-note">
               {t('来自「{name}」，创建于 {date}', { name: restoreTarget.preview.workspace.name, date: formatFullDate(restoreTarget.preview.createdAt) })}

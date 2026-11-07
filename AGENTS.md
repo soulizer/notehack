@@ -21,7 +21,12 @@ You are working on NoteHack, a production note application at `notehack.com`. Re
 - **Do not commit secrets** (`/etc/notehack/notehack.env`, `NOTEHACK_MASTER_KEY`, database passwords, admin recovery key, user data).
 - **Do not claim E2EE.** Current version does not provide it; docs and UI must say the server can read note bodies.
 - **Do not add a second visual language.** Use tokens/components in `apps/web/src/styles/`; update `DESIGN_SYSTEM.md` first if needed.
+- **Never use serif/Songti/Newsreader** anywhere (UI, notes, shares, exports, error pages). Inter/system sans only.
+- **No interface text below 13px** — including privacy/terms/forgot-password, timestamps, hints and error details.
+- **No hover underline, lift, scale or active displacement.** Hover may only change color/background/border.
+- **No marketing homepage.** `/` goes straight to the app or login. No second border/ring on selected elements.
 - **Do not cram every feature into the main screen.** High frequency → main path; medium → context/panel; low → settings; extremely low → command palette + wizard.
+- **Push immediately.** After every code, docs or deployment change, commit and `git push` to `github.com:soulizer/notehack` before considering the task done. Do not leave uncommitted work on this server.
 
 ## Repo map
 
@@ -56,6 +61,7 @@ npm run build
 - [ ] No test data/secrets left in the production database or repo.
 - [ ] If deployment changed: update `OPERATIONS.md`, restart systemd, health check.
 - [ ] If a decision changed: add/update an ADR.
+- [ ] **Committed and pushed to GitHub immediately** (`git push`); verify the remote commit is current.
 
 ## Production notes
 

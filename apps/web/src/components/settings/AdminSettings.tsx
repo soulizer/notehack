@@ -77,12 +77,12 @@ export default function AdminSettings() {
           ].map((item) => (
             <div className="setting-card" key={item.label} style={{ padding: 12 }}>
               <span style={{ color: 'var(--text-tertiary)' }}>{item.icon}</span>
-              <div style={{ fontSize: 20, fontFamily: 'var(--font-serif)', marginTop: 6 }}>{item.value}</div>
+              <div style={{ fontSize: 20, fontFamily: 'var(--font-ui)', marginTop: 6 }}>{item.value}</div>
               <div className="setting-note">{item.label}</div>
             </div>
           ))}
         </div>
-        <div className="setting-card" style={{ marginTop: 8, display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 10.5, color: 'var(--text-tertiary)' }}>
+        <div className="setting-card" style={{ marginTop: 8, display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 13, color: 'var(--text-tertiary)' }}>
           <span>{t('注册模式')}：<strong style={{ color: 'var(--text-secondary)' }}>{instance?.registrationMode ?? '—'}</strong></span>
           <span>{t('OCR')}：<strong style={{ color: 'var(--text-secondary)' }}>{instance?.ocrEnabled ? t('开启') : t('关闭')}</strong></span>
           <span>{t('AI')}：<strong style={{ color: 'var(--text-secondary)' }}>{instance?.aiEnabled ? t('开启') : t('关闭')}</strong></span>
@@ -135,7 +135,7 @@ export default function AdminSettings() {
         </div>
         <div style={{ maxHeight: 360, overflowY: 'auto', border: '1px solid var(--line)', borderRadius: 8, background: 'var(--surface)' }}>
           {audit.slice(0, 60).map((entry) => (
-            <div key={entry.id} style={{ display: 'flex', gap: 10, padding: '8px 10px', borderBottom: '1px solid var(--line-soft)', fontSize: 10.5 }}>
+            <div key={entry.id} style={{ display: 'flex', gap: 10, padding: '8px 10px', borderBottom: '1px solid var(--line-soft)', fontSize: 13 }}>
               <span style={{ width: 130, flex: 'none', color: 'var(--text-tertiary)' }}>{formatFullDate(entry.createdAt)}</span>
               <span style={{ width: 90, flex: 'none', color: 'var(--text-secondary)' }}>{entry.actorName ?? t('系统')}</span>
               <span style={{ flex: 1, color: 'var(--text-secondary)' }}>{entry.action}</span>

@@ -4,7 +4,7 @@ import { ArrowLeft, Check, Globe2, Scissors } from 'lucide-react';
 import { useAuthStore } from '../stores/auth';
 import { useT } from '../lib/i18n';
 import { api } from '../lib/api';
-import { LogoMark } from '../components/Logo';
+import { LogoLockup } from '../components/Logo';
 
 export default function ClipPage() {
   const t = useT();
@@ -56,8 +56,7 @@ export default function ClipPage() {
       <div className="center-card" style={{ maxWidth: 540 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/app" style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <LogoMark size={26} />
-            <span style={{ fontWeight: 650, letterSpacing: '-0.03em' }}>NoteHack</span>
+            <LogoLockup />
           </Link>
           <Link to="/app" className="btn btn-ghost btn-sm"><ArrowLeft size={12} /> {t('返回')}</Link>
         </div>

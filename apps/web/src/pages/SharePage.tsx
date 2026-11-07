@@ -19,7 +19,7 @@ import { useT } from '../lib/i18n';
 import { formatFullDate, formatRelative } from '../lib/utils';
 import { renderMarkdown, stripDuplicateTitle } from '../lib/markdown';
 import { cn } from '../lib/utils';
-import { LogoMark, LogoLockup } from '../components/Logo';
+import { LogoLockup } from '../components/Logo';
 import { Avatar } from '../components/Avatar';
 
 export default function SharePage() {
@@ -188,7 +188,7 @@ export default function SharePage() {
             </button>
           </form>
           <div className="public-share-brand">
-            <LogoMark size={15} /> {t('由 NoteHack 保护')}
+            <span style={{ fontWeight: 650 }}>NoteHack.</span> {t('保护')}
           </div>
         </div>
       </div>
@@ -223,7 +223,7 @@ export default function SharePage() {
                 className="input"
                 value={editTitle}
                 onChange={(event) => setEditTitle(event.target.value)}
-                style={{ fontSize: 28, fontFamily: 'var(--font-serif)', height: 54, marginBottom: 12 }}
+                style={{ fontSize: 28, fontFamily: 'var(--font-ui)', height: 54, marginBottom: 12 }}
               />
               <div className="banner banner-info" style={{ marginBottom: 14 }}>
                 <Edit3 size={15} />
@@ -272,7 +272,7 @@ export default function SharePage() {
               {share.note.attachments.length > 0 && (
                 <section style={{ marginTop: 50, paddingTop: 20, borderTop: '1px solid var(--line)' }}>
                   <div className="public-toc-title">{t('附件')}</div>
-                  <ul style={{ paddingLeft: 18, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                  <ul style={{ paddingLeft: 18, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
                     {share.note.attachments.map((attachment) => (
                       <li key={attachment.id}>
                         <a href={`/api/public/shares/${token}/attachments/${attachment.id}`} target="_blank" rel="noreferrer">
@@ -285,7 +285,7 @@ export default function SharePage() {
               )}
               <footer className="public-footer">
                 <div className="public-footer-brand">
-                  <LogoMark size={22} /> {t('由 NoteHack 发布')}
+                  <span style={{ fontWeight: 650, color: 'var(--text)' }}>NoteHack.</span> {t('发布')}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <ShieldCheck size={12} />
@@ -326,7 +326,7 @@ export default function SharePage() {
                       required
                     />
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('评论会通知笔记作者')}</span>
+                      <span style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{t('评论会通知笔记作者')}</span>
                       <button type="submit" className="btn btn-primary btn-sm" disabled={posting || !commentBody.trim()}>
                         {posting ? <span className="spinner" /> : <Send size={13} />} {t('发送')}
                       </button>

@@ -187,7 +187,7 @@ export function NoteListPane() {
                   background: 'transparent',
                   flex: 1,
                   minWidth: 0,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   color: 'var(--text)',
                 }}
               />
@@ -435,7 +435,7 @@ export function NoteListPane() {
         confirmLabel={t('永久删除')}
         danger
       >
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('已选择 {n} 项', { n: selectedIds.size })}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{t('已选择 {n} 项', { n: selectedIds.size })}</p>
       </ConfirmDialog>
 
       <ConfirmDialog
@@ -451,7 +451,7 @@ export function NoteListPane() {
         confirmLabel={t('永久删除')}
         danger
       >
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{deleteTarget?.title}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{deleteTarget?.title}</p>
       </ConfirmDialog>
     </section>
   );

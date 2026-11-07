@@ -62,7 +62,11 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   if (!response.ok) {
     const payload = data as { error?: { code?: string; message?: string; details?: unknown } } | null;
     const code = payload?.error?.code ?? `HTTP_${response.status}`;
-    const message = payload?.error?.message ?? (typeof data === 'string' ? data : '请求失败');
+    const isGateway = [502, 503, 504].includes(response.status);
+    const message = isGateway
+      ? '服务暂时不可用，请稍后重试。你的本地草稿与待同步内容不会丢失。'
+      : payload?.error?.message ??
+        (typeof data === 'string' && !data.trim().startsWith('<') ? data : '请求失败');
     if (response.status === 401 && !path.includes('/api/auth/')) {
       window.dispatchEvent(new CustomEvent('nh:unauthorized'));
     }

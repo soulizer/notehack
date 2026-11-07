@@ -22,7 +22,7 @@ export function welcomeSeed(locale: string, displayName: string): { folder: stri
         {
           title: '欢迎来到 NoteHack',
           tags: ['开始'],
-          content: `# 欢迎，${displayName} 👋
+          content: `# 欢迎，${displayName}
 
 NoteHack 是一个安静、快速、属于你的笔记空间。它把**记录**、**整理**和**分享**放在同一条路径上，而不是让你先学习一套复杂的系统。
 
@@ -124,7 +124,7 @@ NoteHack 的正文以 **Markdown** 为底层格式，同时提供所见即所得
       {
         title: 'Welcome to NoteHack',
         tags: ['start'],
-        content: `# Welcome, ${displayName} 👋
+        content: `# Welcome, ${displayName}
 
 NoteHack is a calm, fast notebook that is genuinely yours. Capture, shape, and share in one place — without learning a system first.
 

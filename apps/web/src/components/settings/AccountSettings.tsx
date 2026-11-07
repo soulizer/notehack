@@ -110,23 +110,23 @@ export default function AccountSettings() {
             <span className="workspace-mark" style={{ background: 'var(--blue-soft)', color: 'var(--blue)', border: 0 }}>{workspace?.name.slice(0, 1)}</span>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 600 }}>{workspace?.name}</div>
-              <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', marginTop: 2 }}>{t('角色：{role}', { role: roleLabel(t, workspace?.role ?? 'owner') })}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 2 }}>{t('角色：{role}', { role: roleLabel(t, workspace?.role ?? 'owner') })}</div>
             </div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={() => navigate('/app/settings/team')}>{t('管理')}</button>
           </div>
           {summary && (
             <div style={{ display: 'flex', gap: 26, marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--line-soft)' }}>
               <div>
-                <div style={{ fontSize: 18, fontFamily: 'var(--font-serif)', fontWeight: 500 }}>{summary.noteCount}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('笔记')}</div>
+                <div style={{ fontSize: 18, fontFamily: 'var(--font-ui)', fontWeight: 500 }}>{summary.noteCount}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{t('笔记')}</div>
               </div>
               <div>
-                <div style={{ fontSize: 18, fontFamily: 'var(--font-serif)', fontWeight: 500 }}>{summary.memberCount}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('成员')}</div>
+                <div style={{ fontSize: 18, fontFamily: 'var(--font-ui)', fontWeight: 500 }}>{summary.memberCount}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{t('成员')}</div>
               </div>
               <div>
-                <div style={{ fontSize: 18, fontFamily: 'var(--font-serif)', fontWeight: 500 }}>{formatBytes(summary.attachmentBytes)}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('附件')}</div>
+                <div style={{ fontSize: 18, fontFamily: 'var(--font-ui)', fontWeight: 500 }}>{formatBytes(summary.attachmentBytes)}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{t('附件')}</div>
               </div>
             </div>
           )}

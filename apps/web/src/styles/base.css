@@ -21,7 +21,7 @@ body {
   color: var(--text);
   font-family: var(--font-ui);
   font-size: var(--text-base);
-  line-height: 1.55;
+  line-height: 1.6;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'lnum';
   -webkit-font-smoothing: antialiased;
   font-synthesis-style: none;
@@ -64,7 +64,8 @@ a {
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--blue-strong);
+  text-decoration: none;
 }
 
 img {
@@ -257,7 +258,7 @@ textarea::placeholder {
 }
 
 .field-hint {
-  font-size: var(--text-sm);
+  font-size: 13px;
   color: var(--text-tertiary);
   line-height: 1.5;
 }

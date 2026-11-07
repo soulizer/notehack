@@ -221,13 +221,13 @@ export default function SecuritySettings() {
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 11.5, fontWeight: 560, color: 'var(--text)' }}>{describeAgent(session.userAgent)}</span>
+                  <span style={{ fontSize: 13, fontWeight: 560, color: 'var(--text)' }}>{describeAgent(session.userAgent)}</span>
                   {session.current && <span className="badge badge-blue">{t('当前设备')}</span>}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 3 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 3 }}>
                   {session.ip || t('未知地址')} · {t('最后活动')} {formatRelativeShort(session.lastSeenAt)}
                 </div>
-                <div style={{ fontSize: 9.5, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 2 }}>
                   {t('登录于 {date}', { date: formatFullDate(session.createdAt) })}
                 </div>
               </div>

@@ -17,7 +17,7 @@ export default function AboutSettings() {
         <div className="settings-section-head"><span className="settings-section-title">{t('构建版本')}</span></div>
         <div className="setting-card">
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: 30, letterSpacing: '-0.03em' }}>NoteHack</span>
+            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 30, letterSpacing: '-0.03em' }}>NoteHack</span>
             <span className="badge">v{instance?.version ?? '0.1.0'}</span>
           </div>
           <div className="setting-note" style={{ marginTop: 6 }}>

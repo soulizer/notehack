@@ -54,20 +54,18 @@
   --sidebar-accent: #8db4ff;
 
   --font-ui: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
-  --font-serif: 'Newsreader Variable', 'Newsreader', 'Source Serif 4', 'Iowan Old Style', 'Songti SC',
-    'STSong', 'Noto Serif CJK SC', Georgia, serif;
+    'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
   --font-mono: 'SFMono-Regular', 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Consolas, 'Liberation Mono',
     monospace;
 
-  --text-xs: 11.5px;
-  --text-sm: 12.5px;
-  --text-base: 13.5px;
-  --text-md: 14.5px;
-  --text-lg: 16px;
-  --text-xl: 20px;
-  --text-2xl: 26px;
-  --text-title: clamp(30px, 3.4vw, 42px);
+  --text-xs: 13px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-xl: 21px;
+  --text-2xl: 28px;
+  --text-title: clamp(30px, 3vw, 38px);
 
   --space-1: 4px;
   --space-2: 8px;

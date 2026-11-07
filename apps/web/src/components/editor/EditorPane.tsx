@@ -18,6 +18,7 @@ import {
   Mic,
   MoreHorizontal,
   PanelRight,
+  PenLine,
   Pin,
   PinOff,
   RotateCcw,
@@ -595,7 +596,7 @@ export function EditorPane({
                 <div className="menu-separator" />
                 <MenuItem icon={<Share2 size={14} />} onClick={() => { close(); setShowShare(true); }}>{t('分享笔记')}</MenuItem>
                 <MenuItem icon={<Link2 size={14} />} onClick={() => { close(); setShowWiki(true); }}>{t('双向链接')}</MenuItem>
-                <MenuItem icon={<span className="mono" style={{ fontSize: 11 }}>M↓</span>} onClick={() => { close(); void toggleMode(); }}>{mode === 'rich' ? t('Markdown 模式') : t('富文本模式')}</MenuItem>
+                <MenuItem icon={<span className="mono" style={{ fontSize: 13 }}>M↓</span>} onClick={() => { close(); void toggleMode(); }}>{mode === 'rich' ? t('Markdown 模式') : t('富文本模式')}</MenuItem>
                 <div className="menu-separator" />
                 <MenuItem danger icon={<Trash2 size={14} />} onClick={() => { close(); setDeleteOpen(true); }}>{t('删除')}</MenuItem>
               </>
@@ -750,7 +751,6 @@ export function EditorPane({
               initialMarkdown={content}
               reloadKey={0}
               editable={!readOnly}
-              serif={user?.prefs?.editorFont === 'serif'}
               spellcheck={user?.prefs?.spellcheck !== false}
               onChange={applyContent}
               onReady={setEditor}
@@ -763,7 +763,7 @@ export function EditorPane({
 
       <div className="editor-footbar">
         <button type="button" className="footbar-button" onClick={() => void toggleMode()}>
-          <span className="mono" style={{ fontSize: 10, fontWeight: 700 }}>{mode === 'rich' ? 'M↓' : 'Aa'}</span>
+          <span className="mono" style={{ fontSize: 13, fontWeight: 700 }}>{mode === 'rich' ? 'M↓' : 'Aa'}</span>
           {mode === 'rich' ? t('Markdown 模式') : t('富文本模式')}
         </button>
         <span className="footbar-spacer" />
@@ -771,7 +771,7 @@ export function EditorPane({
         <span className="footbar-item">{t('{n} 字符', { n: chars })}</span>
         <span className="footbar-item">v{note.version}</span>
         <button type="button" className="footbar-button" onClick={() => setFocusMode(true)} title={t('聚焦模式')}>
-          <span style={{ fontSize: 11 }}>⤢</span> {t('聚焦')}
+          <span style={{ fontSize: 13 }}>⤢</span> {t('聚焦')}
         </button>
       </div>
 
@@ -912,7 +912,7 @@ export function EditorPane({
         confirmLabel={t('删除')}
         danger
       >
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{note.title}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{note.title}</p>
       </ConfirmDialog>
 
       {voiceActive && (
@@ -951,7 +951,7 @@ export function EmptyEditorState() {
   const createNote = useAppStore((state) => state.createNote);
   return (
     <div className="editor-empty">
-      <div className="editor-empty-mark"><Sparkles size={22} /></div>
+      <div className="editor-empty-mark"><PenLine size={21} /></div>
       <div className="editor-empty-title">{t('从这里开始。')}</div>
       <p className="editor-empty-text">{t('选择左侧的笔记，或写下此刻想到的第一句话。')}</p>
       <div className="editor-empty-actions">

@@ -83,7 +83,7 @@ export function EditorToolbar({
         >
           {(close) => (
             <>
-              <MenuItem icon={<span className="mono" style={{ fontSize: 11 }}>¶</span>} detail={!state?.heading1 && !state?.heading2 && !state?.heading3 ? '✓' : undefined} onClick={() => { close(); editor.chain().focus().setParagraph().run(); }}>
+              <MenuItem icon={<span className="mono" style={{ fontSize: 13 }}>¶</span>} detail={!state?.heading1 && !state?.heading2 && !state?.heading3 ? '✓' : undefined} onClick={() => { close(); editor.chain().focus().setParagraph().run(); }}>
                 {t('正文')}
               </MenuItem>
               <MenuItem icon={<Heading1 size={15} />} onClick={() => { close(); editor.chain().focus().toggleHeading({ level: 1 }).run(); }}>{t('标题 1')}</MenuItem>
@@ -134,7 +134,7 @@ export function EditorToolbar({
             <Link2 size={15} />
           </button>
           <button type="button" className="tool-btn" onClick={onWiki} title={t('双向链接')} aria-label={t('双向链接')}>
-            <span className="mono" style={{ fontSize: 11, fontWeight: 700 }}>[[</span>
+            <span className="mono" style={{ fontSize: 13, fontWeight: 700 }}>[[</span>
           </button>
           <button type="button" className="tool-btn" onClick={() => fileRef.current?.click()} title={t('上传图片或附件')} aria-label={t('上传图片或附件')}>
             <ImagePlus size={15} />

@@ -102,7 +102,7 @@ export default function RegisterPage() {
 
   if (recoveryKey) {
     return (
-      <AuthLayout quote={t('先保存钥匙，')} caption={t('再开始写作。')}>
+      <AuthLayout>
         <div className="animate-rise">
           <div
             style={{
@@ -169,7 +169,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthLayout quote={t('先有一个空间，')} caption={t('再慢慢长大。')}>
+    <AuthLayout>
       <h1 className="auth-heading">{t('创建你的空间')}</h1>
       <p className="auth-sub">{t('一个邮箱、一个密码，然后直接开始写。')}</p>
       <form className="auth-form" onSubmit={onSubmit}>
@@ -242,7 +242,7 @@ export default function RegisterPage() {
                   }}
                 />
               </div>
-              <span style={{ fontSize: 9.5, color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>
                 {strength.label}
               </span>
             </div>

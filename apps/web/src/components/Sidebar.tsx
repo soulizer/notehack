@@ -289,7 +289,7 @@ export function Sidebar() {
               {workspaces.map((workspace) => (
                 <MenuItem
                   key={workspace.id}
-                  icon={<span className="workspace-mark" style={{ width: 20, height: 20, borderRadius: 6, fontSize: 9 }}>{workspace.name.slice(0, 1)}</span>}
+                  icon={<span className="workspace-mark" style={{ width: 20, height: 20, borderRadius: 6, fontSize: 13 }}>{workspace.name.slice(0, 1)}</span>}
                   detail={workspace.id === workspaceId ? '✓' : undefined}
                   onClick={() => {
                     close();
@@ -539,7 +539,7 @@ export function Sidebar() {
           </>
         }
       >
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{deleteNode?.name}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{deleteNode?.name}</p>
       </Modal>
     </>
   );

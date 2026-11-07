@@ -1,7 +1,7 @@
 {
   "name": "notehack",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "NoteHack — a calm, local-first notebook for ideas, knowledge, and publishing.",
   "workspaces": [
     "apps/*",

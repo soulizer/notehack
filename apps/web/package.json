@@ -1,6 +1,6 @@
 {
   "name": "@notehack/web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
-    "@fontsource-variable/newsreader": "^5.2.8",
     "@notehack/shared": "*",
     "@tiptap/extension-character-count": "^3.33.0",
     "@tiptap/extension-code-block-lowlight": "^3.33.0",

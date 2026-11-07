@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   if (challenge) {
     return (
-      <AuthLayout quote={t('两步验证，')} caption={t('多一道安心。')}>
+      <AuthLayout>
         <button
           type="button"
           className="btn btn-ghost btn-sm"
@@ -135,7 +135,7 @@ export default function LoginPage() {
         <div className="field">
           <div className="helper-row">
             <label htmlFor="login-password">{t('密码')}</label>
-            <Link to="/recover" style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>
+            <Link to="/recover" style={{ fontSize: 14, fontWeight: 550, color: 'var(--text-secondary)' }}>
               {t('忘记密码？')}
             </Link>
           </div>
