@@ -376,7 +376,9 @@ curl -fsS https://notehack.com/health
 
 ### 9.3 PDF 导出 501
 
-- 未安装 Chromium 或路径不在 `chromium/chromium-browser/google-chrome`。安装后重启；或改用 HTML 打印。
+- 未安装 Chromium 或路径不在 `/usr/bin/chromium` / `chromium` / `google-chrome`；可用 `CHROMIUM_PATH=/usr/bin/chromium` 指定。
+- systemd 非 root 运行时 Chromium 需要可写的 `HOME`/`XDG_*` 与 `--user-data-dir`；应用已自动创建临时目录。检查 journal 中的 `PDF export failed`。
+- 仍失败可改用 HTML 打印为 PDF。
 
 ### 9.4 OCR 不工作
 

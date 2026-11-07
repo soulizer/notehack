@@ -151,7 +151,7 @@ apps/web/src/styles/tokens.css        设计 token
 - 数据目录：`/var/lib/notehack`（0700）；env：`/etc/notehack/notehack.env`（0600）。
 - 最终状态：1 个管理员、3 篇种子笔记、0 会话、0 分享、0 备份、0 附件、0 团队空间；管理员与恢复密钥保存在 `/root/notehack-admin-initial.txt`（0600），生产密钥备份在 `/root/notehack-secrets-backup.txt`（0600，应复制到离线后删除）。
 - 未配置 AI、未配置 S3 异地；注册模式 `open`。
-- Git：`main` 已推送到 `github.com:soulizer/notehack`（deploy key 已添加）。
+- Git：`main` 已推送到 `github.com:soulizer/notehack`（deploy key 已添加）；最终提交 `cf29d55`。
 
 ### 最终验证
 

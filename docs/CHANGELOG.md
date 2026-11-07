@@ -69,6 +69,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 - 分享列表要求分享权限；分享编辑归一化公开附件 URL；路径穿越/MIME/大小校验。
 - 恢复密钥重置会撤销全部会话并关闭 2FA。
 
+### Fixed
+
+- 标题与正文首个 H1 重复：服务端/客户端剥离，分享与 HTML/PDF 导出一致。
+- 全库 Markdown 导出的附件相对路径按文件夹深度计算；全库 HTML 的 wiki link 转为相对页面链接。
+- 分享密码/过期/撤销流程；公开编辑把公开附件 URL 归一化回内部 URL。
+- 生产 PDF 导出在 systemd 非 root 下需要可写 HOME/XDG 与 `--user-data-dir`，已修复。
+- ENEX 导入剥离 XML prolog/DOCTYPE，不再把声明写入正文。
+- TOTP 防重放；2FA 关闭支持备用码；分享列表要求分享权限。
+- 静态资源 404 时不再回退 HTML；build 后重启服务的运维要求写入文档。
+- 批量选择/恢复/永久删除 UI；列表“加载更多”；最近 120 篇离线预取。
+
 ### Known limitations / not in 0.1
 
 - 不提供 E2EE（明确说明服务端可读正文）。
