@@ -231,6 +231,8 @@ export default async function workspaceRoutes(app: FastifyInstance) {
     const auth = requireAuth(request);
     const { id } = parse(z.object({ id: z.string().uuid() }), request.params);
     const actorRole = await requireWorkspace(auth.user.id, id, 'manage');
+    const workspaceRow = await one<{ kind: string }>('SELECT kind FROM workspaces WHERE id = $1', [id]);
+    if (workspaceRow?.kind === 'personal') throw errors.forbidden('个人空间是私密的，不能邀请成员');
     const body = parse(z.object({ email: emailSchema, role: roleSchema.default('editor') }), request.body);
     if (body.role === 'admin' && actorRole !== 'owner') throw errors.forbidden('只有所有者可以邀请管理员');
     const existingMember = await one<{ user_id: string }>(

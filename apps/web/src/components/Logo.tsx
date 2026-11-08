@@ -26,7 +26,7 @@ export function LogoLockup({ inverse = false }: { inverse?: boolean }) {
   return (
     <span className={cn('brand-lockup', inverse && 'brand-lockup-inverse')}>
       <LogoMark inverse={inverse} />
-      <span className="brand-wordmark">NoteHack</span>
+      <span className="brand-wordmark">NoteHack<span className="brand-period">.</span></span>
     </span>
   );
 }

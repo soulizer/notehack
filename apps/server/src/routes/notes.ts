@@ -16,6 +16,7 @@ import {
   emptyTrash,
   getBacklinks,
   getNoteForUser,
+  addConflictVersion,
   getVersion,
   listVersions,
   listingNotes,
@@ -286,6 +287,31 @@ export default async function noteRoutes(app: FastifyInstance) {
     const note = await restoreVersion(id, versionId, auth.user.id);
     await audit({ workspaceId: note.workspaceId, actorId: auth.user.id, action: 'note.version.restore', targetType: 'note', targetId: id, meta: { version: versionId }, ip: clientIp(request) });
     return { note };
+  });
+
+  app.post('/api/notes/:id/conflicts', async (request) => {
+    const auth = requireAuth(request);
+    const { id } = parse(z.object({ id: z.string().uuid() }), request.params);
+    const body = parse(
+      z.object({ title: noteTitleSchema, contentMd: noteContentSchema }),
+      request.body,
+    );
+    const result = await addConflictVersion({
+      noteId: id,
+      userId: auth.user.id,
+      title: body.title,
+      contentMd: body.contentMd,
+    });
+    await audit({
+      workspaceId: (await getNoteForUser(id, auth.user.id)).note.workspaceId,
+      actorId: auth.user.id,
+      action: 'note.conflict.save',
+      targetType: 'note',
+      targetId: id,
+      meta: { version: result.version },
+      ip: clientIp(request),
+    });
+    return result;
   });
 
   app.post('/api/notes/:id/versions', async (request) => {

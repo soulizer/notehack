@@ -86,7 +86,7 @@ export default function AiSettings() {
         <div className="setting-row">
           <div className="setting-row-main">
             <div className="setting-row-title">{t('可随时关闭')}</div>
-            <div className="setting-row-desc">{t('关闭后，AI 摘要入口会隐藏；本地摘要仍然可用，且完全在服务器内部生成。')}</div>
+            <div className="setting-row-desc">{t('关闭后，AI 摘要入口会隐藏；NoteHack 不会生成或保存摘要。')}</div>
           </div>
           <div className="setting-row-control">
             <span className={`badge ${instance?.aiEnabled ? 'badge-green' : ''}`}>{instance?.aiEnabled ? t('实例已启用') : t('实例未启用')}</span>
@@ -147,7 +147,7 @@ export default function AiSettings() {
           <div className="settings-section-head"><span className="settings-section-title">{t('实例 AI 设置')}</span></div>
           <div className="banner">
             <LockKeyhole size={15} />
-            <div>{t('仅实例管理员可以配置 AI 服务。你可以在单篇笔记中使用本地摘要，它不会离开服务器。')}</div>
+            <div>{t('仅实例管理员可以配置 AI 服务。摘要必须由你主动触发，且只在启用后出现。')}</div>
           </div>
         </section>
       )}
@@ -158,7 +158,7 @@ export default function AiSettings() {
           <div className="setting-card">
             <Sparkles size={15} style={{ color: 'var(--blue)', marginBottom: 8 }} />
             <div className="setting-row-title">{t('单篇笔记的“…”菜单')}</div>
-            <p className="setting-note" style={{ marginTop: 4 }}>{t('不占用主界面，不自动弹出。需要时打开，可以选择本地摘要或 AI 摘要。')}</p>
+            <p className="setting-note" style={{ marginTop: 4 }}>{t('不占用主界面，不自动弹出。需要时从单篇笔记的更多菜单中打开 AI 摘要。')}</p>
           </div>
           <div className="setting-card">
             <Check size={15} style={{ color: 'var(--green)', marginBottom: 8 }} />

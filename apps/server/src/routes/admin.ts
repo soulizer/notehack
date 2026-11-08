@@ -9,7 +9,6 @@ import { getAiConfig, getSetting, saveAiConfig, setSetting } from '../services/s
 import { config } from '../config.js';
 import { getOffsiteConfig, offsitePublicConfig, saveOffsiteConfig, testOffsite } from '../services/offsite.js';
 import { getNoteForUser } from '../services/notes.js';
-import { markdownToPlainText } from '../lib/text.js';
 
 export default async function adminRoutes(app: FastifyInstance) {
   async function requireAdmin(userId: string): Promise<void> {
@@ -270,14 +269,4 @@ export default async function adminRoutes(app: FastifyInstance) {
     return { summary, provider: ai.providerLabel, model: ai.model, warning: '本次请求仅包含你主动选择的这篇笔记。NoteHack 不使用你的笔记训练模型。' };
   });
 
-  app.post('/api/ai/local-summary', async (request) => {
-    const auth = requireAuth(request);
-    const body = parse(z.object({ noteId: z.string().uuid() }), request.body);
-    const { note } = await getNoteForUser(body.noteId, auth.user.id);
-    if (note.encrypted) throw errors.badRequest('加密笔记不能生成摘要');
-    const plain = markdownToPlainText(note.contentMd);
-    const paragraphs = plain.split(/\n{2,}/).map((part) => part.trim()).filter((part) => part.length > 30);
-    const summary = paragraphs.slice(0, 3).join('\n\n').slice(0, 800) || plain.slice(0, 500);
-    return { summary, provider: '本地', model: 'extractive', warning: '本地摘要完全在服务器内生成，不发送给第三方。' };
-  });
 }

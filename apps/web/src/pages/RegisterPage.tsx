@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const nextParam = searchParams.get('next');
-  const next = nextParam?.startsWith('/') ? nextParam : '/app';
+  const next = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') && !nextParam.includes('\\') ? nextParam : '/app';
   const register = useAuthStore((state) => state.register);
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -102,7 +102,7 @@ export default function RegisterPage() {
 
   if (recoveryKey) {
     return (
-      <AuthLayout>
+      <AuthLayout wide>
         <div className="animate-rise">
           <div
             style={{
@@ -169,100 +169,104 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout wide>
       <h1 className="auth-heading">{t('创建你的空间')}</h1>
       <p className="auth-sub">{t('一个邮箱、一个密码，然后直接开始写。')}</p>
-      <form className="auth-form" onSubmit={onSubmit}>
-        <div className="field">
-          <label htmlFor="reg-name">{t('昵称')}</label>
-          <input
-            id="reg-name"
-            className="input input-lg"
-            placeholder={t('你希望被怎样称呼')}
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-            autoComplete="nickname"
-            required
-            autoFocus
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="reg-email">{t('邮箱')}</label>
-          <input
-            id="reg-email"
-            className="input input-lg"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-            required
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="reg-password">{t('密码')}</label>
-          <div style={{ position: 'relative' }}>
+      <form className="auth-form auth-form-grid" onSubmit={onSubmit}>
+        <div className="auth-form-pair">
+          <div className="field">
+            <label htmlFor="reg-name">{t('昵称')}</label>
             <input
-              id="reg-password"
+              id="reg-name"
               className="input input-lg"
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('至少 10 个字符')}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              placeholder={t('你希望被怎样称呼')}
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+              autoComplete="nickname"
+              required
+              autoFocus
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="reg-email">{t('邮箱')}</label>
+            <input
+              id="reg-email"
+              className="input input-lg"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
+        </div>
+        <div className="auth-form-pair">
+          <div className="field">
+            <label htmlFor="reg-password">{t('密码')}</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                id="reg-password"
+                className="input input-lg"
+                type={showPassword ? 'text' : 'password'}
+                placeholder={t('至少 10 个字符')}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="new-password"
+                required
+                minLength={10}
+                style={{ paddingRight: 40 }}
+              />
+              <button
+                type="button"
+                className="icon-btn icon-btn-sm"
+                onClick={() => setShowPassword((value) => !value)}
+                style={{ position: 'absolute', right: 7, top: 7 }}
+                aria-label={showPassword ? t('隐藏密码') : t('显示密码')}
+              >
+                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+            {password && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 5 }}>
+                <div className="progress" style={{ flex: 1, height: 3 }}>
+                  <div
+                    className="progress-bar"
+                    style={{
+                      width: `${strength.score}%`,
+                      background:
+                        strength.tone === 'weak'
+                          ? 'var(--red)'
+                          : strength.tone === 'fair'
+                            ? 'var(--amber)'
+                            : strength.tone === 'good'
+                              ? 'var(--blue)'
+                              : 'var(--green)',
+                    }}
+                  />
+                </div>
+                <span style={{ fontSize: 13, color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>
+                  {strength.label}
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="field">
+            <label htmlFor="reg-confirm">{t('确认密码')}</label>
+            <input
+              id="reg-confirm"
+              className="input input-lg"
+              type="password"
+              placeholder={t('再次输入密码')}
+              value={confirm}
+              onChange={(event) => setConfirm(event.target.value)}
               autoComplete="new-password"
               required
-              minLength={10}
-              style={{ paddingRight: 40 }}
             />
-            <button
-              type="button"
-              className="icon-btn icon-btn-sm"
-              onClick={() => setShowPassword((value) => !value)}
-              style={{ position: 'absolute', right: 7, top: 7 }}
-              aria-label={showPassword ? t('隐藏密码') : t('显示密码')}
-            >
-              {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-            </button>
           </div>
-          {password && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 5 }}>
-              <div className="progress" style={{ flex: 1, height: 3 }}>
-                <div
-                  className="progress-bar"
-                  style={{
-                    width: `${strength.score}%`,
-                    background:
-                      strength.tone === 'weak'
-                        ? 'var(--red)'
-                        : strength.tone === 'fair'
-                          ? 'var(--amber)'
-                          : strength.tone === 'good'
-                            ? 'var(--blue)'
-                            : 'var(--green)',
-                  }}
-                />
-              </div>
-              <span style={{ fontSize: 13, color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>
-                {strength.label}
-              </span>
-            </div>
-          )}
-        </div>
-        <div className="field">
-          <label htmlFor="reg-confirm">{t('确认密码')}</label>
-          <input
-            id="reg-confirm"
-            className="input input-lg"
-            type="password"
-            placeholder={t('再次输入密码')}
-            value={confirm}
-            onChange={(event) => setConfirm(event.target.value)}
-            autoComplete="new-password"
-            required
-          />
         </div>
         {inviteMode && (
-          <div className="field">
+          <div className="field auth-form-full">
             <label htmlFor="reg-invite">{t('邀请码')}</label>
             <input
               id="reg-invite"
@@ -273,7 +277,7 @@ export default function RegisterPage() {
             />
           </div>
         )}
-        <label className="checkbox-row" style={{ marginTop: 2 }}>
+        <label className="checkbox-row auth-form-full" style={{ marginTop: 2 }}>
           <input type="checkbox" checked={terms} onChange={(event) => setTerms(event.target.checked)} />
           <span>
             {t('我同意')} <Link to="/terms">{t('服务条款')}</Link> {t('与')}{' '}
@@ -281,11 +285,11 @@ export default function RegisterPage() {
           </span>
         </label>
         {error && (
-          <div className="form-error" role="alert">
+          <div className="form-error auth-form-full" role="alert">
             <AlertCircle size={14} /> {error}
           </div>
         )}
-        <button type="submit" className="btn btn-primary btn-block auth-submit" disabled={loading}>
+        <button type="submit" className="btn btn-primary btn-block auth-submit auth-form-full" disabled={loading}>
           {loading ? <span className="spinner" /> : null}
           {loading ? t('创建中…') : t('创建账户')}
           {!loading && <ArrowRight size={14} />}

@@ -8,6 +8,7 @@ import {
   FileText,
   Loader2,
   MoreHorizontal,
+  PanelLeftOpen,
   Pin,
   PinOff,
   RotateCcw,
@@ -161,6 +162,15 @@ export function NoteListPane() {
     <section className="list-pane">
       <div className="list-top">
         <div className="list-search-row">
+          <button
+            type="button"
+            className="icon-btn icon-btn-sm mobile-menu-btn"
+            onClick={() => setMobileSidebar(true)}
+            aria-label={t('打开导航')}
+            title={t('打开导航')}
+          >
+            <PanelLeftOpen size={16} />
+          </button>
           <div className="search-trigger" style={{ padding: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0, padding: '0 10px' }}>
               <Search size={14} style={{ flex: 'none' }} />
@@ -227,7 +237,6 @@ export function NoteListPane() {
               </button>
             )}
             <Dropdown
-              width={180}
               trigger={
                 <button type="button" className="icon-btn icon-btn-sm" title={t('排序')} aria-label={t('排序')}>
                   <ArrowDownUp size={14} />
@@ -252,14 +261,6 @@ export function NoteListPane() {
                 </>
               )}
             </Dropdown>
-            <button
-              type="button"
-              className="icon-btn icon-btn-sm mobile-menu-btn"
-              onClick={() => setMobileSidebar(true)}
-              aria-label={t('打开导航')}
-            >
-              <SlidersHorizontal size={14} />
-            </button>
           </div>
         </div>
       </div>

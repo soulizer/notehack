@@ -6,13 +6,13 @@ export function Dropdown({
   trigger,
   children,
   align = 'end',
-  width = 210,
+  width = 'auto',
   className,
 }: {
   trigger: ReactNode;
   children: (close: () => void) => ReactNode;
   align?: 'start' | 'end';
-  width?: number;
+  width?: number | 'auto';
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -27,8 +27,9 @@ export function Dropdown({
     const triggerNode = (triggerRef.current.firstElementChild as HTMLElement | null) ?? triggerRef.current;
     const rect = triggerNode.getBoundingClientRect();
     const panelHeight = panelRef.current?.offsetHeight ?? 260;
+    const panelWidth = width === 'auto' ? (panelRef.current?.offsetWidth ?? 180) : width;
     const top = rect.bottom + 6 + panelHeight > window.innerHeight - 12 ? Math.max(12, rect.top - panelHeight - 6) : rect.bottom + 6;
-    const left = align === 'end' ? Math.max(12, rect.right - width) : Math.min(rect.left, window.innerWidth - width - 12);
+    const left = align === 'end' ? Math.max(12, rect.right - panelWidth) : Math.min(rect.left, window.innerWidth - panelWidth - 12);
     setStyle({ top, left });
   }, [open, align, width]);
 
@@ -91,7 +92,7 @@ export function Dropdown({
           <div
             ref={panelRef}
             className={cn('popover', className)}
-            style={{ top: style.top, left: style.left, width }}
+            style={{ top: style.top, left: style.left, ...(width === 'auto' ? {} : { width }) }}
             onClick={(event) => event.stopPropagation()}
           >
             {children(close)}

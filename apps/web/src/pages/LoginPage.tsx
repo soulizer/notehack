@@ -20,7 +20,7 @@ export default function LoginPage() {
   const [code, setCode] = useState('');
 
   const nextParam = params.get('next');
-  const next = nextParam?.startsWith('/') ? nextParam : '/app';
+  const next = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') && !nextParam.includes('\\') ? nextParam : '/app';
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

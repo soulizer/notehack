@@ -10,6 +10,7 @@ import {
   Eye,
   LockKeyhole,
   MessageCircle,
+  Paperclip,
   Printer,
   Send,
   ShieldCheck,
@@ -166,7 +167,7 @@ export default function SharePage() {
           <div className="public-gate-icon"><LockKeyhole size={22} /></div>
           <h1>{t('链接不存在或已失效')}</h1>
           <p>{error ?? t('它可能已被撤销、过期，或链接不完整。')}</p>
-          <Link to="/" className="btn btn-secondary" style={{ marginTop: 20 }}>{t('了解 NoteHack')}</Link>
+          <Link to="/" className="btn btn-secondary public-gate-cta">{t('了解 NoteHack')}</Link>
         </div>
       </div>
     );
@@ -196,7 +197,7 @@ export default function SharePage() {
             </button>
           </form>
           <div className="public-share-brand">
-            <span style={{ fontWeight: 650 }}>NoteHack.</span> {t('保护')}
+            <span style={{ fontWeight: 650 }}>NoteHack.</span> {t('由 NoteHack 保护')}
           </div>
         </div>
       </div>
@@ -228,23 +229,21 @@ export default function SharePage() {
           {editing ? (
             <>
               <input
-                className="input"
+                className="input public-edit-title"
                 value={editTitle}
                 onChange={(event) => setEditTitle(event.target.value)}
-                style={{ fontSize: 28, fontFamily: 'var(--font-ui)', height: 54, marginBottom: 12 }}
               />
-              <div className="banner banner-info" style={{ marginBottom: 14 }}>
+              <div className="banner banner-info public-edit-banner">
                 <Edit3 size={15} />
                 <div>{t('你正在通过分享链接编辑 Markdown。保存后会生成新的历史版本，并通知笔记作者。')}</div>
               </div>
               <textarea
-                className="markdown-source"
+                className="markdown-source public-edit-source"
                 value={editContent}
                 onChange={(event) => setEditContent(event.target.value)}
-                style={{ minHeight: '52vh', border: '1px solid var(--line)', borderRadius: 9, padding: 16, background: 'var(--surface)' }}
               />
-              {editError && <div className="form-error" style={{ marginTop: 10 }}><AlertCircle size={14} /> {editError}</div>}
-              <div style={{ display: 'flex', gap: 8, marginTop: 14, justifyContent: 'flex-end' }}>
+              {editError && <div className="form-error public-edit-error"><AlertCircle size={14} /> {editError}</div>}
+              <div className="public-edit-actions">
                 <button type="button" className="btn btn-ghost" onClick={() => { setEditing(false); setEditContent(share.note.contentMd); setEditTitle(share.note.title); }}>
                   {t('取消')}
                 </button>
@@ -257,15 +256,17 @@ export default function SharePage() {
             <>
               <h1 className="public-title">{share.note.title}</h1>
               <div className="public-meta screen-only">
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Avatar name={share.authorName} color="#2f6feb" size="sm" />
-                  {share.authorName}
-                </span>
-                <span className="dot" />
-                <span>{t('发布于')} {formatFullDate(share.publishedAt)}</span>
-                <span className="dot" />
-                <span>{t('更新于')} {formatRelative(share.note.updatedAt)}</span>
-                <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+                <div className="public-byline">
+                  <span className="public-author">
+                    <Avatar name={share.authorName} color="#2f6feb" size="sm" />
+                    {share.authorName}
+                  </span>
+                  <span className="dot" />
+                  <span>{t('发布于')} {formatFullDate(share.publishedAt)}</span>
+                  <span className="dot" />
+                  <span>{t('更新于')} {formatRelative(share.note.updatedAt)}</span>
+                </div>
+                <div className="public-actions">
                   <button type="button" className="icon-btn icon-btn-sm" onClick={() => void copyShareLink()} aria-label={t('复制链接')} title={copiedLink ? t('已复制') : t('复制链接')}>
                     {copiedLink ? <Check size={14} /> : <Copy size={14} />}
                   </button>
@@ -277,35 +278,40 @@ export default function SharePage() {
                       <Edit3 size={14} />
                     </button>
                   )}
-                </span>
+                </div>
               </div>
               <div className="public-meta public-print-meta print-only">
                 <span>{share.authorName}</span>
                 <span className="dot" />
                 <span>{t('发布于')} {formatPrintDate(share.publishedAt)}</span>
                 <span className="dot" />
-                <span>{t('更新于')} {formatPrintDate(share.note.updatedAt)}</span>
+                <span>{t('更新于')} {formatRelative(share.note.updatedAt)}</span>
                 <span className="dot" />
                 <span>{t('打印于')} {formatPrintDate(new Date().toISOString())}</span>
               </div>
               <div className="public-body prose" dangerouslySetInnerHTML={{ __html: rendered.html }} />
               {share.note.attachments.length > 0 && (
-                <section style={{ marginTop: 50, paddingTop: 20, borderTop: '1px solid var(--line)' }}>
+                <section className="public-attachments">
                   <div className="public-toc-title">{t('附件')}</div>
-                  <ul style={{ paddingLeft: 18, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                  <div className="public-attachment-list">
                     {share.note.attachments.map((attachment) => (
-                      <li key={attachment.id}>
-                        <a href={`/api/public/shares/${token}/attachments/${attachment.id}`} target="_blank" rel="noreferrer">
-                          {attachment.filename}
-                        </a>
-                      </li>
+                      <a
+                        key={attachment.id}
+                        className="public-attachment"
+                        href={`/api/public/shares/${token}/attachments/${attachment.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Paperclip size={13} />
+                        <span>{attachment.filename}</span>
+                      </a>
                     ))}
-                  </ul>
+                  </div>
                 </section>
               )}
               <footer className="public-footer">
                 <div className="public-footer-brand">
-                  <span style={{ fontWeight: 650, color: 'var(--text)' }}>NoteHack.</span> {t('发布')}
+                  <span style={{ fontWeight: 650, color: 'var(--text)' }}>NoteHack.</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <ShieldCheck size={12} />
@@ -397,7 +403,7 @@ function PublicHeader({ minimal = false }: { minimal?: boolean }) {
                 <ShieldCheck size={11} /> {t('安全分享')}
               </span>
             </div>
-            <Link to="/register" className="public-header-cta">
+            <Link to="/register" className="btn btn-secondary btn-sm public-header-cta">
               {t('创建你的 NoteHack')} <ArrowLeft size={12} style={{ transform: 'rotate(180deg)' }} />
             </Link>
           </>

@@ -79,7 +79,6 @@ export function EditorToolbar({
         </div>
         <div className="toolbar-divider" />
         <Dropdown
-          width={180}
           trigger={
             <button type="button" className="tool-btn tool-btn-text" title={t('标题')} aria-label={t('标题')}>
               {headingLabel}
@@ -170,7 +169,6 @@ export function EditorToolbar({
         <div className="table-toolbar" role="toolbar" aria-label={t('表格操作')}>
           <span className="table-toolbar-label">{t('表格')}</span>
           <Dropdown
-            width={180}
             trigger={
               <button type="button" className="tool-btn tool-btn-text" title={t('行操作')} aria-label={t('行操作')}>
                 <Rows3 size={14} /> {t('行')}
@@ -186,7 +184,6 @@ export function EditorToolbar({
             )}
           </Dropdown>
           <Dropdown
-            width={180}
             trigger={
               <button type="button" className="tool-btn tool-btn-text" title={t('列操作')} aria-label={t('列操作')}>
                 <Columns3 size={14} /> {t('列')}

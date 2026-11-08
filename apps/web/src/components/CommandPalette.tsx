@@ -57,6 +57,7 @@ export function CommandPalette() {
   const setQuery = useAppStore((state) => state.setQuery);
   const logout = useAuthStore((state) => state.logout);
   const user = useAuthStore((state) => state.user);
+  const instance = useAuthStore((state) => state.instance);
   const setUser = useAuthStore((state) => state.setUser);
   const [query, setQueryValue] = useState('');
   const [results, setResults] = useState<NoteSummary[]>([]);
@@ -165,14 +166,14 @@ export function CommandPalette() {
             keywords: 'share link publish',
             run: () => editorAction('share'),
           },
-          {
+          ...(instance?.aiEnabled ? [{
             id: 'summary',
             title: t('生成摘要'),
             description: note.title,
             icon: <Sparkles size={15} />,
             keywords: 'summary ai',
             run: () => editorAction('summary'),
-          },
+          }] : []),
           {
             id: 'export-note',
             title: t('导出当前笔记'),

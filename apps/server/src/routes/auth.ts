@@ -453,6 +453,10 @@ export default async function authRoutes(app: FastifyInstance) {
       read_at: Date | null;
       created_at: Date;
     }>('SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50', [auth.user.id]);
+    const unread = await one<{ count: string }>(
+      'SELECT count(*)::text AS count FROM notifications WHERE user_id = $1 AND read_at IS NULL',
+      [auth.user.id],
+    );
     return {
       notifications: rows.map((row) => ({
         id: row.id,
@@ -463,7 +467,7 @@ export default async function authRoutes(app: FastifyInstance) {
         readAt: row.read_at?.toISOString() ?? null,
         createdAt: row.created_at.toISOString(),
       })),
-      unread: rows.filter((row) => !row.read_at).length,
+      unread: Number(unread?.count ?? 0),
     };
   });
 
@@ -510,7 +514,10 @@ export default async function authRoutes(app: FastifyInstance) {
   app.post('/api/tokens', async (request) => {
     const auth = requireAuth(request);
     const body = parse(
-      z.object({ name: z.string().trim().min(1).max(80), scopes: z.array(z.string()).max(10).optional() }),
+      z.object({
+        name: z.string().trim().min(1).max(80),
+        scopes: z.array(z.enum(['notes:read', 'notes:write'])).max(2).optional(),
+      }),
       request.body,
     );
     const token = `nh_${randomToken(30)}`;

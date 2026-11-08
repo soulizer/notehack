@@ -50,17 +50,31 @@ const WikiLinkDecoration = Extension.create<{ onOpen?: (title: string) => void }
             const decorations: Decoration[] = [];
             state.doc.descendants((node, pos) => {
               if (!node.isText || !node.text) return;
-              const regex = /\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]/g;
+              const regex = /\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/g;
               let match: RegExpExecArray | null;
               while ((match = regex.exec(node.text))) {
+                const raw = match[0];
+                const start = pos + match.index;
+                // Keep the Markdown source intact, but hide the brackets and
+                // the optional alias prefix so the editor shows only the
+                // human-readable note title.
+                const pipe = raw.slice(2, -2).indexOf('|');
+                const labelStart = pipe === -1 ? 2 : 2 + pipe + 1;
+                const labelEnd = raw.length - 2;
+                if (labelStart > 0) {
+                  decorations.push(Decoration.inline(start, start + labelStart, { class: 'nh-wiki-syntax' }));
+                }
                 decorations.push(
-                  Decoration.inline(pos + match.index, pos + match.index + match[0].length, {
+                  Decoration.inline(start + labelStart, start + labelEnd, {
                     class: 'nh-wikilink',
                     'data-note-title': match[1].trim(),
-                    title: '⌘/Ctrl 点击打开笔记',
+                    title: '点击打开笔记',
                     nodeName: 'span',
                   }),
                 );
+                if (labelEnd < raw.length) {
+                  decorations.push(Decoration.inline(start + labelEnd, start + raw.length, { class: 'nh-wiki-syntax' }));
+                }
               }
             });
             return DecorationSet.create(state.doc, decorations);
@@ -68,7 +82,8 @@ const WikiLinkDecoration = Extension.create<{ onOpen?: (title: string) => void }
           handleClick(_view, _pos, event) {
             const target = event.target as HTMLElement;
             const link = target.closest('.nh-wikilink') as HTMLElement | null;
-            if (link && (event.metaKey || event.ctrlKey)) {
+            if (link) {
+              event.preventDefault();
               const title = link.getAttribute('data-note-title');
               if (title) options.onOpen?.(title);
               return true;

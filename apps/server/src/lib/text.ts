@@ -9,9 +9,11 @@ export function markdownToPlainText(markdown: string): string {
     .replace(MD_CODE, (block) => block.replace(/```\w*/g, ''))
     .replace(MD_IMAGE, '$1')
     .replace(MD_LINK, '$1')
+    .replace(/^[ \t|:-]{3,}$/gm, '')
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/^\s*[-*+]\s+/gm, '')
     .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\[(?:x| )\]\s*/gi, '')
     .replace(/[*_~`>#|]/g, '')
     .replace(/\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, '$1')
     .replace(/\n{3,}/g, '\n\n')
@@ -29,9 +31,9 @@ export function stripTitleHeading(markdown: string, title: string): string {
 
 export function excerpt(markdown: string, max = 220): string {
   // Keep excerpts clean even for legacy notes whose content was accidentally
-  // stored as HTML by older rich-text saves.
-  const text = markdownToPlainText(markdown)
-    .replace(/<[^>]*>/g, ' ')
+  // stored as HTML by older rich-text saves. Strip tags before the Markdown
+  // cleaner removes '>', otherwise malformed HTML attributes leak through.
+  const text = markdownToPlainText(markdown.replace(/<[^>]*>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
   return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;

@@ -355,10 +355,10 @@ apps/web/src/styles/tokens.css        设计 token
 12. **Markdown 模式冗余**：删除顶部“Markdown 源码模式 · 所有更改都会自动保存”提示条和 `.source-footer`，只保留 `.editor-footbar`。
 13. **空间模型**：个人空间和团队空间都可以创建多个。个人空间私有、可重命名、不可邀请；删除时必须保证账户至少保留一个空间。团队空间支持成员/角色/邀请/审计。设置页改名为“空间”，新增空间概览、切换、个人/团队说明；创建弹窗可选择个人/团队，管理入口管理当前空间。
 - **空间命名只输入一个字**：根因是 Modal 的焦点管理 effect 依赖每次渲染都变化的 `onClose`；每次 keystroke 都重新聚焦弹窗关闭按钮。现改为只依赖 `open`，保存最新 onClose ref，并优先聚焦输入/文本域。同时修复分享/上传窗口被父组件重渲染打断的闪烁。
-14. **菜单宽度再收敛**：普通菜单从 220px 降到 **180px**（通知中心 320 面板例外）；Dropdown 用真实触发按钮定位，工作区/用户菜单 x=10。
+14. **菜单宽度再收敛**：普通菜单从 220px 降到 **180px**（通知中心 320 面板例外）；Dropdown 用真实触发按钮定位，工作区/用户菜单 x=10。（第六轮改为内容自适应，见下方。）
 15. **Banner/Toast 对齐**：统一为 16px 图标列 + 文本列 + 固定关闭列的网格；图标与首行文字顶部对齐，文本 `min-width:0`。安全页提示与“端到端加密”标题间距通过 `.banner + .settings-section` 统一为 30px。
 16. **账户排版**：显示名称、邮箱、保存按钮放入同一个 `profile-fields` 列；输入与保存按钮均 36px，头像圆形。
-17. **头像/logo/浏览器图标**：头像改圆形白字；Logo 改为几何 `N.` 标记 + `NoteHack` 文字；favicon/PWA/apple-touch 由同一 SVG 源生成；favicon URL 添加 `?v=5` 缓存失效。
+17. **头像/logo/浏览器图标**：头像改圆形白字；Logo 改为几何 `N.` 标记 + `NoteHack` 文字；favicon/PWA/apple-touch 由同一 SVG 源生成；favicon URL 添加 `?v=5` 缓存失效。（第六轮改为默认文字标识，折叠时才显示 `N.`。）
 18. **深色表面**：`--ink-900/950` 由深蓝海军色改为暖炭色，toast/代码块不再与淡黄纸面形成冷暖冲突。
 19. **Modal 焦点与闪烁**：`Modal` 的焦点管理 effect 依赖每次父组件渲染都会变化的 `onClose`，导致空间命名弹窗等每输入一个字符就重新聚焦关闭按钮；分享/上传父组件重渲染时也会闪烁。改为 `onCloseRef` + 只依赖 `open`，优先聚焦输入/文本域。
 20. **个人空间创建**：后端 `POST /api/workspaces` 接受 `kind=personal|team`；设置页创建弹窗可选择类型；个人空间可创建多个，删除时账户至少保留一个空间。
@@ -367,7 +367,7 @@ apps/web/src/styles/tokens.css        设计 token
 23. **移动端去重**：底部快速栏移除 `.mobile-quick-new`；新建只保留顶部 `.new-note-btn`，与桌面同一套白底细边框/蓝图标样式。快速栏为四等分，第一项改用 FileText 图标，避免与新建图标相同。
 24. **分享页增强**：公开页增加复制链接按钮；打印样式与元信息已在 0.1.5 前完成。
 25. **Demo 账号**：`demo@notehack.com`（显示名 `demonotehack.com`）已创建，包含中英文、Markdown/富文本、表格、图片、附件、标签、文件夹、评论、版本、分享、回收站、第二个人空间、团队空间和一份备份；密码保存在 `/root/notehack-demo-credentials.txt`，不写入仓库。
-26. **打印**：分享页新增专用 `@media print`，隐藏评论、目录、按钮、分享品牌；打印元信息包含发布、更新、打印时间，格式 `yyyy年MM月dd日 HH:mm`；正文/代码/表格使用浅色打印样式。
+26. **打印**：分享页新增专用 `@media print`，隐藏评论、目录、按钮、分享品牌；打印元信息包含发布、更新、打印时间，格式 `yyyy年MM月dd日 HH:mm`；正文/代码/表格使用浅色打印样式。（第六轮改为“更新相对时间 + 发布/打印完整时间”。）
 
 ### 验证
 
@@ -382,3 +382,57 @@ apps/web/src/styles/tokens.css        设计 token
 ### 版本
 
 - v0.1.5；DESIGN_SYSTEM 0.8、QUALITY、CHANGELOG 同步。
+
+
+---
+
+## 2026-11-08 · 第六轮移动端、注册、分享、Wiki 与安全审计
+
+### 根因与修复
+
+1. **移动端侧栏阴影**：`.sidebar` 在 `responsive.css` 的移动端媒体查询里仍有 `box-shadow: var(--shadow-lg)`；删除后实测 `box-shadow: none`。
+2. **菜单图标位置与重复**：移动端展开按钮原先在列表操作区，使用与设置相同的滑块图标。移到搜索框左侧，改为 `PanelLeftOpen`（面板展开语义），设置仍用 `SlidersHorizontal`；实测按钮 x=14、搜索框 x=47。
+3. **“我的空间”点击无效（关键 bug）**：空间切换菜单能打开，但被移动端侧栏盖住。`--z-dropdown` 原为 40，移动端侧栏为 60，Playwright 报“回收站拦截点击”。把 `--z-dropdown` 提升到 70（Modal 80、Toast 100），菜单即可点击；实测切换到“产品团队”成功后侧栏关闭，重新打开切换回“演示空间”。
+4. **文件夹/标签间距过大**：侧栏树使用 `flex:1` 吃掉剩余高度。改为 `flex:0 1 auto; max-height:38vh`，标签区紧跟在文件夹后，同时保留滚动能力。
+5. **账户菜单**：整行用户信息不再是触发器；只有右侧“…”按钮打开“退出登录”。菜单宽度由固定 180/210px 改为内容自适应（140–360px），退出菜单实测 140px；笔记更多菜单 161.6px。全宽空间触发器左对齐，“…”触发器右对齐。
+6. **Logo**：默认为 `NoteHack.`（深色文字 + 蓝色句点），不再默认显示几何 N 标记；折叠侧栏 56px 时才显示 `N.`。修复登录/注册/分享顶栏链接继承全局蓝色导致整词变蓝的问题；这些顶栏现在显式继承深色文字。
+7. **Wiki 链接**：
+   - 旧 demo 内容被 Turndown 转义成 `\[\[...\]\]`，导致只显示字面量、不能点击；已迁移为 `[[...]]`。
+   - 编辑器 decoration 现在隐藏 `[[`、`]]` 与别名前缀，只显示标题；默认普通单击跳转（不再要求 ⌘/Ctrl）。
+   - 目标不在当前过滤列表时，`onWikiOpen` 通过 `/api/search?workspaceId=...&q=标题` 精确解析，找不到才提示。
+   - 分享页/版本预览的 `wikiLinkify` 仍显示纯标题。
+8. **本地摘要**：删除 `/api/ai/local-summary` 路由、SummaryDialog 的本地生成分支、命令面板入口和“本地摘要仍可用”的设置文案；只在 `instance.aiEnabled` 时显示“生成摘要”。
+9. **冲突副本进入历史**：新增 `addConflictVersion` 服务与 `POST /api/notes/:id/conflicts`；客户端冲突时把本地内容写入 `note_versions(reason='conflict')`，编辑器打开历史面板。原来 11 条 `标题（冲突副本 时间）` 笔记迁移到 `note_versions`，`notes` 中冲突副本为 0。历史 UI 标签改为“冲突副本”，不显示版本号。
+10. **打印时间**：分享页更新信息改为 `formatRelative`（如“大约 1 小时前”）；打印元信息保留完整发布/打印时间。
+11. **注册页排版**：根因是 `.auth-form` 只有 `gap` 却没有 `display:flex`，字段实际没有间距。补 `display:flex; flex-direction:column; gap:17px`；注册页使用 560px 卡片与 2×2 字段网格，移动端单列；首次聚焦/错误/按钮间距恢复。
+12. **分享页排版**：元数据分“作者/发布/更新 + 右侧操作”两组；评论表单卡片化；附件使用图标列表；页脚去掉“由 NoteHack 发布”重复品牌；顶栏 CTA 使用次级按钮；移动端 390px 无横向溢出。
+13. **HTML 表格与摘要清理**：5 篇 demo 笔记的 HTML 表格转为 GFM Markdown；`excerpt()` 先移除 HTML 再走 Markdown 清理，避免 `<table style=` 泄漏；`markdownToPlainText` 移除表格分隔行和任务复选框；回填全部 27 篇笔记摘要。
+14. **样式审计**：Playwright 扫描 1440×960 与 390×844 的登录、注册、分享、应用首页、账户、外观、移动首页/分享页，无 <13px 可见文字、无横向溢出；`font-size` 的 em 写法加 `max(13px, …)` 下限。
+15. **安全修复与审计**：
+    - 反向链接查询增加 `n.workspace_id = $3`，阻止跨工作区标题碰撞泄漏。
+    - 个人空间禁止创建邀请（服务端 403）。
+    - 导入 zip 在解压前检查条目声明大小，防 zip 炸弹。
+    - 公开分享评论/编辑分别限流 20/10min、30/10min。
+    - API token scopes 只接受 `notes:read` / `notes:write`。
+    - 通知未读数改为独立 count，不再只数最近 50 条。
+    - Nginx 只转发 `X-Forwarded-For: $remote_addr`，避免伪造代理链；登录/注册 `next` 拒绝 `//` 与反斜杠跳转。
+    - 回收站中的笔记不能新建分享；公开分享正文、编辑、评论和附件端点都显式排除 `trashed_at` 笔记。
+    - 实测 note/folder/attachment IDOR 均 404、`/api/admin/stats` 403、无 CSRF 头 403、XSS 载荷被 DOMPurify 清除、`../../evil.txt` 存储为 `evil.txt`、只读 token 写入 403、`next=//example.com` 登录后停留 `/app`。
+    - `npm audit --omit=dev` 仍有 5 个 moderate（archiver/minimatch）；升级 archiver@8 曾在生产失败，暂不升级，记录在 QUALITY 3.4。
+
+### 验证
+
+- `npm run typecheck` 通过；`npm test` server 14 + web 3 通过；`npm run build` 通过。
+- 部署：rsync `apps/web/dist` 与 `apps/server/dist` 到 `/opt/notehack`，更新 Nginx 配置，`systemctl restart notehack`；`/health` 0.1.5。
+- Playwright 关键结果：Wiki 5 个链接、普通单击跳转成功；冲突历史含 v3 `conflict`；笔记列表无“冲突副本”；更多菜单无“生成摘要”；移动端无阴影、四项快速栏、空间切换成功、账户菜单仅“…”可开；打印元信息含“打印于”和相对更新；注册 560px/2×2；样式扫描 0 个 <13px。
+- 清理：测试临时笔记/附件/分享/token 已删除；15 个 HeadlessChrome 会话与 2 条未读测试安全通知已删除；admin/demo 未读均为 0。
+
+### 待办 / 已知风险
+
+- archiver 5 个 moderate 暂不升级；如需升级必须 staging 验证导出/备份。
+- PDF 导出依赖 Chromium `--no-sandbox`（容器环境）；输入 HTML 已 sanitize，但仍是已知攻击面，后续可加独立低权限 worker。
+- 无实时协作/CRDT；冲突以历史快照恢复。
+
+### 版本
+
+- v0.1.5（同日第六轮补丁）；DESIGN_SYSTEM 0.9、QUALITY、CHANGELOG、DEMO、ARCHITECTURE、FEATURES 同步；新增 ADR-009。

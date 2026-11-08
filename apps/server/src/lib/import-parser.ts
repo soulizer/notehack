@@ -72,6 +72,12 @@ async function extractZip(zipPath: string, targetDir: string): Promise<Map<strin
     if (entry.isDirectory) continue;
     const name = safeZipName(entry.entryName);
     if (name.startsWith('__MACOSX/') || name.startsWith('.DS_Store')) continue;
+    // Reject oversized entries from their headers before inflating them. A
+    // small zip can declare gigabytes and otherwise exhaust server memory.
+    const declared = Number(entry.header.size ?? 0);
+    if (declared > MAX_ZIP_BYTES || total + declared > MAX_ZIP_BYTES) {
+      throw errors.badRequest('解压后的文件过大');
+    }
     const data = entry.getData();
     total += data.length;
     if (total > MAX_ZIP_BYTES) throw errors.badRequest('解压后的文件过大');

@@ -1,6 +1,6 @@
 # ADR-003: Version check + line-based 3-way merge + conflict copies
 
-- Status: accepted
+- Status: superseded in part by ADR-009 (2026-11-08) for the conflict-copy storage decision; merge strategy remains accepted
 - Date: 2026-11-07
 
 ## Context
@@ -19,5 +19,5 @@ Offline outbox items are merged per note, not replayed key-by-key. Version snaps
 ## Consequences
 
 - No silent overwrite; most non-overlapping edits merge automatically.
-- Rare conflicts create an extra note; users see a banner and can open the copy.
+- Rare conflicts previously created an extra note. Since ADR-009, the local snapshot is stored in `note_versions` (`reason='conflict'`) and shown in history, not in the note list.
 - No CRDT/real-time collaboration (see ADR-007).

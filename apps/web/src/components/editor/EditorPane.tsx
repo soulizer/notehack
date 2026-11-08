@@ -44,7 +44,7 @@ import {
   shortcutLabel,
   wordCount,
 } from '../../lib/utils';
-import { downloadBlob } from '../../lib/api';
+import { api, downloadBlob } from '../../lib/api';
 import { saveDraft, readDraft, clearDraft, type Draft } from '../../lib/offline';
 import { escapeHtml } from '../../lib/utils';
 import { markdownToEditorHtml, renderMarkdown, stripDuplicateTitle } from '../../lib/markdown';
@@ -196,15 +196,34 @@ export function EditorPane({
     function onWikiOpen(event: Event) {
       const title = (event as CustomEvent<{ title: string }>).detail?.title;
       if (!title) return;
+      const normalized = title.trim().toLowerCase();
       const target = useAppStore
         .getState()
-        .notes.find((entry) => entry.title.trim().toLowerCase() === title.trim().toLowerCase());
-      if (target) navigate(`/app/note/${target.id}`);
-      else toast('warning', t('找不到链接的笔记'), title);
+        .notes.find((entry) => entry.title.trim().toLowerCase() === normalized);
+      if (target) {
+        navigate(`/app/note/${target.id}`);
+        return;
+      }
+      // The linked note may live outside the current filter. Resolve it
+      // through search instead of silently doing nothing.
+      if (!workspaceId) {
+        toast('warning', t('找不到链接的笔记'), title);
+        return;
+      }
+      void api
+        .get<{ notes: Array<{ id: string; title: string }> }>(
+          `/api/search?workspaceId=${encodeURIComponent(workspaceId)}&q=${encodeURIComponent(title)}&limit=20`,
+        )
+        .then((result) => {
+          const match = result.notes.find((entry) => entry.title.trim().toLowerCase() === normalized);
+          if (match) navigate(`/app/note/${match.id}`);
+          else toast('warning', t('找不到链接的笔记'), title);
+        })
+        .catch(() => toast('warning', t('找不到链接的笔记'), title));
     }
     window.addEventListener('nh:open-wiki', onWikiOpen);
     return () => window.removeEventListener('nh:open-wiki', onWikiOpen);
-  }, [navigate, t]);
+  }, [navigate, t, workspaceId]);
 
   useEffect(() => {
     function onEditorAction(event: Event) {
@@ -215,7 +234,10 @@ export function EditorPane({
         else toast('warning', t('无法分享'), t('请先登录并确保你有分享权限。'));
       }
       if (action === 'history') setContextTab('history');
-      if (action === 'summary') setShowSummary(true);
+      if (action === 'summary') {
+        if (instance?.aiEnabled) setShowSummary(true);
+        else toast('info', t('AI 摘要未启用'), t('实例管理员尚未配置 AI。'));
+      }
       if (action === 'focus') setFocusMode(true);
       if (action === 'export') setShowExport(true);
     }
@@ -597,7 +619,6 @@ export function EditorPane({
             <PanelRight size={16} />
           </button>
           <Dropdown
-            width={180}
             trigger={
               <button type="button" className="icon-btn" aria-label={t('更多操作')} title={t('更多操作')}>
                 <MoreHorizontal size={17} />
@@ -617,7 +638,9 @@ export function EditorPane({
                 <MenuItem icon={<FileText size={14} />} onClick={() => { close(); void duplicateNote(note.id).then((copy) => { if (copy) navigate(`/app/note/${copy.id}`); }); }}>{t('创建副本')}</MenuItem>
                 <MenuItem icon={<FolderIcon />} onClick={() => { close(); setMoveTarget(note.folderId); setShowMove(true); }}>{t('移动到')}</MenuItem>
                 <MenuItem icon={<History size={14} />} onClick={() => { close(); setContextTab('history'); }}>{t('版本历史')}</MenuItem>
-                <MenuItem icon={<Sparkles size={14} />} onClick={() => { close(); setShowSummary(true); }}>{t('生成摘要')}</MenuItem>
+                {instance?.aiEnabled && (
+                  <MenuItem icon={<Sparkles size={14} />} onClick={() => { close(); setShowSummary(true); }}>{t('生成摘要')}</MenuItem>
+                )}
                 <MenuItem icon={<Mic size={14} />} onClick={() => { close(); startVoice(); }}>{voiceActive ? t('正在聆听…') : t('语音输入')}</MenuItem>
                 <MenuItem icon={focusMode ? <Minimize2 size={14} /> : <Maximize2 size={14} />} onClick={() => { close(); setFocusMode(!focusMode); }}>{focusMode ? t('退出聚焦') : t('聚焦模式')}</MenuItem>
                 <div className="menu-separator" />
@@ -681,9 +704,9 @@ export function EditorPane({
         <div style={{ padding: '10px 18px 0' }}>
           <div className="banner banner-warning" style={{ maxWidth: 900, margin: '0 auto' }}>
             <AlertTriangle size={15} />
-            <div style={{ flex: 1 }}>{t('检测到冲突，已保留一份副本。当前显示的是服务器上的版本。')}</div>
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { clearConflict(); navigate(`/app/note/${conflictNoteId}`); }}>
-              {t('查看冲突副本')}
+            <div style={{ flex: 1 }}>{t('检测到冲突，本地内容已保存到版本历史。当前显示的是服务器上的版本。')}</div>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { clearConflict(); setContextTab('history'); }}>
+              {t('查看历史版本')}
             </button>
           </div>
         </div>

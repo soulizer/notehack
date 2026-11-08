@@ -26,7 +26,6 @@ export interface User {
 export interface UserPrefs {
   theme?: ThemePreference;
   locale?: 'zh-CN' | 'en';
-  editorFont?: 'sans' | 'serif';
   editorWidth?: 'narrow' | 'wide';
   spellcheck?: boolean;
   defaultFolderId?: string | null;

@@ -359,6 +359,44 @@ async function snapshotVersion(
   );
 }
 
+export async function addConflictVersion(input: {
+  noteId: string;
+  userId: string;
+  title: string;
+  contentMd: string;
+}): Promise<{ version: number }> {
+  const existing = await getNoteRow(input.noteId);
+  if (!existing) throw errors.notFound('笔记不存在');
+  await requireWorkspace(input.userId, existing.workspace_id, 'write');
+  const version = await transaction(async (client) => {
+    // Serialize concurrent conflict saves for the same note; the unique
+    // (note_id, version) index must never turn a preserved snapshot into a 500.
+    const note = await client.query<{ version: number }>(
+      'SELECT version FROM notes WHERE id = $1 FOR UPDATE',
+      [input.noteId],
+    );
+    if (!note.rowCount) throw errors.notFound('笔记不存在');
+    const max = await client.query<{ max: string }>(
+      'SELECT COALESCE(max(version), 0)::text AS max FROM note_versions WHERE note_id = $1',
+      [input.noteId],
+    );
+    const next = Math.max(note.rows[0].version, Number(max.rows[0]?.max ?? 0)) + 1;
+    await client.query(
+      `INSERT INTO note_versions (note_id, version, title, content_md, reason, created_by)
+       VALUES ($1, $2, $3, $4, 'conflict', $5)`,
+      [input.noteId, next, input.title.slice(0, 500) || '未命名笔记', input.contentMd, input.userId],
+    );
+    await client.query(
+      `DELETE FROM note_versions WHERE note_id = $1 AND id NOT IN (
+         SELECT id FROM note_versions WHERE note_id = $1 ORDER BY version DESC LIMIT 60
+       )`,
+      [input.noteId],
+    );
+    return next;
+  });
+  return { version };
+}
+
 export async function updateNote(input: {
   noteId: string;
   userId: string;
@@ -594,9 +632,10 @@ export async function getBacklinks(noteId: string, userId: string) {
     `SELECT DISTINCT n.id, n.title, n.excerpt, n.updated_at
      FROM note_links l JOIN notes n ON n.id = l.source_note_id
      WHERE (l.target_note_id = $1 OR (l.target_note_id IS NULL AND lower(l.target_title) = lower($2)))
+       AND n.workspace_id = $3
        AND n.deleted_at IS NULL AND n.trashed_at IS NULL
      ORDER BY n.updated_at DESC LIMIT 200`,
-    [noteId, row.title],
+    [noteId, row.title, row.workspace_id],
   );
   return rows.map((entry) => ({
     id: entry.id,

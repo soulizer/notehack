@@ -74,7 +74,7 @@
 }
 
 .brand-mark {
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
   flex: none;
@@ -92,11 +92,19 @@
 }
 
 .brand-wordmark {
-  font-size: 17px;
-  font-weight: 680;
-  letter-spacing: -0.05em;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.055em;
   color: inherit;
   line-height: 1;
+}
+
+.brand-period {
+  color: var(--blue);
+}
+
+.brand-lockup-inverse .brand-period {
+  color: var(--sidebar-accent);
 }
 
 .sidebar-collapse {
@@ -285,7 +293,8 @@
   padding: 0 10px;
   overflow-y: auto;
   min-height: 0;
-  flex: 1;
+  flex: 0 1 auto;
+  max-height: 38vh;
 }
 
 .tree-folder {
@@ -375,11 +384,21 @@
   color: var(--sidebar-text);
   text-align: left;
   width: 100%;
-  transition: background var(--dur);
 }
 
-.sidebar-user:hover {
+.sidebar-user-more {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  color: var(--sidebar-muted);
+  flex: none;
+}
+
+.sidebar-user-more:hover {
   background: var(--sidebar-bg-hover);
+  color: var(--sidebar-text-strong);
 }
 
 .sidebar-user-meta {
@@ -1617,10 +1636,6 @@ kbd {
   height: 26px;
 }
 
-.app-root.sidebar-collapsed .sidebar-user-more {
-  display: none;
-}
-
 .app-root.sidebar-collapsed .workspace-switcher {
   justify-content: center;
   margin-inline: 8px;
@@ -1645,19 +1660,25 @@ kbd {
 }
 
 .app-root.sidebar-collapsed .sidebar-user {
-  width: 26px;
-  height: 26px;
-  min-height: 26px;
+  width: 100%;
+  height: auto;
+  min-height: 0;
   margin: 0 auto;
   padding: 0;
+  flex-direction: column;
   justify-content: center;
+  gap: 4px;
   border-radius: 8px;
 }
 
 .app-root.sidebar-collapsed .sidebar-user .avatar {
   width: 26px;
   height: 26px;
-  border-radius: 8px;
+}
+
+.app-root.sidebar-collapsed .sidebar-user-more {
+  width: 28px;
+  height: 22px;
 }
 
 
@@ -1924,4 +1945,8 @@ kbd {
 
 .table-toolbar .table-delete {
   color: var(--red);
+}
+
+.app-root.sidebar-collapsed .brand-mark {
+  display: inline-flex;
 }

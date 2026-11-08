@@ -279,7 +279,6 @@ export function Sidebar() {
               <span className="tree-folder-name">{folder.name}</span>
               {folder.noteCount ? <span className="tree-folder-count">{folder.noteCount}</span> : null}
               <Dropdown
-                width={180}
                 trigger={
                   <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
                     <MoreHorizontal size={13} />
@@ -360,7 +359,6 @@ export function Sidebar() {
         </div>
 
         <Dropdown
-          width={180}
           align="start"
           trigger={
             <button type="button" className="workspace-switcher">
@@ -512,7 +510,6 @@ export function Sidebar() {
                       <span className="tag-chip-count">{tag.noteCount ?? 0}</span>
                     </button>
                     <Dropdown
-                      width={180}
                       trigger={
                         <button type="button" className="tag-chip-more" aria-label={t('更多操作')}>
                           <MoreHorizontal size={11} />
@@ -565,34 +562,34 @@ export function Sidebar() {
             <Settings size={15} />
             <span className="nav-label">{t('设置')}</span>
           </button>
-          <Dropdown
-            width={180}
-            align="start"
-            trigger={
-              <button type="button" className="sidebar-user" aria-label={t('账户菜单')} title={t('账户菜单')}>
-                <Avatar name={user?.displayName ?? 'N'} color={user?.avatarColor} size="sm" />
-                <span className="sidebar-user-meta">
-                  <span className="sidebar-user-name">{user?.displayName}</span>
-                  <span className="sidebar-user-sub">{user?.email}</span>
-                </span>
-                <MoreHorizontal className="sidebar-user-more" size={14} style={{ color: 'var(--sidebar-muted)' }} />
-              </button>
-            }
-          >
-            {(close) => (
-              <MenuItem
-                danger
-                icon={<LogOut size={14} />}
-                onClick={async () => {
-                  close();
-                  await logout();
-                  navigate('/login');
-                }}
-              >
-                {t('退出登录')}
-              </MenuItem>
-            )}
-          </Dropdown>
+          <div className="sidebar-user">
+            <Avatar name={user?.displayName ?? 'N'} color={user?.avatarColor} size="sm" />
+            <span className="sidebar-user-meta">
+              <span className="sidebar-user-name">{user?.displayName}</span>
+              <span className="sidebar-user-sub">{user?.email}</span>
+            </span>
+            <Dropdown
+              trigger={
+                <button type="button" className="sidebar-user-more" aria-label={t('账户菜单')} title={t('账户菜单')}>
+                  <MoreHorizontal size={14} />
+                </button>
+              }
+            >
+              {(close) => (
+                <MenuItem
+                  danger
+                  icon={<LogOut size={14} />}
+                  onClick={async () => {
+                    close();
+                    await logout();
+                    navigate('/login');
+                  }}
+                >
+                  {t('退出登录')}
+                </MenuItem>
+              )}
+            </Dropdown>
+          </div>
         </div>
       </aside>
 

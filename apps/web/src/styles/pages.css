@@ -67,6 +67,10 @@
   z-index: 10;
 }
 
+.public-header-inner > a[aria-label='NoteHack'] {
+  color: var(--text);
+}
+
 .public-header-inner {
   max-width: 1060px;
   height: 100%;
@@ -89,9 +93,15 @@
 .public-header-cta {
   font-size: 13px;
   color: var(--text-secondary);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
+  text-decoration: none;
+}
+
+.public-header-cta:hover {
+  color: var(--text);
+  text-decoration: none;
 }
 
 .public-layout.no-toc {
@@ -136,13 +146,37 @@
 .public-meta {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px 18px;
   margin-top: 17px;
-  padding-bottom: 28px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--line);
   color: var(--text-tertiary);
   font-size: 13px;
+}
+
+.public-byline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.public-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.public-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex: none;
 }
 
 .public-meta .dot {
@@ -269,17 +303,21 @@
 }
 
 .public-comment-form {
-  margin-top: 20px;
+  margin-top: 22px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
 }
 
 .public-comment-form input,
 .public-comment-form textarea {
   border: 1px solid var(--line-strong);
   border-radius: 7px;
-  background: var(--surface);
+  background: var(--paper-50);
   padding: 9px 10px;
   font-size: 13px;
   outline: none;
@@ -301,6 +339,10 @@
   margin: 100px auto;
   text-align: center;
   padding: 0 22px;
+}
+
+.public-gate-cta {
+  margin-top: 20px;
 }
 
 .public-gate-icon {
@@ -537,6 +579,7 @@
 .auth-screen-brand {
   display: inline-flex;
   align-items: center;
+  color: var(--text);
   text-decoration: none;
 }
 
@@ -555,6 +598,10 @@
 .auth-card-clean {
   width: 100%;
   max-width: 392px;
+}
+
+.auth-card-wide {
+  max-width: 560px;
 }
 
 .auth-screen-foot {
@@ -589,7 +636,19 @@
 
 .auth-form {
   margin-top: 28px;
+  display: flex;
+  flex-direction: column;
   gap: 17px;
+}
+
+.auth-form-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 17px;
+}
+
+.auth-form-full {
+  grid-column: 1 / -1;
 }
 
 .auth-form .field > label {
@@ -608,7 +667,6 @@
   height: 44px;
   font-size: 14px;
   border-radius: 8px;
-  margin-top: 6px;
 }
 
 .auth-heading {
@@ -669,6 +727,10 @@
     max-width: none;
   }
 
+  .auth-form-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .auth-screen-foot {
     padding: 16px 22px 24px;
     flex-wrap: wrap;
@@ -678,6 +740,70 @@
   .auth-heading {
     font-size: 28px;
   }
+}
+
+.public-attachments {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.public-attachment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.public-attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 7px 9px;
+  margin-left: -9px;
+  border-radius: 7px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.public-attachment:hover {
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.public-edit-title {
+  font-family: var(--font-ui);
+  font-size: 28px;
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  height: 54px;
+  margin-bottom: 12px;
+}
+
+.public-edit-banner {
+  margin-bottom: 14px;
+}
+
+.public-edit-source {
+  min-height: 52vh;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.public-edit-error {
+  margin-top: 10px;
+}
+
+.public-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  justify-content: flex-end;
 }
 
 /* Print-only metadata is hidden on screen and shown in the print sheet. */

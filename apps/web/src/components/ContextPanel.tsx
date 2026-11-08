@@ -30,7 +30,7 @@ const REASON_LABELS: Record<string, string> = {
   manual: '手动保存',
   restore: '恢复操作',
   import: '导入操作',
-  conflict: '冲突',
+  conflict: '冲突副本',
 };
 
 export function ContextPanel() {
@@ -444,7 +444,10 @@ export function ContextPanel() {
                     <History size={13} style={{ color: 'var(--text-tertiary)', marginTop: 2 }} />
                     <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
                       <span className="version-time" style={{ display: 'block' }}>{formatFullDate(version.createdAt)}</span>
-                      <span className="version-reason">{t(REASON_LABELS[version.reason] ?? '自动保存')} {version.version === versions.currentVersion ? `· ${t('当前版本')}` : `· v${version.version}`}</span>
+                      <span className="version-reason">
+                        {t(REASON_LABELS[version.reason] ?? '自动保存')}
+                        {version.reason === 'conflict' ? '' : version.version === versions.currentVersion ? ` · ${t('当前版本')}` : ` · v${version.version}`}
+                      </span>
                     </span>
                   </button>
                 ))}
@@ -453,7 +456,7 @@ export function ContextPanel() {
             {versionDetail && (
               <div style={{ marginTop: 12 }}>
                 <div className="context-section-title">
-                  <span>{t('版本预览')} · v{versionDetail.version}</span>
+                  <span>{t('版本预览')} · {versionDetail.reason === 'conflict' ? t('冲突副本') : `v${versionDetail.version}`}</span>
                 </div>
                 <div className="version-preview prose" style={{ fontSize: 13 }} dangerouslySetInnerHTML={{ __html: renderMarkdown(versionDetail.contentMd).html }} />
                 <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>

@@ -20,7 +20,6 @@ import {
 } from '../lib/offline';
 import { toast } from './toast';
 import { translate } from '../lib/i18n';
-import { formatRelativeShort } from '../lib/utils';
 import { mergeText } from '../lib/merge';
 
 export type NoteFilter = 'all' | 'recent' | 'favorites' | 'trash' | 'folder' | 'tag';
@@ -1004,25 +1003,24 @@ async function resolveConflict(
     }
   }
   try {
-    const copy = await api.post<{ note: Note }>('/api/notes', {
-      workspaceId: remote.workspaceId,
-      title: `${localTitle}（${translate('冲突副本')} ${formatRelativeShort(new Date().toISOString())}）`,
+    await api.post<{ version: number }>(`/api/notes/${noteId}/conflicts`, {
+      title: localTitle,
       contentMd: localContent,
-      folderId: remote.folderId,
-      tagIds: remote.tags.map((tag) => tag.id),
     });
     set({
       note: get().note?.id === noteId ? remote : get().note,
-      notes: [noteSummary(copy.note), ...upsertSummary(get().notes, remote)],
-      conflictNoteId: copy.note.id,
+      notes: upsertSummary(get().notes, remote),
+      conflictNoteId: noteId,
+      contextTab: 'history',
+      contextOpen: true,
       syncState: 'saved',
       reloadTick: get().reloadTick + 1,
     });
     await cacheNote(remote);
-    toast('warning', translate('检测到冲突，已保留一份副本'), translate('查看冲突副本'));
+    toast('warning', translate('检测到冲突，已保存到版本历史'), translate('本地内容没有丢失，可在历史版本中查看。'));
     return remote;
   } catch (error) {
-    toast('error', translate('冲突副本创建失败'), (error as Error).message);
+    toast('error', translate('冲突内容保存失败'), (error as Error).message);
     return null;
   }
 }

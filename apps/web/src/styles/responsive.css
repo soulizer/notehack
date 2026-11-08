@@ -77,7 +77,6 @@
     width: 258px;
     transform: translateX(-102%);
     transition: transform 260ms var(--ease);
-    box-shadow: var(--shadow-lg);
     z-index: 60;
   }
 

@@ -43,7 +43,7 @@ Fastify API (Node.js, TypeScript)
 | 身份 | UUID | 重命名/移动/恢复不破坏引用 |
 | 服务端 | Fastify + PostgreSQL | 多用户、团队、分享、FTS、审计；比每端 SQLite 同步更简单可靠 |
 | 客户端离线 | IndexedDB 缓存 + outbox | Web/PWA 多设备可用；实现真正离线编辑与合并 |
-| 冲突 | version + 行级 diff3 + 冲突副本 | 不静默覆盖；无需全量 CRDT |
+| 冲突 | version + 行级 diff3 + 历史冲突快照 | 不静默覆盖；冲突不进入笔记列表；无需全量 CRDT |
 | 附件 | 服务器 AES-256-GCM | 静止加密；分享/导出可控制 |
 | E2EE | v1 不提供 | 搜索/分享/AI/恢复需要服务端读正文；不假装提供 |
 | 备份 | 独立 `.nhbackup` + 恢复前备份 | 与同步解耦；可下载/上传/预览/恢复 |
@@ -193,8 +193,8 @@ Editor (debounce 800ms)
 - 收到 409 时，从错误 `details.current` 取服务器当前 note。
 - 使用 `node-diff3` 的 `diff3Merge(localLines, baseLines, remoteLines, {excludeFalseConflicts:true})`：
   - 无冲突：合并后以 `remote.version` 为 base 再次 PATCH；
-  - 有冲突或 base 缺失：创建新笔记 `标题（冲突副本 时间）`，保留本地内容；当前编辑器切换到服务器版本；
-  - 编辑器显示冲突横幅，可跳转冲突副本。
+  - 有冲突或 base 缺失：调用 `POST /api/notes/:id/conflicts` 将本地内容写入 `note_versions`（`reason='conflict'`），当前编辑器切换到服务器版本；
+  - 编辑器显示冲突横幅，可打开右侧“历史”查看冲突快照；冲突快照不会创建笔记，也不会出现在笔记列表。
 - 离线 outbox 按笔记合并，不按按键重放；联网后逐条同步。
 
 ### 4.3 版本
@@ -405,6 +405,8 @@ attachments/<attachmentId>/<filename>
 - 角色：owner/admin/editor/viewer；管理员不能直接移除 owner，需先转移所有权。
 - 审计：登录、2FA、密码、恢复密钥、成员/角色、邀请接受、分享、备份、导入/导出、工作区删除等。
 - 每请求权限检查；列表查询始终带 workspace 成员关系，不依赖 UI 过滤。
+- 反向链接查询同时限制 source/target 的工作区，避免跨空间标题碰撞泄漏。
+- 公开分享评论与编辑端点分别限流（20/10 分钟、30/10 分钟）；个人空间禁止创建成员邀请。
 
 ---
 
@@ -414,7 +416,7 @@ attachments/<attachmentId>/<filename>
 - API key 用 AES-256-GCM 加密存 `instance_settings`。
 - 用户必须主动点击“AI 摘要”；只发送当前笔记标题 + 正文（≤30k 字符）；不发送其他笔记、账户密码或恢复密钥；加密笔记不发送。
 - 请求超时 45s；不自动重试；失败返回 502。
-- 本地摘要始终可用，完全在服务器内提取段落，不调用第三方。
+- 本地摘要已移除（它只是重复正文前段）；AI 摘要仅在管理员启用且用户主动触发时使用。
 - 未配置/关闭时，AI 入口显示为不可用；不弹窗、不后台请求。
 
 ---
@@ -450,7 +452,7 @@ attachments/<attachmentId>/<filename>
 
 1. **E2EE 未提供**：服务端可读正文；隐私政策明确。
 2. **离线仅缓存打开过的笔记**：未预取全库；附件离线不可上传。
-3. **没有实时协作/CRDT**：多人同时编辑同一笔记时可能产生冲突副本；分享编辑为保存式。
+3. **没有实时协作/CRDT**：多人同时编辑同一笔记时会保留冲突快照到版本历史；分享编辑为保存式。
 4. **没有异地备份**：备份在同一服务器；建议定期下载。
 5. **搜索中文依赖 ILIKE/trigram**：未接中文分词；超大规模库可能变慢。
 6. **OCR 需服务器安装 tesseract/pdftotext**；默认关闭，按环境开启。

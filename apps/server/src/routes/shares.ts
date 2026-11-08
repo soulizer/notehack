@@ -103,6 +103,7 @@ export default async function shareRoutes(app: FastifyInstance) {
     const { id } = parse(z.object({ id: z.string().uuid() }), request.params);
     const { note } = await getNoteForUser(id, auth.user.id);
     if (!note.canShare) throw errors.forbidden('没有分享权限');
+    if (note.trashedAt) throw errors.badRequest('请先恢复这篇笔记再创建分享');
     if (note.encrypted) throw errors.badRequest('端到端加密笔记不能创建公开分享');
     const body = parse(
       z.object({
@@ -258,7 +259,7 @@ export default async function shareRoutes(app: FastifyInstance) {
       encrypted: boolean;
       workspace_id: string;
       created_by: string;
-    }>('SELECT id, title, content_md, version, updated_at, encrypted, workspace_id, created_by FROM notes WHERE id = $1 AND deleted_at IS NULL', [share.note_id]);
+    }>('SELECT id, title, content_md, version, updated_at, encrypted, workspace_id, created_by FROM notes WHERE id = $1 AND deleted_at IS NULL AND trashed_at IS NULL', [share.note_id]);
     if (!note || note.encrypted) throw errors.notFound('笔记不存在');
     const access = checkAccess(request, share);
     if (!access) {
@@ -340,7 +341,9 @@ export default async function shareRoutes(app: FastifyInstance) {
     });
   });
 
-  app.put('/api/public/shares/:token/note', async (request) => {
+  app.put('/api/public/shares/:token/note', {
+    config: { rateLimit: { max: 30, timeWindow: '10 minutes' } },
+  }, async (request) => {
     const { token } = parse(z.object({ token: z.string().min(8) }), request.params);
     const share = await shareByToken(token);
     if (!share) throw errors.notFound('分享链接不存在或已失效');
@@ -356,7 +359,7 @@ export default async function shareRoutes(app: FastifyInstance) {
       request.body,
     );
     const note = await one<{ id: string; workspace_id: string; created_by: string; title: string }>(
-      'SELECT id, workspace_id, created_by, title FROM notes WHERE id = $1 AND deleted_at IS NULL',
+      'SELECT id, workspace_id, created_by, title FROM notes WHERE id = $1 AND deleted_at IS NULL AND trashed_at IS NULL',
       [share.note_id],
     );
     if (!note) throw errors.notFound('笔记不存在');
@@ -387,7 +390,9 @@ export default async function shareRoutes(app: FastifyInstance) {
     return { note: { id: result.note.id, title: result.note.title, version: result.note.version, updatedAt: result.note.updatedAt } };
   });
 
-  app.post('/api/public/shares/:token/comments', async (request) => {
+  app.post('/api/public/shares/:token/comments', {
+    config: { rateLimit: { max: 20, timeWindow: '10 minutes' } },
+  }, async (request) => {
     const { token } = parse(z.object({ token: z.string().min(8) }), request.params);
     const share = await shareByToken(token);
     if (!share) throw errors.notFound('分享链接不存在或已失效');
@@ -398,7 +403,7 @@ export default async function shareRoutes(app: FastifyInstance) {
       request.body,
     );
     const note = await one<{ id: string; created_by: string; title: string }>(
-      'SELECT id, created_by, title FROM notes WHERE id = $1 AND deleted_at IS NULL',
+      'SELECT id, created_by, title FROM notes WHERE id = $1 AND deleted_at IS NULL AND trashed_at IS NULL',
       [share.note_id],
     );
     if (!note) throw errors.notFound('笔记不存在');
@@ -442,8 +447,10 @@ export default async function shareRoutes(app: FastifyInstance) {
       sha256: string;
       storage_key: string;
     }>(
-      `SELECT filename, mime, sha256, storage_key FROM attachments
-       WHERE id = $1 AND note_id = $2 AND deleted_at IS NULL`,
+      `SELECT a.filename, a.mime, a.sha256, a.storage_key
+       FROM attachments a JOIN notes n ON n.id = a.note_id
+       WHERE a.id = $1 AND a.note_id = $2 AND a.deleted_at IS NULL
+         AND n.deleted_at IS NULL AND n.trashed_at IS NULL`,
       [attachmentId, share.note_id],
     );
     if (!row) throw errors.notFound();

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { LogoLockup } from '../components/Logo';
 import { useT } from '../lib/i18n';
 
-export function AuthLayout({ children }: { children: ReactNode }) {
+export function AuthLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   const t = useT();
   return (
     <div className="auth-screen">
@@ -13,7 +13,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         </Link>
       </header>
       <main className="auth-screen-main">
-        <div className="auth-card-clean">{children}</div>
+        <div className={wide ? 'auth-card-clean auth-card-wide' : 'auth-card-clean'}>{children}</div>
       </main>
       <footer className="auth-screen-foot">
         <span>© {new Date().getFullYear()} NoteHack</span>
