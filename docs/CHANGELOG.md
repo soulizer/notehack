@@ -54,7 +54,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 - 移动端空间切换菜单现在浮在侧栏之上（`--z-dropdown: 70`），解决“我的空间/演示空间”看似不可点击的问题。
 - Wiki 链接编辑器内只显示笔记标题，普通单击跳转；目标不在当前列表时通过搜索解析。
-- 冲突快照进入 `note_versions(reason='conflict')`，历史面板显示“冲突副本”；`POST /api/notes/:id/conflicts` 与审计事件 `note.conflict.save`。
+- 冲突快照进入 `note_versions(reason='conflict')`，历史面板显示“冲突副本”；`POST /api/notes/:id/conflicts` 与审计事件 `note.conflict.save`。新增幂等迁移 `002_conflict_history.sql`，将旧冲突副本笔记移入历史。
 - 注册页 560px 卡片 + 2×2 字段网格；表单统一 `display:flex` 与 17px 间距。
 - 分享页元数据/操作分组、评论卡片、附件列表、页脚与移动端排版收敛。
 - 安全加固：反向链接跨工作区隔离、个人空间禁止邀请、Zip 声明大小上限、公开分享评论/编辑限流、API token scope 白名单、通知未读总数独立统计。

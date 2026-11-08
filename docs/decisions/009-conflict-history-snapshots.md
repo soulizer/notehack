@@ -16,7 +16,7 @@ When a save cannot be merged cleanly:
 2. The local content is written to `note_versions` with `reason='conflict'` and `created_by` set to the author.
 3. The editor opens the right-side **历史** panel and shows a banner explaining that local content is preserved.
 4. No note is created, moved, indexed, or shown in the note list.
-5. Legacy conflict-copy notes are migrated into `note_versions` (`reason='conflict'`) and then deleted from `notes`.
+5. Legacy conflict-copy notes are migrated into `note_versions` (`reason='conflict'`) and then deleted from `notes` by the idempotent migration `002_conflict_history.sql`.
 
 `addConflictVersion` enforces workspace write permission, caps history at 60 snapshots, and audits `note.conflict.save`.
 

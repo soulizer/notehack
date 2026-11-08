@@ -402,7 +402,7 @@ apps/web/src/styles/tokens.css        设计 token
    - 目标不在当前过滤列表时，`onWikiOpen` 通过 `/api/search?workspaceId=...&q=标题` 精确解析，找不到才提示。
    - 分享页/版本预览的 `wikiLinkify` 仍显示纯标题。
 8. **本地摘要**：删除 `/api/ai/local-summary` 路由、SummaryDialog 的本地生成分支、命令面板入口和“本地摘要仍可用”的设置文案；只在 `instance.aiEnabled` 时显示“生成摘要”。
-9. **冲突副本进入历史**：新增 `addConflictVersion` 服务与 `POST /api/notes/:id/conflicts`；客户端冲突时把本地内容写入 `note_versions(reason='conflict')`，编辑器打开历史面板。原来 11 条 `标题（冲突副本 时间）` 笔记迁移到 `note_versions`，`notes` 中冲突副本为 0。历史 UI 标签改为“冲突副本”，不显示版本号。
+9. **冲突副本进入历史**：新增 `addConflictVersion` 服务与 `POST /api/notes/:id/conflicts`；客户端冲突时把本地内容写入 `note_versions(reason='conflict')`，编辑器打开历史面板。原来 11 条 `标题（冲突副本 时间）` 笔记已迁移到 `note_versions`，`notes` 中冲突副本为 0；新增幂等迁移 `002_conflict_history.sql` 供其他实例升级。历史 UI 标签改为“冲突副本”，不显示版本号。
 10. **打印时间**：分享页更新信息改为 `formatRelative`（如“大约 1 小时前”）；打印元信息保留完整发布/打印时间。
 11. **注册页排版**：根因是 `.auth-form` 只有 `gap` 却没有 `display:flex`，字段实际没有间距。补 `display:flex; flex-direction:column; gap:17px`；注册页使用 560px 卡片与 2×2 字段网格，移动端单列；首次聚焦/错误/按钮间距恢复。
 12. **分享页排版**：元数据分“作者/发布/更新 + 右侧操作”两组；评论表单卡片化；附件使用图标列表；页脚去掉“由 NoteHack 发布”重复品牌；顶栏 CTA 使用次级按钮；移动端 390px 无横向溢出。
