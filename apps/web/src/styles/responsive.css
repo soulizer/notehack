@@ -281,7 +281,8 @@
     display: none;
   }
 
-  .topbar-actions .hide-mobile {
+  .topbar-actions .hide-mobile,
+  .page-topbar .hide-mobile {
     display: none !important;
   }
 
@@ -307,13 +308,7 @@
   }
 
   .list-body {
-    padding-bottom: 86px;
-  }
-
-  .mobile-quickbar {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    justify-items: center;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
   }
 
   .editor-mobile-actions {
@@ -528,44 +523,8 @@
 /* Mobile-only elements hidden by default. */
 .mobile-menu-btn,
 .mobile-back-btn,
-.mobile-quickbar,
 .editor-mobile-actions {
   display: none;
-}
-
-.mobile-quickbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  height: calc(58px + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
-  align-items: center;
-  justify-content: stretch;
-  background: color-mix(in srgb, var(--paper-50) 92%, transparent);
-  border-top: 1px solid var(--line);
-  backdrop-filter: blur(14px);
-}
-
-.mobile-quick-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-width: 54px;
-  color: var(--text-tertiary);
-  font-size: 13px;
-  padding: 6px 8px;
-  border-radius: 8px;
-}
-
-.mobile-quick-item.active {
-  color: var(--text);
-}
-
-.mobile-quick-item svg {
-  flex: none;
 }
 
 
@@ -615,7 +574,6 @@
   .editor-topbar,
   .editor-toolbar-wrap,
   .editor-footbar,
-  .mobile-quickbar,
   .toast-viewport,
   .modal-overlay,
   .cmdk-overlay {
@@ -661,18 +619,30 @@
   }
 
   .settings-nav {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    align-items: stretch;
     max-height: none;
+    padding: 9px 12px;
     overflow: visible;
-    align-items: flex-start;
+    border-bottom: 1px solid var(--line-soft);
   }
 
   .settings-nav-group {
-    flex-wrap: wrap;
+    display: contents;
   }
 
   .settings-nav-item {
-    flex: 0 0 auto;
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    padding: 0 6px;
+    white-space: nowrap;
+  }
+
+  .settings-inner {
+    padding: 24px 18px calc(48px + env(safe-area-inset-bottom));
   }
 }
 

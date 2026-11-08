@@ -360,6 +360,7 @@ export function Sidebar() {
 
         <Dropdown
           align="start"
+          width="trigger"
           trigger={
             <button type="button" className="workspace-switcher">
               <span className="workspace-mark">{currentWorkspace?.name?.slice(0, 1).toUpperCase() ?? 'N'}</span>
@@ -555,7 +556,10 @@ export function Sidebar() {
             type="button"
             className={cn('nav-item', settingsActive && 'active')}
             onClick={() => {
-              navigate('/app/settings/account');
+              const state = location.pathname.startsWith('/app/settings')
+                ? location.state
+                : { from: location.pathname + location.search };
+              navigate('/app/settings/account', { state });
               closeMobile();
             }}
           >

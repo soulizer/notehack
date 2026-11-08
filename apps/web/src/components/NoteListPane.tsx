@@ -5,7 +5,6 @@ import {
   Check,
   CheckSquare,
   FilePlus2,
-  FileText,
   Loader2,
   MoreHorizontal,
   PanelLeftOpen,
@@ -13,7 +12,6 @@ import {
   PinOff,
   RotateCcw,
   Search,
-  SlidersHorizontal,
   Star,
   StarOff,
   XCircle,
@@ -372,31 +370,6 @@ export function NoteListPane() {
             )}
           </div>
         )}
-      </div>
-
-      <div className="mobile-quickbar">
-        <button type="button" className="mobile-quick-item active" onClick={() => navigate('/app')}>
-          <FileText size={18} />
-          {t('笔记')}
-        </button>
-        <button
-          type="button"
-          className="mobile-quick-item"
-          onClick={() => {
-            window.dispatchEvent(new Event('nh:focus-search'));
-          }}
-        >
-          <Search size={18} />
-          {t('搜索')}
-        </button>
-        <button type="button" className="mobile-quick-item" onClick={() => void useAppStore.getState().setFilter('favorites')}>
-          <Star size={18} />
-          {t('收藏')}
-        </button>
-        <button type="button" className="mobile-quick-item" onClick={() => navigate('/app/settings/account')}>
-          <SlidersHorizontal size={18} />
-          {t('设置')}
-        </button>
       </div>
 
       <ConfirmDialog

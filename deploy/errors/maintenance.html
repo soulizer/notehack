@@ -14,8 +14,9 @@
     -webkit-font-smoothing: antialiased;
   }
   .page { width: min(480px, calc(100vw - 48px)); padding: 40px 0; }
-  .brand { display: flex; align-items: baseline; gap: 3px; font-size: 19px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 48px; }
-  .brand span { color: #1f6feb; }
+  .brand { display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 48px; }
+  .brand img { width: 26px; height: 26px; border-radius: 7px; display: block; }
+  .brand i { color: #1f6feb; font-style: normal; }
   .code { font-size: 13px; font-weight: 600; letter-spacing: .12em; color: #8a8780; text-transform: uppercase; margin-bottom: 14px; }
   h1 { font-size: 28px; line-height: 1.25; letter-spacing: -0.03em; font-weight: 650; margin: 0 0 12px; }
   p { font-size: 15px; line-height: 1.7; color: #67655f; margin: 0 0 28px; max-width: 400px; }
@@ -28,7 +29,7 @@
 </head>
 <body>
   <main class="page">
-    <div class="brand">NoteHack<span>.</span></div>
+    <div class="brand"><img src="/favicon.svg?v=6" alt="" width="26" height="26"><span>NoteHack<i>.</i></span></div>
     <div class="code">503 · Service unavailable</div>
     <h1>服务暂时不可用</h1>
     <p>应用正在重启或数据库暂时不可达。你的笔记数据不会因此丢失。请稍等片刻后重试；如果持续出现，请联系实例管理员。</p>

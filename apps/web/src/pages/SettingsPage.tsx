@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Bot,
   CloudDownload,
@@ -41,6 +41,7 @@ const SECTIONS = [
 export default function SettingsPage({ section }: { section: string }) {
   const t = useT();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const workspaceId = useAppStore((state) => state.workspaceId);
   const workspace = useAuthStore((state) => state.workspaces.find((entry) => entry.id === workspaceId));
@@ -48,11 +49,16 @@ export default function SettingsPage({ section }: { section: string }) {
   const current = visibleSections.some((entry) => entry.id === section) ? section : 'account';
 
   const groups = ['个人', '数据', '高级'];
+  const from = (location.state as { from?: unknown } | null)?.from;
+  const backTarget =
+    typeof from === 'string' && from.startsWith('/app') && !from.startsWith('/app/settings')
+      ? from
+      : '/app';
 
   return (
     <div className="page-shell">
       <header className="page-topbar">
-        <button type="button" className="icon-btn mobile-back-btn" onClick={() => navigate('/app')} aria-label={t('返回笔记')}>
+        <button type="button" className="icon-btn mobile-back-btn" onClick={() => navigate(backTarget)} aria-label={t('返回笔记')}>
           <ArrowLeft size={17} />
         </button>
         <h1>{t('设置')}</h1>
@@ -60,7 +66,7 @@ export default function SettingsPage({ section }: { section: string }) {
           {workspace?.name ?? user?.displayName}
         </span>
         <div style={{ flex: 1 }} />
-        <button type="button" className="btn btn-ghost btn-sm hide-mobile" onClick={() => navigate('/app')}>
+        <button type="button" className="btn btn-ghost btn-sm hide-mobile" onClick={() => navigate(backTarget)}>
           {t('返回笔记')}
         </button>
       </header>
@@ -76,7 +82,7 @@ export default function SettingsPage({ section }: { section: string }) {
                     key={entry.id}
                     type="button"
                     className={cn('settings-nav-item', current === entry.id && 'active')}
-                    onClick={() => navigate(`/app/settings/${entry.id}`)}
+                    onClick={() => navigate(`/app/settings/${entry.id}`, { state: location.state })}
                   >
                     {Icon ? <Icon size={14} /> : <span style={{ width: 14, display: 'grid', placeItems: 'center', fontSize: 13 }}>ⓘ</span>}
                     {t(entry.label)}

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Command } from 'cmdk';
 import {
   Archive,
@@ -48,6 +48,7 @@ interface PaletteCommand {
 export function CommandPalette() {
   const t = useT();
   const navigate = useNavigate();
+  const location = useLocation();
   const open = useAppStore((state) => state.commandOpen);
   const setOpen = useAppStore((state) => state.setCommandOpen);
   const workspaceId = useAppStore((state) => state.workspaceId);
@@ -113,7 +114,12 @@ export function CommandPalette() {
 
   function go(path: string) {
     close();
-    navigate(path);
+    const state = path.startsWith('/app/settings')
+      ? location.pathname.startsWith('/app/settings')
+        ? location.state
+        : { from: location.pathname + location.search }
+      : undefined;
+    navigate(path, state ? { state } : undefined);
   }
 
   function editorAction(action: string) {

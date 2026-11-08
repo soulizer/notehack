@@ -245,7 +245,7 @@
 ### 8.4 移动端
 
 - Trilium 的移动端是响应式 Web + 树在笔记下方；Joplin 有原生移动；Memos/Blinko 移动体验强。
-- **NoteHack：** 单屏栈 + 底部快速栏 + 全屏编辑器 + 全屏信息面板；PWA 可安装；`/new` 快捷新建、`/search` 快捷搜索、Web Share Target `/clip`；Web Speech API 语音输入；离线队列。
+- **NoteHack：** 单屏栈 + 侧栏抽屉 + 全屏编辑器 + 全屏信息面板；设置使用一屏 3×3 扁平导航；PWA 可安装；`/new` 快捷新建、`/search` 快捷搜索、Web Share Target `/clip`；Web Speech API 语音输入；离线队列。
 
 ---
 

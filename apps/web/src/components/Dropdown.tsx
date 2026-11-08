@@ -12,11 +12,11 @@ export function Dropdown({
   trigger: ReactNode;
   children: (close: () => void) => ReactNode;
   align?: 'start' | 'end';
-  width?: number | 'auto';
+  width?: number | 'auto' | 'trigger';
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [style, setStyle] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [style, setStyle] = useState<{ top: number; left: number; width?: number }>({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLSpanElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -27,10 +27,11 @@ export function Dropdown({
     const triggerNode = (triggerRef.current.firstElementChild as HTMLElement | null) ?? triggerRef.current;
     const rect = triggerNode.getBoundingClientRect();
     const panelHeight = panelRef.current?.offsetHeight ?? 260;
-    const panelWidth = width === 'auto' ? (panelRef.current?.offsetWidth ?? 180) : width;
+    const targetWidth = width === 'trigger' ? rect.width : width === 'auto' ? undefined : width;
+    const panelWidth = targetWidth ?? panelRef.current?.offsetWidth ?? 180;
     const top = rect.bottom + 6 + panelHeight > window.innerHeight - 12 ? Math.max(12, rect.top - panelHeight - 6) : rect.bottom + 6;
     const left = align === 'end' ? Math.max(12, rect.right - panelWidth) : Math.min(rect.left, window.innerWidth - panelWidth - 12);
-    setStyle({ top, left });
+    setStyle({ top, left, ...(targetWidth ? { width: targetWidth } : {}) });
   }, [open, align, width]);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export function Dropdown({
           <div
             ref={panelRef}
             className={cn('popover', className)}
-            style={{ top: style.top, left: style.left, ...(width === 'auto' ? {} : { width }) }}
+            style={{ top: style.top, left: style.left, ...(style.width ? { width: style.width } : {}) }}
             onClick={(event) => event.stopPropagation()}
           >
             {children(close)}
