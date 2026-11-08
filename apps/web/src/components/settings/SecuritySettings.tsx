@@ -5,12 +5,11 @@ import {
   Copy,
   Download,
   KeyRound,
-  Laptop,
+  MonitorSmartphone,
   LockKeyhole,
   LogOut,
   ShieldCheck,
   ShieldOff,
-  Smartphone,
   X,
 } from 'lucide-react';
 import type { SessionInfo, User } from '@notehack/shared';
@@ -217,7 +216,7 @@ export default function SecuritySettings() {
           {sessions.map((session) => (
             <div key={session.id} className="setting-card" style={{ display: 'flex', alignItems: 'flex-start', gap: 11, padding: 12 }}>
               <span style={{ color: 'var(--text-tertiary)', marginTop: 1 }}>
-                {/Mobile|Android|iPhone|iPad/i.test(session.userAgent) ? <Smartphone size={16} /> : <Laptop size={16} />}
+                <MonitorSmartphone size={16} />
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>

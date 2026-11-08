@@ -31,6 +31,7 @@ export default function AppPage() {
   const reloadTick = useAppStore((state) => state.reloadTick);
   const contextOpen = useAppStore((state) => state.contextOpen);
   const setContextOpen = useAppStore((state) => state.setContextOpen);
+  const setContextTab = useAppStore((state) => state.setContextTab);
   const setCommandOpen = useAppStore((state) => state.setCommandOpen);
   const commandOpen = useAppStore((state) => state.commandOpen);
   const focusMode = useAppStore((state) => state.focusMode);
@@ -46,6 +47,7 @@ export default function AppPage() {
   const settingsSection = location.pathname.match(/^\/app\/settings\/([^/]+)/)?.[1] ?? 'account';
   const noteId = location.pathname.match(/^\/app\/note\/([^/]+)/)?.[1] ?? null;
   const isNewRoute = location.pathname === '/app/new';
+  const requestedPanel = new URLSearchParams(location.search).get('panel');
 
   useEffect(() => {
     if (!workspaces.length) return;
@@ -58,6 +60,13 @@ export default function AppPage() {
       void initialize(valid.id);
     }
   }, [workspaces, workspaceId, initializedWorkspace, initialize]);
+
+  useEffect(() => {
+    if (!note || !requestedPanel) return;
+    if (requestedPanel === 'comments' || requestedPanel === 'history' || requestedPanel === 'backlinks' || requestedPanel === 'info') {
+      setContextTab(requestedPanel);
+    }
+  }, [note?.id, requestedPanel, setContextTab]);
 
   useEffect(() => {
     if (!initializedWorkspace) return;
@@ -124,7 +133,7 @@ export default function AppPage() {
           setMobileSidebar(false);
           return;
         }
-        if (useAppStore.getState().contextOpen && window.innerWidth <= 1600) {
+        if (useAppStore.getState().contextOpen && window.innerWidth <= 1240) {
           setContextOpen(false);
           return;
         }

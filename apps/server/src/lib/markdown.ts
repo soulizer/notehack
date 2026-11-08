@@ -66,12 +66,12 @@ export function exportHtmlDocument(input: {
   .brand { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px; letter-spacing:.02em; margin-bottom:48px; }
   .brand strong { color:var(--ink); font-weight:650; }
   .meta { color:var(--muted); font-size:13px; margin: 0 0 36px; }
-  h1 { font-family: "Newsreader", "Source Serif 4", "Songti SC", Georgia, serif; font-weight:500; letter-spacing:-.035em; font-size: 44px; line-height:1.12; margin: 0 0 18px; }
+  h1 { font-weight:650; letter-spacing:-.04em; font-size: 40px; line-height:1.14; margin: 0 0 18px; }
   h2 { font-size: 26px; letter-spacing:-.022em; margin: 2.1em 0 .6em; font-weight:650; }
   h3 { font-size: 20px; letter-spacing:-.012em; margin: 1.7em 0 .5em; font-weight:650; }
   p, li { font-size: 16.5px; }
   a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  a:hover { color: var(--accent); text-decoration: none; }
   .nh-wikilink { color: var(--accent); border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
   blockquote { margin: 1.5em 0; padding: 2px 0 2px 22px; border-left: 2px solid var(--accent); color:#45443f; }
   code { background:#efede7; border-radius:5px; padding:.12em .38em; font: .88em "SFMono-Regular", Consolas, monospace; }
@@ -79,14 +79,14 @@ export function exportHtmlDocument(input: {
   pre code { background:none; padding:0; font-size:13.5px; color:inherit; }
   table { width:100%; border-collapse: collapse; margin:1.6em 0; font-size:14.5px; }
   th, td { border-bottom:1px solid var(--line); text-align:left; padding:10px 12px; vertical-align:top; }
-  th { color:var(--muted); font-weight:600; font-size:12.5px; text-transform: uppercase; letter-spacing:.05em; }
+  th { color:var(--muted); font-weight:600; font-size:13px; text-transform: uppercase; letter-spacing:.05em; }
   img { max-width:100%; height:auto; border-radius:8px; margin: 1em 0; }
   hr { border:0; border-top:1px solid var(--line); margin: 3em 0; }
   input[type=checkbox] { margin-right:.5em; accent-color: var(--accent); }
   .attachments { margin-top: 56px; padding-top: 22px; border-top:1px solid var(--line); }
   .attachments h2 { font-size:14px; margin:0 0 12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
   .attachments ul { padding-left: 18px; font-size:14px; color:var(--muted); }
-  footer { margin-top: 64px; padding-top: 18px; border-top:1px solid var(--line); color:var(--muted); font-size:12.5px; display:flex; justify-content:space-between; }
+  footer { margin-top: 64px; padding-top: 18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; display:flex; justify-content:space-between; }
   @media (max-width: 640px) { .wrap { padding: 40px 20px 64px; } h1 { font-size: 34px; } }
   @media print {
     body { background:#fff; }

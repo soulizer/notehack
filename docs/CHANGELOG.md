@@ -3,6 +3,39 @@
 All notable changes to NoteHack are documented here.  
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions use [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] — 2026-11-08
+
+全站体验修正：主题、折叠侧栏、字体回退、内联命名、通知深链与图标统一。
+
+### Changed
+
+- 浅色主题的侧栏改为暖纸色，深色主题保持深色；workspace mark、导航、文件夹树、标签、用户区全部跟随主题 token。
+- 折叠侧栏改为两行布局：`N.` 在上，通知与展开按钮在下；折叠图标随状态切换。
+- 编辑器富文本显式使用无衬线字体；Markdown 源码/代码块的中文回退加入系统中文字体，避免落到宋体。
+- 导出 HTML/PDF、全库 HTML 索引移除 Newsreader/Songti/Georgia，链接 hover 不再出现下划线。
+- 新建/重命名文件夹与标签改为列表内联命名，Enter/失焦保存、Esc 取消；删除仍二次确认。
+- 通知支持深链：评论定位到目标评论，共享编辑打开对应版本；通知行显示“查看评论/查看修改”等动作。
+- 登录用户评论他人笔记也会通知笔记作者。
+- favicon/PWA/apple-touch 统一由同一个几何 N. SVG 生成；移除 Globe2 浏览器式图标；登录设备统一为单一设备图标。
+- 信息面板在 1440px 下并排显示，不再遮挡正文；设置导航 active 不再产生 1px 边框位移。
+- Nginx 对 `/` 与静态图标使用 no-cache，hashed `/assets/` 长缓存；Workbox 清理旧缓存，避免旧 CSS/旧图标残留。
+
+### Fixed
+
+- 管理员“运行概况”统计卡高度不一致（grid 子项误继承 sibling margin）。
+- 折叠侧栏 logo/通知/折叠图标重叠。
+- 浅色主题侧栏不跟随主题。
+- Logo 悬停下划线。
+- 共享笔记评论/编辑通知无法直接打开内容。
+
+### Verification
+
+- typecheck、server 14 + web 3 tests、build 通过。
+- Playwright 验证主题、折叠、内联命名、信息面板、管理员统计、通知评论/版本深链。
+- 临时测试数据已清理，未删除用户笔记或既有登录设备。
+
+---
+
 ## [0.1.1] — 2026-11-08
 
 入口、视觉与错误体验纠偏。此版本没有新增功能，重点是去掉营销外壳与“AI 味”，把产品本身放到第一屏。

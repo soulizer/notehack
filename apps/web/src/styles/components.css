@@ -828,10 +828,11 @@
   height: 30px;
   padding: 0 9px;
   border-radius: 6px;
+  border: 1px solid transparent;
   color: var(--text-secondary);
   font-size: 13px;
   text-align: left;
-  transition: background var(--dur), color var(--dur);
+  transition: background var(--dur), color var(--dur), border-color var(--dur);
 }
 
 .settings-nav-item svg {
@@ -848,7 +849,7 @@
   background: var(--surface);
   color: var(--text);
   font-weight: 570;
-  border: 1px solid var(--line);
+  border-color: var(--line);
 }
 
 .settings-nav-item.active svg {
@@ -1255,3 +1256,36 @@
 }
 
 /* Native dialog fallback avoided; keep consistent. */
+
+/* Instance stats: one equal-height grid, no accidental sibling margins. */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  grid-auto-rows: 1fr;
+}
+
+.admin-stats .setting-card {
+  min-width: 0;
+  min-height: 86px;
+  padding: 12px;
+}
+
+.admin-stats .setting-card + .setting-card {
+  margin-top: 0;
+}
+
+.admin-stat-value {
+  margin-top: 6px;
+  font-family: var(--font-ui);
+  font-size: 20px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

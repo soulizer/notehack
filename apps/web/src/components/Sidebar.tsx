@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Archive,
@@ -12,6 +12,7 @@ import {
   LogOut,
   MoreHorizontal,
   PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Settings,
   Star,
@@ -32,6 +33,73 @@ import { Modal } from './Modal';
 import { NotificationCenter } from './NotificationCenter';
 import { api } from '../lib/api';
 import { toast } from '../stores/toast';
+
+/**
+ * A lightweight inline name field. Enter/blob commits, Escape cancels, and
+ * the surrounding row keeps its own geometry so no modal is needed for
+ * creating a folder or tag.
+ */
+function InlineNameInput({
+  initialValue = '',
+  placeholder,
+  onSubmit,
+  onCancel,
+}: {
+  initialValue?: string;
+  placeholder: string;
+  onSubmit: (value: string) => Promise<boolean>;
+  onCancel: () => void;
+}) {
+  const [value, setValue] = useState(initialValue);
+  const [saving, setSaving] = useState(false);
+  const settled = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function commit() {
+    if (settled.current) return;
+    const trimmed = value.trim();
+    if (!trimmed) {
+      settled.current = true;
+      onCancel();
+      return;
+    }
+    settled.current = true;
+    setSaving(true);
+    const ok = await onSubmit(trimmed);
+    if (!ok) {
+      settled.current = false;
+      setSaving(false);
+      inputRef.current?.focus();
+    }
+  }
+
+  return (
+    <input
+      ref={inputRef}
+      className="inline-name-input"
+      value={value}
+      placeholder={placeholder}
+      aria-label={placeholder}
+      maxLength={80}
+      autoFocus
+      disabled={saving}
+      onChange={(event) => setValue(event.target.value)}
+      onBlur={() => {
+        if (!settled.current) void commit();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          void commit();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          settled.current = true;
+          onCancel();
+        }
+      }}
+    />
+  );
+}
 
 export function Sidebar() {
   const t = useT();
@@ -62,10 +130,11 @@ export function Sidebar() {
   const refreshTags = useAppStore((state) => state.refreshTags);
 
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [folderModal, setFolderModal] = useState<{ mode: 'create' | 'rename'; folder?: Folder } | null>(null);
-  const [tagModal, setTagModal] = useState<{ mode: 'create' | 'rename'; tag?: Tag } | null>(null);
+  const folderTreeRef = useRef<HTMLDivElement>(null);
+  const tagListRef = useRef<HTMLDivElement>(null);
+  const [editingFolder, setEditingFolder] = useState<{ id?: string; name: string } | null>(null);
+  const [editingTag, setEditingTag] = useState<{ id?: string; name: string } | null>(null);
   const [deleteNode, setDeleteNode] = useState<{ kind: 'folder' | 'tag'; id: string; name: string } | null>(null);
-  const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
 
   const currentWorkspace = workspaces.find((workspace) => workspace.id === workspaceId);
@@ -103,29 +172,44 @@ export function Sidebar() {
     closeMobile();
   }
 
-  async function submitName(event: FormEvent) {
-    event.preventDefault();
-    if (!workspaceId || !name.trim()) return;
-    setBusy(true);
+  async function saveFolder(name: string, id?: string): Promise<boolean> {
+    if (!workspaceId || !name.trim()) return false;
     try {
-      if (folderModal?.mode === 'create') {
-        await api.post('/api/folders', { workspaceId, name: name.trim(), parentId: null });
-      } else if (folderModal?.mode === 'rename' && folderModal.folder) {
-        await api.patch(`/api/folders/${folderModal.folder.id}`, { name: name.trim() });
-      } else if (tagModal?.mode === 'create') {
-        await api.post('/api/tags', { workspaceId, name: name.trim() });
-      } else if (tagModal?.mode === 'rename' && tagModal.tag) {
-        await api.patch(`/api/tags/${tagModal.tag.id}`, { name: name.trim() });
-      }
-      await Promise.all([refreshFolders(), refreshTags()]);
-      setFolderModal(null);
-      setTagModal(null);
-      setName('');
+      if (id) await api.patch(`/api/folders/${id}`, { name: name.trim() });
+      else await api.post('/api/folders', { workspaceId, name: name.trim(), parentId: null });
+      await refreshFolders();
+      setEditingFolder(null);
+      return true;
     } catch (error) {
       toast('error', t('保存失败'), (error as Error).message);
-    } finally {
-      setBusy(false);
+      return false;
     }
+  }
+
+  async function saveTag(name: string, id?: string): Promise<boolean> {
+    if (!workspaceId || !name.trim()) return false;
+    try {
+      if (id) await api.patch(`/api/tags/${id}`, { name: name.trim() });
+      else await api.post('/api/tags', { workspaceId, name: name.trim() });
+      await refreshTags();
+      setEditingTag(null);
+      return true;
+    } catch (error) {
+      toast('error', t('保存失败'), (error as Error).message);
+      return false;
+    }
+  }
+
+  function startCreateFolder() {
+    setEditingTag(null);
+    setEditingFolder({ name: '' });
+    requestAnimationFrame(() => folderTreeRef.current?.scrollTo({ top: 0 }));
+  }
+
+  function startCreateTag() {
+    setEditingFolder(null);
+    setEditingTag({ name: '' });
+    requestAnimationFrame(() => tagListRef.current?.scrollTo({ top: 0 }));
   }
 
   async function confirmDelete() {
@@ -154,6 +238,25 @@ export function Sidebar() {
       .map((folder) => {
         const children = folders.filter((item) => item.parentId === folder.id);
         const isOpen = expanded.has(folder.id);
+        if (editingFolder?.id === folder.id) {
+          return (
+            <div key={folder.id} className="tree-folder expanded">
+              <div className="tree-folder-row is-editing" style={{ paddingLeft: 6 + depth * 9 }}>
+                <span className="tree-chevron">
+                  {children.length > 0 ? <ChevronDown size={12} /> : <span style={{ width: 12 }} />}
+                </span>
+                {isOpen ? <FolderOpen size={13} /> : <FolderClosed size={13} />}
+                <InlineNameInput
+                  initialValue={editingFolder.name}
+                  placeholder={t('文件夹名称')}
+                  onSubmit={(value) => saveFolder(value, folder.id)}
+                  onCancel={() => setEditingFolder(null)}
+                />
+              </div>
+              {isOpen && children.length > 0 && <div className="tree-children">{renderFolders(folder.id, depth + 1)}</div>}
+            </div>
+          );
+        }
         return (
           <div key={folder.id} className={cn('tree-folder', isOpen && 'expanded')}>
             <div
@@ -194,8 +297,7 @@ export function Sidebar() {
                       icon={<Plus size={14} />}
                       onClick={() => {
                         close();
-                        setName('');
-                        setFolderModal({ mode: 'create' });
+                        startCreateFolder();
                       }}
                     >
                       {t('新建文件夹')}
@@ -204,8 +306,8 @@ export function Sidebar() {
                       icon={<FolderClosed size={14} />}
                       onClick={() => {
                         close();
-                        setName(folder.name);
-                        setFolderModal({ mode: 'rename', folder });
+                        setEditingTag(null);
+                        setEditingFolder({ id: folder.id, name: folder.name });
                       }}
                     >
                       {t('重命名')}
@@ -248,12 +350,18 @@ export function Sidebar() {
       <aside className="sidebar">
         <div className="sidebar-brand">
           <Link to="/app" aria-label="NoteHack" onClick={closeMobile}>
-            <LogoLockup inverse />
+            <LogoLockup />
           </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <div className="sidebar-brand-actions">
             <NotificationCenter />
-            <button type="button" className="sidebar-collapse" onClick={toggleSidebar} aria-label={t('收起侧栏')}>
-              <PanelLeftClose size={15} />
+            <button
+              type="button"
+              className="sidebar-collapse"
+              onClick={toggleSidebar}
+              aria-label={t(collapsed ? '展开侧栏' : '收起侧栏')}
+              title={t(collapsed ? '展开侧栏' : '收起侧栏')}
+            >
+              {collapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
             </button>
             <button
               type="button"
@@ -347,21 +455,29 @@ export function Sidebar() {
           <button
             type="button"
             className="sidebar-section-action"
-            onClick={() => {
-              setName('');
-              setFolderModal({ mode: 'create' });
-            }}
+            onClick={startCreateFolder}
             aria-label={t('新建文件夹')}
           >
             <FolderPlus size={13} />
           </button>
         </div>
-        <div className="sidebar-tree">
+        <div className="sidebar-tree" ref={folderTreeRef}>
+          {editingFolder && !editingFolder.id && (
+            <div className="tree-folder-row is-editing" style={{ paddingLeft: 6 }}>
+              <span className="tree-chevron"><span style={{ width: 12 }} /></span>
+              <FolderPlus size={13} />
+              <InlineNameInput
+                placeholder={t('文件夹名称')}
+                onSubmit={(value) => saveFolder(value)}
+                onCancel={() => setEditingFolder(null)}
+              />
+            </div>
+          )}
           {folders.length ? (
             renderFolders(null)
-          ) : (
+          ) : !editingFolder ? (
             <div className="sidebar-empty">{t('用文件夹给笔记一个结构。')}</div>
-          )}
+          ) : null}
         </div>
 
         <div className="sidebar-section">
@@ -369,65 +485,84 @@ export function Sidebar() {
           <button
             type="button"
             className="sidebar-section-action"
-            onClick={() => {
-              setName('');
-              setTagModal({ mode: 'create' });
-            }}
+            onClick={startCreateTag}
             aria-label={t('新建标签')}
           >
             <Plus size={13} />
           </button>
         </div>
-        <div style={{ maxHeight: '24vh', overflowY: 'auto', flex: 'none' }}>
-          {tags.length ? (
+        <div ref={tagListRef} style={{ maxHeight: '24vh', overflowY: 'auto', flex: 'none' }}>
+          {editingTag || tags.length ? (
             <div className="tag-list">
-              {tags.slice(0, 30).map((tag) => (
-                <div key={tag.id} style={{ display: 'flex', alignItems: 'center' }}>
-                  <button
-                    type="button"
-                    className={cn('tag-nav-item', !settingsActive && filter === 'tag' && tagId === tag.id && 'active')}
-                    onClick={() => void selectFilter('tag', { tagId: tag.id })}
-                    style={{ flex: 1, minWidth: 0 }}
-                  >
-                    <span className="tag-dot" style={{ ['--tag-color' as string]: tag.color ?? 'var(--sidebar-muted)' }} />
-                    <span>{tag.name}</span>
-                    <span className="tag-count">{tag.noteCount ?? 0}</span>
-                  </button>
-                  <Dropdown
-                    width={160}
-                    trigger={
-                      <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
-                        <MoreHorizontal size={12} />
-                      </button>
-                    }
-                  >
-                    {(close) => (
-                      <>
-                        <MenuItem
-                          icon={<Hash size={14} />}
-                          onClick={() => {
-                            close();
-                            setName(tag.name);
-                            setTagModal({ mode: 'rename', tag });
-                          }}
-                        >
-                          {t('重命名')}
-                        </MenuItem>
-                        <MenuItem
-                          danger
-                          icon={<Trash2 size={14} />}
-                          onClick={() => {
-                            close();
-                            setDeleteNode({ kind: 'tag', id: tag.id, name: tag.name });
-                          }}
-                        >
-                          {t('删除标签')}
-                        </MenuItem>
-                      </>
-                    )}
-                  </Dropdown>
+              {editingTag && !editingTag.id && (
+                <div className="tag-edit-row">
+                  <Hash size={13} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
+                  <InlineNameInput
+                    placeholder={t('标签名称')}
+                    onSubmit={(value) => saveTag(value)}
+                    onCancel={() => setEditingTag(null)}
+                  />
                 </div>
-              ))}
+              )}
+              {tags.slice(0, 30).map((tag) =>
+                editingTag?.id === tag.id ? (
+                  <div className="tag-edit-row" key={tag.id}>
+                    <Hash size={13} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
+                    <InlineNameInput
+                      initialValue={editingTag.name}
+                      placeholder={t('标签名称')}
+                      onSubmit={(value) => saveTag(value, tag.id)}
+                      onCancel={() => setEditingTag(null)}
+                    />
+                  </div>
+                ) : (
+                  <div key={tag.id} style={{ display: 'flex', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className={cn('tag-nav-item', !settingsActive && filter === 'tag' && tagId === tag.id && 'active')}
+                      onClick={() => void selectFilter('tag', { tagId: tag.id })}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      <span className="tag-dot" style={{ ['--tag-color' as string]: tag.color ?? 'var(--sidebar-muted)' }} />
+                      <span>{tag.name}</span>
+                      <span className="tag-count">{tag.noteCount ?? 0}</span>
+                    </button>
+                    <Dropdown
+                      width={160}
+                      trigger={
+                        <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
+                          <MoreHorizontal size={12} />
+                        </button>
+                      }
+                    >
+                      {(close) => (
+                        <>
+                          <MenuItem
+                            icon={<Hash size={14} />}
+                            onClick={() => {
+                              close();
+                              setEditingFolder(null);
+                              setEditingTag({ id: tag.id, name: tag.name });
+                            }}
+                          >
+                            {t('重命名')}
+                          </MenuItem>
+                          <MenuItem
+                            danger
+                            icon={<Trash2 size={14} />}
+                            onClick={() => {
+                              close();
+                              setDeleteNode({ kind: 'tag', id: tag.id, name: tag.name });
+                            }}
+                          >
+                            {t('删除标签')}
+                          </MenuItem>
+                        </>
+                      )}
+                    </Dropdown>
+                  </div>
+                ),
+              )}
             </div>
           ) : (
             <div className="sidebar-empty">{t('用标签连接不同文件夹中的想法。')}</div>
@@ -492,33 +627,6 @@ export function Sidebar() {
           </Dropdown>
         </div>
       </aside>
-
-      <Modal
-        open={Boolean(folderModal || tagModal)}
-        onClose={() => {
-          setFolderModal(null);
-          setTagModal(null);
-        }}
-        title={folderModal ? (folderModal.mode === 'create' ? t('新建文件夹') : t('重命名文件夹')) : tagModal?.mode === 'create' ? t('新建标签') : t('重命名标签')}
-        size="sm"
-        footer={
-          <>
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { setFolderModal(null); setTagModal(null); }}>
-              {t('取消')}
-            </button>
-            <button type="submit" form="node-name-form" className="btn btn-primary btn-sm" disabled={busy || !name.trim()}>
-              {busy && <span className="spinner" />} {t('保存')}
-            </button>
-          </>
-        }
-      >
-        <form id="node-name-form" onSubmit={submitName}>
-          <div className="field">
-            <label>{folderModal ? t('文件夹名称') : t('标签名称')}</label>
-            <input className="input" value={name} onChange={(event) => setName(event.target.value)} autoFocus maxLength={80} />
-          </div>
-        </form>
-      </Modal>
 
       <Modal
         open={Boolean(deleteNode)}

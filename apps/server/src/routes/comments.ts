@@ -7,6 +7,7 @@ import { parse } from '../lib/validate.js';
 import { getNoteForUser } from '../services/notes.js';
 import { requireWorkspace } from '../services/workspaces.js';
 import { audit } from '../lib/audit.js';
+import { notify } from '../services/sessions.js';
 
 export default async function commentRoutes(app: FastifyInstance) {
   app.get('/api/notes/:id/comments', async (request) => {
@@ -53,6 +54,15 @@ export default async function commentRoutes(app: FastifyInstance) {
       `INSERT INTO comments (note_id, user_id, body) VALUES ($1, $2, $3) RETURNING id, created_at, updated_at`,
       [id, auth.user.id, body.body],
     );
+    if (note.createdBy !== auth.user.id) {
+      await notify({
+        userId: note.createdBy,
+        type: 'comment',
+        title: '新的笔记评论',
+        body: `${auth.user.display_name} 评论了《${note.title}》`,
+        link: `/app/note/${id}?panel=comments&comment=${row!.id}`,
+      });
+    }
     return {
       comment: {
         id: row!.id,

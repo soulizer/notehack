@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Check,
   Download,
@@ -35,6 +35,9 @@ const REASON_LABELS: Record<string, string> = {
 export function ContextPanel() {
   const t = useT();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedComment = searchParams.get('comment');
+  const requestedVersion = searchParams.get('version');
   const note = useAppStore((state) => state.note);
   const folders = useAppStore((state) => state.folders);
   const tags = useAppStore((state) => state.tags);
@@ -80,14 +83,30 @@ export function ContextPanel() {
     }
     if (tab === 'comments') {
       setCommentLoading(true);
-      api.get<{ comments: Comment[] }>(`/api/notes/${note!.id}/comments`).then((response) => setComments(response.comments)).catch(() => setComments([])).finally(() => setCommentLoading(false));
+      api.get<{ comments: Comment[] }>(`/api/notes/${note!.id}/comments`)
+        .then((response) => {
+          setComments(response.comments);
+          if (requestedComment) {
+            window.setTimeout(() => {
+              document.getElementById(`comment-${requestedComment}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 60);
+          }
+        })
+        .catch(() => setComments([]))
+        .finally(() => setCommentLoading(false));
     }
     if (tab === 'history') {
       setVersionLoading(true);
       setVersionDetail(null);
       api.get<{ currentVersion: number; versions: NoteVersion[] }>(`/api/notes/${note!.id}/versions`).then(setVersions).catch(() => setVersions(null)).finally(() => setVersionLoading(false));
     }
-  }, [tab, note?.id, note?.version]);
+  }, [tab, note?.id, note?.version, requestedComment]);
+
+  useEffect(() => {
+    if (tab !== 'history' || !versions || !requestedVersion) return;
+    const target = versions.versions.find((version) => String(version.version) === requestedVersion);
+    if (target && versionDetail?.id !== target.id) void loadVersion(target);
+  }, [tab, versions, requestedVersion, versionDetail?.id]);
 
   if (!note) return null;
 
@@ -334,7 +353,11 @@ export function ContextPanel() {
             ) : (
               <div className="comment-list">
                 {comments.map((comment) => (
-                  <div className="comment-item" key={comment.id}>
+                  <div
+                    className={cn('comment-item', requestedComment === comment.id && 'is-target')}
+                    id={`comment-${comment.id}`}
+                    key={comment.id}
+                  >
                     <Avatar name={comment.authorName} color={comment.isGuest ? '#6c5ce7' : '#2f6feb'} size="sm" />
                     <div className="comment-body">
                       <div className="comment-head">

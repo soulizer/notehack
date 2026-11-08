@@ -5,7 +5,6 @@ import {
   Copy,
   Edit3,
   Eye,
-  Globe2,
   Link2,
   LockKeyhole,
   MessageCircle,
@@ -212,7 +211,7 @@ export function ShareDialog({ note, open, onClose }: { note: Note; open: boolean
                     </span>
                     {share.hasPassword && <LockKeyhole size={12} style={{ color: 'var(--text-tertiary)' }} />}
                     <span style={{ flex: 1, minWidth: 0, fontSize: 13, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <Globe2 size={11} />
+                      <Link2 size={11} />
                       {formatFullDate(share.createdAt)}
                       {share.expiresAt && <><Clock3 size={11} /> {formatFullDate(share.expiresAt)}</>}
                       <span>· {t('浏览 {n}', { n: share.viewCount })}</span>

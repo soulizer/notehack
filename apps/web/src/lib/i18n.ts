@@ -677,6 +677,14 @@ const en: Record<string, string> = {
   '无标签': 'No tags',
   '新建': 'New',
   '关闭侧栏': 'Close sidebar',
+  '收起侧栏': 'Collapse sidebar',
+  '展开侧栏': 'Expand sidebar',
+  '查看评论': 'View comments',
+  '查看修改': 'View changes',
+  '查看安全设置': 'View security',
+  '新的笔记评论': 'New note comment',
+  '新的分享评论': 'New share comment',
+  '共享笔记被编辑': 'Shared note edited',
 };
 
 export type Translate = (zh: string, vars?: Record<string, string | number>) => string;

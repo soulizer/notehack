@@ -159,6 +159,8 @@ nginx -t && systemctl reload nginx
 ```
 
 > 完整 TLS 配置由 Nginx 直接提供 SPA 静态文件，只有 `/api/` 与 `/health` 反代到 Node。因此 API 重启时登录页不会变成 502；`502/503/504` 统一显示 `maintenance.html`。每次部署修改 `deploy/errors/` 后，记得同步到 `/var/www/notehack-errors/`。
+>
+> 缓存策略：hashed `/assets/` 长缓存（1 年），`/`、favicon、manifest 使用 `expires -1` 强制重新验证。这样部署后不会继续显示旧 CSS、旧下划线或旧图标。
 
 > 如果证书路径不同（例如 `/etc/letsencrypt/live/www.notehack.com/`），修改 Nginx 配置中的 `ssl_certificate` 路径。首次配置不能引用尚不存在的证书，所以必须先 HTTP-only。
 
@@ -192,7 +194,7 @@ ss -tlnp
 
 ```bash
 curl -fsS https://notehack.com/health | jq .
-# {"ok":true,"version":"0.1.1","time":"...","database":true}
+# {"ok":true,"version":"0.1.2","time":"...","database":true}
 ```
 
 ---

@@ -18,12 +18,19 @@
   min-height: 0;
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 1px solid var(--sidebar-line);
 }
 
 .sidebar > * {
   position: relative;
   z-index: 1;
+}
+
+.sidebar-brand-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: none;
 }
 
 .sidebar-brand {
@@ -39,11 +46,30 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--text-inverse);
+  color: inherit;
   min-width: 0;
+  text-decoration: none;
 }
 
-.brand-lockup:hover {
+.brand-lockup:hover,
+.brand-lockup:focus,
+.brand-lockup:focus-visible,
+.brand-lockup * {
+  text-decoration: none;
+}
+
+.sidebar-brand > a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--sidebar-text-strong);
+  text-decoration: none;
+}
+
+.sidebar-brand > a:hover,
+.sidebar-brand > a:focus,
+.sidebar-brand > a:focus-visible {
+  color: var(--sidebar-text-strong);
   text-decoration: none;
 }
 
@@ -107,13 +133,13 @@
   width: 27px;
   height: 27px;
   border-radius: 8px;
-  background: linear-gradient(145deg, rgba(141, 180, 255, 0.24), rgba(108, 92, 231, 0.2));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--sidebar-accent) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sidebar-accent) 18%, transparent);
   display: grid;
   place-items: center;
   font-size: 13px;
   font-weight: 700;
-  color: #dfe9ff;
+  color: var(--sidebar-text-strong);
   flex: none;
 }
 
@@ -129,7 +155,7 @@
   font-size: 13px;
   font-weight: 560;
   letter-spacing: -0.01em;
-  color: #e7e4dc;
+  color: var(--sidebar-text-strong);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -164,7 +190,7 @@
   height: 33px;
   padding: 0 9px;
   border-radius: 7px;
-  color: #c9c7c1;
+  color: var(--sidebar-text-soft);
   font-size: 13.5px;
   font-weight: 470;
   letter-spacing: -0.005em;
@@ -175,13 +201,13 @@
 
 .nav-item:hover {
   background: var(--sidebar-bg-hover);
-  color: #f0eee8;
+  color: var(--sidebar-text-strong);
   text-decoration: none;
 }
 
 .nav-item.active {
   background: var(--sidebar-bg-active);
-  color: #ffffff;
+  color: var(--sidebar-text-strong);
   font-weight: 560;
 }
 
@@ -271,7 +297,7 @@
   height: 30px;
   padding: 0 7px 0 6px;
   border-radius: 6px;
-  color: #bbb9b4;
+  color: var(--sidebar-text-soft);
   font-size: 13px;
   cursor: pointer;
   transition: background var(--dur), color var(--dur);
@@ -279,12 +305,12 @@
 
 .tree-folder-row:hover {
   background: var(--sidebar-bg-hover);
-  color: #eeece6;
+  color: var(--sidebar-text-strong);
 }
 
 .tree-folder-row.active {
   background: var(--sidebar-bg-active);
-  color: #fff;
+  color: var(--sidebar-text-strong);
   font-weight: 550;
 }
 
@@ -336,7 +362,7 @@
   height: 28px;
   padding: 0 8px;
   border-radius: 6px;
-  color: #bbb9b4;
+  color: var(--sidebar-text-soft);
   font-size: 13px;
   text-align: left;
   min-width: 0;
@@ -344,13 +370,13 @@
 
 .tag-nav-item:hover {
   background: var(--sidebar-bg-hover);
-  color: #eeece6;
+  color: var(--sidebar-text-strong);
   text-decoration: none;
 }
 
 .tag-nav-item.active {
   background: var(--sidebar-bg-active);
-  color: #fff;
+  color: var(--sidebar-text-strong);
 }
 
 .tag-dot {
@@ -449,7 +475,7 @@
   display: block;
   font-size: 13px;
   font-weight: 550;
-  color: #e9e6df;
+  color: var(--sidebar-text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -472,7 +498,7 @@
   place-items: center;
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: var(--sidebar-text-strong);
   background: var(--avatar-color, var(--blue));
   flex: none;
   letter-spacing: -0.02em;
@@ -577,9 +603,9 @@ kbd {
   place-items: center;
   border-radius: var(--radius-sm);
   background: var(--ink-900);
-  color: #fff;
+  color: var(--sidebar-text-strong);
   box-shadow: var(--shadow-xs);
-  transition: background var(--dur), transform var(--dur);
+  transition: background var(--dur);
   flex: none;
 }
 
@@ -1659,8 +1685,25 @@ kbd {
 }
 
 .app-root.sidebar-collapsed .sidebar-brand {
+  height: 70px;
+  flex-direction: column;
   justify-content: center;
-  padding: 0;
+  gap: 3px;
+  padding: 5px 0 4px;
+}
+
+.app-root.sidebar-collapsed .sidebar-brand > a {
+  height: 26px;
+  justify-content: center;
+}
+
+.app-root.sidebar-collapsed .sidebar-brand > div {
+  gap: 4px;
+}
+
+.app-root.sidebar-collapsed .sidebar-collapse {
+  width: 24px;
+  height: 24px;
 }
 
 .app-root.sidebar-collapsed .workspace-switcher {
@@ -1772,7 +1815,7 @@ kbd {
   place-items: center;
   flex: none;
   margin-top: 2px;
-  color: #fff;
+  color: var(--sidebar-text-strong);
   background: var(--surface);
 }
 
@@ -1785,20 +1828,61 @@ kbd {
   display: inline-block;
 }
 
-.logo-initial {
-  font-weight: 700;
-  letter-spacing: -0.06em;
-  line-height: 1;
+/* Inline naming replaces a modal for lightweight folder/tag actions. */
+.inline-name-input {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  padding: 0 5px;
+  border: 1px solid var(--sidebar-accent);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  text-decoration: none;
 }
 
-.logo-initial span {
+.inline-name-input::placeholder {
+  color: var(--sidebar-muted);
+}
+
+.tree-folder-row.is-editing {
+  background: var(--sidebar-bg-hover);
+}
+
+.tag-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: var(--sidebar-bg-hover);
+  color: var(--sidebar-text);
+}
+
+.brand-period {
   color: var(--blue);
 }
 
-.logo-initial-inverse {
-  color: #F2F0EA;
+.brand-lockup-inverse {
+  color: #f2f0ea;
 }
 
-.logo-initial-inverse span {
+.brand-lockup-inverse .brand-period,
+.brand-lockup-inverse .brand-initial span {
   color: var(--sidebar-accent);
+}
+
+/* A comment opened from a notification gets a quiet, temporary highlight. */
+.comment-item.is-target {
+  margin: -4px -6px;
+  padding: 4px 6px;
+  border-radius: 7px;
+  background: var(--blue-faint);
+}
+
+.context-tab.active::after {
+  bottom: 0;
 }

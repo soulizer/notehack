@@ -64,9 +64,9 @@ export default function AdminSettings() {
       <section className="settings-section">
         <div className="settings-section-head">
           <span className="settings-section-title">{t('运行概况')}</span>
-          <span className="settings-section-desc">v{instance?.version ?? '0.1.0'}</span>
+          <span className="settings-section-desc">v{instance?.version ?? '—'}</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }} className="import-counts">
+        <div className="admin-stats">
           {[
             { icon: <Users size={15} />, value: stats?.users ?? 0, label: t('用户') },
             { icon: <Database size={15} />, value: stats?.notes ?? 0, label: t('笔记') },
@@ -75,9 +75,9 @@ export default function AdminSettings() {
             { icon: <Server size={15} />, value: stats?.workspaces ?? 0, label: t('工作区') },
             { icon: <ShieldCheck size={15} />, value: stats?.attachments ?? 0, label: t('附件') },
           ].map((item) => (
-            <div className="setting-card" key={item.label} style={{ padding: 12 }}>
+            <div className="setting-card" key={item.label}>
               <span style={{ color: 'var(--text-tertiary)' }}>{item.icon}</span>
-              <div style={{ fontSize: 20, fontFamily: 'var(--font-ui)', marginTop: 6 }}>{item.value}</div>
+              <div className="admin-stat-value">{item.value}</div>
               <div className="setting-note">{item.label}</div>
             </div>
           ))}

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Check, Globe2, Scissors } from 'lucide-react';
+import { ArrowLeft, Check, Link2, Scissors } from 'lucide-react';
 import { useAuthStore } from '../stores/auth';
 import { useT } from '../lib/i18n';
 import { api } from '../lib/api';
@@ -80,7 +80,7 @@ export default function ClipPage() {
           </div>
           {pageUrl && (
             <div className="info-line">
-              <Globe2 size={13} />
+              <Link2 size={13} />
               <span className="truncate">{pageUrl}</span>
             </div>
           )}

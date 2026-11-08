@@ -219,3 +219,54 @@ apps/web/src/styles/tokens.css        设计 token
 - API 停止时：`/login` 静态页 200，`/api/*` 返回品牌 503 页。
 - 生产清理：1 管理员、3 篇种子笔记、0 会话、0 分享、0 备份、0 附件、0 通知、0 API token；临时注册账号已删除。
 - 本轮改动已 `git commit` 并推送到 GitHub；管理员首登改密、恢复密钥离线保存仍需用户完成。
+
+---
+
+## 2026-11-08 · 第二轮全站体验修正（v0.1.2）
+
+### 用户新反馈
+
+- 编辑器内仍有大量宋体；侧栏折叠后 logo、通知、折叠图标排版错误且图标不切换。
+- 切到浅色主题后左侧仍是深色。
+- 鼠标悬停 logo 仍出现下划线。
+- 实例管理“运行概况”中“用户”卡片高度不一致。
+- 新建文件夹使用弹窗不自然，应改为列表顶部的内联命名。
+- 系统出现两种浏览器图标且都丑。
+- 共享笔记被编辑/评论后只有通知，无法直接查看评论和修改内容。
+- 要求全站主动排查，而不是只修点名问题；代码要语义化、可读、可维护。
+
+### 根因与修复
+
+1. **宋体根因**：富文本表面没有显式 `font-family`；Markdown 源码/代码块使用 `--font-mono`，中文在该栈中回退到 SimSun/Songti；服务端 `exportHtmlDocument` 和全库 HTML 索引仍写着 Newsreader/Songti/Georgia。
+   - `.prose` 显式 `font-family: var(--font-ui)`。
+   - `--font-mono` 在 generic monospace 前加入 PingFang/Noto Sans CJK/Source Han Sans/Microsoft YaHei。
+   - 导出 HTML/PDF 和工作区索引全部改为 Inter/系统无衬线；导出中的 `a:hover` 也不再下划线。
+2. **浅色主题侧栏仍深色**：侧栏 token 被固定成 `--ink-900`，且大量硬编码 `#c9c7c1/#fff`。新增浅色侧栏 token（暖纸 #f1eee7、深字、蓝 accent）与深色覆盖；workspace mark、nav、树、标签、用户区全部改用 token。迁移外观预览的迷你侧栏颜色。
+3. **折叠侧栏布局**：折叠时 `.sidebar-brand` 改为纵向两行：`N.` 一行，通知 + 展开按钮一行；按钮 24px，间距 4px，品牌高 70px。`PanelLeftClose`/`PanelLeftOpen` 随 `sidebarCollapsed` 切换，`aria-label/title` 同步。
+4. **Logo 下划线**：给 `.sidebar-brand > a`、`.brand-lockup` 及子元素加 `text-decoration:none`（含 hover/focus）；同时给 Nginx 的 `/` 加 `expires -1`、hashed `/assets/` 长缓存，避免旧 CSS/旧 favicon 被浏览器/SW 继续使用；Workbox 开启 `cleanupOutdatedCaches/skipWaiting/clientsClaim`。
+5. **管理员统计卡高度**：根因是 `.setting-card + .setting-card { margin-top:10px }` 误作用到 grid 子项。改为 `.admin-stats` 专用 grid（`grid-auto-rows:1fr`，清除 sibling margin，统一 min-height），实测 6 张卡均为 99.2px。
+6. **文件夹/标签命名**：删除新建/重命名的名称弹窗；`InlineNameInput` 在文件夹树顶部或原名位置内联渲染，Enter/失焦保存，Esc 取消；标签同样处理。删除确认仍保留弹窗（破坏性操作）。
+7. **通知深链**：
+   - 分享评论链接 `/app/note/<id>?panel=comments&comment=<commentId>`；分享编辑链接 `/app/note/<id>?panel=history&version=<n>`。
+   - AppPage 读取 `panel` 并打开上下文面板；ContextPanel 读取 `comment/version`，滚动并高亮目标评论，或自动加载目标版本预览。
+   - 登录用户评论他人笔记时也写入通知（此前只有公开分享评论会通知）。
+   - 通知行增加“查看评论/查看修改/查看安全设置”动作词。
+8. **图标统一**：favicon/PWA/apple-touch 全部由同一个几何 N. SVG 生成；删除 Globe2 浏览器式图标，分享链接改 Link2；登录设备统一为 `MonitorSmartphone` 单一设备图标，不再混用 Laptop/Smartphone。
+9. **信息面板遮挡**：上下文面板的抽屉断点从 1600px 改为 1240px（与设计系统一致）；1440px 下并排，实测 panel x=1096、main right=1096，无重叠。
+10. **边框/按钮统一**：设置导航增加透明占位边框，避免 active 时 1px 位移；移除 new-note 按钮残留 transform 过渡；移除死代码旧 auth/marketing 样式中的无用规则。
+
+### 验证
+
+- `npm run typecheck`、server 14 + web 3 tests、`npm run build` 通过。
+- Playwright：浅色侧栏 `rgb(241,238,231)`、深色侧栏 `rgb(6,9,21)`；logo hover 无下划线；折叠后 logo/bell/toggle 分别为 y=13/38/38，不重叠。
+- 新建文件夹内联框出现；Esc 取消无残留；新建/重命名/标签均不弹窗。
+- 1440px 信息面板并排，无遮挡；管理员 6 张统计卡等高。
+- 实际创建 share + 访客评论，通知点击后 URL 带 `panel=comments&comment=...`，评论面板打开并高亮目标；手动插入版本通知后点击自动加载版本预览。
+- 导出字体源中已无 Newsreader/Songti/Georgia；Markdown source 计算字体栈包含中文字体回退。
+- 测试临时文件夹、评论、分享、通知、临时版本通知均已清理；用户已有笔记与登录设备未删除。
+
+### 待办
+
+- [x] 已清理测试产生的 HeadlessChrome 会话；保留用户自己的 3 个 Firefox 登录设备。
+- 若用户仍看到旧图标，强制刷新一次；Nginx/Workbox 已做缓存失效。
+- 版本 v0.1.2 已构建部署，`/health` 返回 `0.1.2`。

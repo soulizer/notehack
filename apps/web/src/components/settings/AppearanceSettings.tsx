@@ -74,7 +74,17 @@ export default function AppearanceSettings() {
                     background: option.id === 'dark' ? '#0d111e' : option.id === 'light' ? '#f8f6f1' : 'linear-gradient(90deg,#0d111e 50%,#f8f6f1 50%)',
                   }}
                 >
-                  <div style={{ width: 22, background: option.id === 'light' ? '#f0ece4' : '#070c1c' }} />
+                  <div
+                    style={{
+                      width: 22,
+                      background:
+                        option.id === 'light'
+                          ? '#f1eee7'
+                          : option.id === 'dark'
+                            ? '#070c1c'
+                            : 'linear-gradient(90deg,#070c1c 50%,#f1eee7 50%)',
+                    }}
+                  />
                   <div style={{ flex: 1, padding: 7 }}>
                     <div style={{ height: 5, width: '55%', borderRadius: 2, background: option.id === 'dark' ? '#e6e3dc' : '#23252a', opacity: 0.8 }} />
                     <div style={{ height: 3, width: '80%', borderRadius: 2, background: option.id === 'dark' ? '#3a4157' : '#ddd8ce', marginTop: 5 }} />

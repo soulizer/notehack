@@ -6,7 +6,7 @@ NoteHack 是一个安静、快速、本地优先的笔记空间：把记录、�
 
 - 生产域名：<https://notehack.com>
 - 仓库：<https://github.com/soulizer/notehack>
-- 版本：0.1.1
+- 版本：0.1.2
 
 ---
 
@@ -75,7 +75,7 @@ curl -fsS https://notehack.com/health
 
 生产形态：
 
-- Nginx 终止 TLS，代理到 `127.0.0.1:8787`；
+- Nginx 终止 TLS，直接提供 SPA 静态文件，只代理 `/api/` 与 `/health` 到 `127.0.0.1:8787`；
 - systemd 运行 API；
 - PostgreSQL 本地；
 - 数据在 `/var/lib/notehack`（0700）；

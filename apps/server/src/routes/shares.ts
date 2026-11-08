@@ -382,7 +382,7 @@ export default async function shareRoutes(app: FastifyInstance) {
       type: 'share_edit',
       title: '共享笔记被编辑',
       body: `${body.guestName || '一位访客'} 通过分享链接更新了《${result.note.title}》`,
-      link: `/app/note/${note.id}`,
+      link: `/app/note/${note.id}?panel=history&version=${result.note.version}`,
     });
     return { note: { id: result.note.id, title: result.note.title, version: result.note.version, updatedAt: result.note.updatedAt } };
   });
@@ -411,7 +411,7 @@ export default async function shareRoutes(app: FastifyInstance) {
       type: 'comment',
       title: '新的分享评论',
       body: `${body.guestName || '一位访客'} 评论了《${note.title}》`,
-      link: `/app/note/${note.id}`,
+      link: `/app/note/${note.id}?panel=comments&comment=${row!.id}`,
     });
     return {
       comment: {

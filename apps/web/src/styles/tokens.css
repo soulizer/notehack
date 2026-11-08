@@ -45,18 +45,30 @@
   --red: #c23d4e;
   --red-soft: #fcecef;
 
-  --sidebar-bg: var(--ink-900);
-  --sidebar-bg-hover: rgba(255, 255, 255, 0.055);
-  --sidebar-bg-active: rgba(255, 255, 255, 0.09);
-  --sidebar-text: #d9d7d0;
-  --sidebar-muted: #8e8d9c;
-  --sidebar-line: rgba(255, 255, 255, 0.075);
-  --sidebar-accent: #8db4ff;
+  /*
+   * The sidebar follows the active theme. In light mode it is a warm paper
+   * surface, not a permanently dark "stage" — otherwise the theme control
+   * would be a lie.
+   */
+  --sidebar-bg: #f1eee7;
+  --sidebar-bg-hover: rgba(24, 26, 31, 0.05);
+  --sidebar-bg-active: rgba(31, 111, 235, 0.09);
+  --sidebar-text: #3f3f3a;
+  --sidebar-text-soft: #4b4b45;
+  --sidebar-text-strong: #181a1f;
+  --sidebar-muted: #7d7970;
+  --sidebar-line: rgba(24, 26, 31, 0.09);
+  --sidebar-accent: #1f6feb;
 
   --font-ui: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
     'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
+  /*
+   * CJK sans fonts are deliberately placed before the generic monospace
+   * fallback. Otherwise Chinese text in Markdown source/code blocks falls
+   * back to Songti/SimSun on systems without a monospace CJK face.
+   */
   --font-mono: 'SFMono-Regular', 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Consolas, 'Liberation Mono',
-    monospace;
+    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', monospace;
 
   --text-xs: 13px;
   --text-sm: 13px;
@@ -150,6 +162,8 @@
   --sidebar-bg-hover: rgba(255, 255, 255, 0.05);
   --sidebar-bg-active: rgba(255, 255, 255, 0.085);
   --sidebar-text: #d5d2cb;
+  --sidebar-text-soft: #c9c6be;
+  --sidebar-text-strong: #f0eee8;
   --sidebar-muted: #868596;
   --sidebar-line: rgba(255, 255, 255, 0.07);
   --sidebar-accent: #9ebeff;

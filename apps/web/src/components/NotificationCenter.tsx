@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, CheckCheck, ShieldAlert, UserPlus, MessageCircle } from 'lucide-react';
+import { Bell, CheckCheck, ChevronRight, MessageCircle, PencilLine, ShieldAlert, UserPlus } from 'lucide-react';
 import type { Notification } from '@notehack/shared';
 import { api } from '../lib/api';
 import { useT } from '../lib/i18n';
@@ -64,7 +64,7 @@ export function NotificationCenter() {
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: '#8db4ff',
+                background: 'var(--sidebar-accent)',
                 boxShadow: '0 0 0 2px var(--sidebar-bg)',
               }}
             />
@@ -103,6 +103,8 @@ export function NotificationCenter() {
                     <ShieldAlert size={15} />
                   ) : notification.type === 'invitation' ? (
                     <UserPlus size={15} />
+                  ) : notification.type === 'share_edit' ? (
+                    <PencilLine size={15} />
                   ) : (
                     <MessageCircle size={15} />
                   )}
@@ -119,6 +121,28 @@ export function NotificationCenter() {
                   <span style={{ display: 'block', marginTop: 4, fontSize: 13, color: 'var(--text-tertiary)' }}>
                     {formatRelativeShort(notification.createdAt)}
                   </span>
+                  {notification.link && (
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        marginTop: 5,
+                        fontSize: 13,
+                        fontWeight: 560,
+                        color: 'var(--blue)',
+                      }}
+                    >
+                      {notification.type === 'share_edit'
+                        ? t('查看修改')
+                        : notification.type === 'comment'
+                          ? t('查看评论')
+                          : notification.type === 'security'
+                            ? t('查看安全设置')
+                            : t('查看')}
+                      <ChevronRight size={12} />
+                    </span>
+                  )}
                 </span>
               </button>
             ))
