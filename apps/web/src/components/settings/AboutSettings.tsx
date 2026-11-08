@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, ExternalLink, Github, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
+import { BookOpen, ExternalLink, Focus, Github, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth';
 import { useT } from '../../lib/i18n';
 
@@ -18,7 +18,7 @@ export default function AboutSettings() {
         <div className="setting-card">
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
             <span style={{ fontFamily: 'var(--font-ui)', fontSize: 30, letterSpacing: '-0.03em' }}>NoteHack</span>
-            <span className="badge">v{instance?.version ?? '0.1.0'}</span>
+            <span className="badge">v{instance?.version ?? '—'}</span>
           </div>
           <div className="setting-note" style={{ marginTop: 6 }}>
             {instance?.publicOrigin} · {t('账户')}: {user?.email}
@@ -37,7 +37,7 @@ export default function AboutSettings() {
         <div className="settings-section-head"><span className="settings-section-title">{t('设计原则')}</span></div>
         <div className="principles-grid" style={{ gridTemplateColumns: '1fr', border: 0, background: 'transparent', gap: 8 }}>
           <div className="setting-card">
-            <Sparkles size={15} style={{ color: 'var(--blue)', marginBottom: 8 }} />
+            <Focus size={15} style={{ color: 'var(--blue)', marginBottom: 8 }} />
             <div className="setting-row-title">{t('一屏一个主任务')}</div>
             <p className="setting-note" style={{ marginTop: 4 }}>{t('写作时，管理操作退到背景；管理时，编辑控件让位。主界面只保留新建、搜索、列表、编辑器与保存状态。')}</p>
           </div>

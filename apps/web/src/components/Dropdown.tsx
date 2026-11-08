@@ -34,12 +34,28 @@ export function Dropdown({
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
       if (panelRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
+      // Scrollbar clicks are not always reported inside the panel node.
+      const rect = panelRef.current?.getBoundingClientRect();
+      if (
+        rect &&
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+      ) {
+        return;
+      }
       setOpen(false);
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
-    const onScroll = () => setOpen(false);
+    const onScroll = (event: Event) => {
+      // Scrolling inside the panel (wheel or scrollbar) must never close it.
+      const target = event.target as Node | null;
+      if (target && panelRef.current?.contains(target)) return;
+      setOpen(false);
+    };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
     window.addEventListener('scroll', onScroll, true);

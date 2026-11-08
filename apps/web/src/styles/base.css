@@ -270,11 +270,22 @@ textarea::placeholder {
   border: 1px solid var(--line-strong);
   background: var(--surface-raised);
   border-radius: var(--radius-sm);
-  padding: 9px 11px;
-  font-size: var(--text-md);
+  padding: 0 11px;
+  font-size: 14px;
+  line-height: 1.4;
   color: var(--text);
   transition: border-color var(--dur), box-shadow var(--dur), background var(--dur);
   box-shadow: var(--shadow-xs);
+}
+
+.input,
+.select {
+  height: 36px;
+}
+
+.textarea {
+  height: auto;
+  padding: 9px 11px;
 }
 
 .input:hover,
@@ -300,8 +311,17 @@ textarea::placeholder {
 }
 
 .input-lg {
-  padding: 11px 13px;
-  font-size: var(--text-lg);
+  height: 42px;
+  padding: 0 13px;
+  font-size: 15px;
+}
+
+.input-sm,
+.select-sm {
+  height: 30px;
+  padding: 0 9px;
+  font-size: 13px;
+  border-radius: 7px;
 }
 
 .textarea {

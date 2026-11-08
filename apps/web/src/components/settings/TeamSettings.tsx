@@ -275,7 +275,7 @@ export default function TeamSettings() {
                     <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{member.email} · {t('加入于 {date}', { date: formatRelativeShort(member.joinedAt) })}</div>
                   </div>
                   {canManage && member.role !== 'owner' ? (
-                    <select className="select" value={member.role} onChange={(event) => void changeRole(member, event.target.value)} style={{ height: 29, width: 100, fontSize: 13 }}>
+                    <select className="select select-sm" value={member.role} onChange={(event) => void changeRole(member, event.target.value)} style={{ width: 100 }}>
                       {ROLES.map((role) => <option key={role} value={role}>{roleLabel(t, role)}</option>)}
                       {isOwner && <option value="owner">{t('转移所有权')}</option>}
                     </select>

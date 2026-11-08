@@ -677,6 +677,7 @@ const en: Record<string, string> = {
   '无标签': 'No tags',
   '新建': 'New',
   '关闭侧栏': 'Close sidebar',
+  '账户菜单': 'Account menu',
   '收起侧栏': 'Collapse sidebar',
   '展开侧栏': 'Expand sidebar',
   '查看评论': 'View comments',

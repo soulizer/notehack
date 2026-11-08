@@ -270,3 +270,31 @@ apps/web/src/styles/tokens.css        设计 token
 - [x] 已清理测试产生的 HeadlessChrome 会话；保留用户自己的 3 个 Firefox 登录设备。
 - 若用户仍看到旧图标，强制刷新一次；Nginx/Workbox 已做缓存失效。
 - 版本 v0.1.2 已构建部署，`/health` 返回 `0.1.2`。
+
+---
+
+## 2026-11-08 · 第三轮全站 bug 与控件规范（v0.1.3）
+
+### 反馈与根因
+
+1. **“新建笔记”按钮是黑点**：`.new-note-btn` 深色底仍使用 `--sidebar-text-strong`；浅色主题下该 token 是深色，图标与背景融成黑点。改为蓝底白字（深色主题蓝底深色字），并统一为 36px。
+2. **通知浮层一滚就消失**：`Dropdown` 在全屏捕获 `scroll` 时无条件 `setOpen(false)`，连面板自身滚轮/滚动条滚动也会关闭。改为：滚动事件目标在面板内则忽略；pointerdown 若落在面板几何区域内（含原生滚动条）也不关闭。
+3. **折叠后图标拥挤**：品牌/通知/展开由同一行改为纵向分层；`N.`、通知、展开各占一行；底部隐藏“更多”图标，头像本身即账户菜单入口，避免头像与更多挤在一行。
+4. **标签**：侧栏圆点改为 `#` 图标；标签列表改为 `flex-wrap` chips，一行可多个；标签区底部 padding 16px + margin 12px，与设置分隔线实测间距 28px。ContextPanel 标签 chip 也改用 `#`。
+5. **输入框过大**：基础 `.input/.select` 由 9px padding 的 44px 高改为 36px 标准；新增 30px `.input-sm/.select-sm`、42px `.input-lg`、认证页 44px。ContextPanel 标签搜索和团队角色选择统一 30px。
+6. **数据与备份卡片不等高**：有两个根因。其一，全局 `.setting-card + .setting-card { margin-top:10px }` 漏进所有 Grid；其二，数据/导入步骤使用 `.principles-grid` 但该类从未设置 `display:grid`，实际是 block 堆叠，`gap` 也不生效。删除全局 sibling margin；补上 `.principles-grid { display:grid }`；为 `.export-grid/.steps-grid/.restore-counts/.import-counts/.principles-grid/.admin-stats` 增加 `align-items:stretch`、`grid-auto-rows:1fr` 与子卡 `height:100%`。实测导出卡 164.6px×3、导入步骤 100.4px×3、About 129.8px×3、管理员 99.2px×6 全部等高。
+7. **勾选态黑点风险**：`.note-check.checked` 原用 `--sidebar-text-strong`，在蓝底上对比错误；改为白/深色显式对比。
+8. **全站同类扫描**：设置页所有 `.settings-inner .input/.select` 实测 36px；各设置页卡片 Grid 无行高差异；Dropdown 统一修复；深色底图标使用显式对比色。
+
+### 验证
+
+- typecheck、server 14 + web 3 tests、build 通过。
+- Playwright 1440×980：通知面板滚轮/滚动条滚动后仍存在；折叠侧栏 bell y=36、toggle y=64，纵向分层；头像 y≈941，More 隐藏。
+- 标签 chips：3 个标签 2 行显示，最后 chip 到分隔线 28px；`#` 图标显示。
+- 账号输入 36px；数据页输入 36px；导出卡全部 164.6px；步骤卡全部 79.6px；管理员卡全部 99.2px。
+- 浅色侧栏 `rgb(241,238,231)`、深色 `rgb(6,9,21)`；新笔记按钮浅色蓝底白字、深色蓝底深色字。
+- 用户正在使用的笔记/文件夹/标签/会话未被删除；仅新增测试会话在验证后清理。
+
+### 版本
+
+- v0.1.3；文档同步 DESIGN_SYSTEM 0.4、QUALITY、CHANGELOG。

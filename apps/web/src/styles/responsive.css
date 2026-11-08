@@ -573,9 +573,9 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: var(--ink-900);
+  background: var(--blue);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(10, 16, 36, 0.22);
+  box-shadow: 0 4px 14px rgba(31, 111, 235, 0.26);
   margin-top: -10px;
 }
 

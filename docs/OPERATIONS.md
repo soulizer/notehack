@@ -194,7 +194,7 @@ ss -tlnp
 
 ```bash
 curl -fsS https://notehack.com/health | jq .
-# {"ok":true,"version":"0.1.2","time":"...","database":true}
+# {"ok":true,"version":"0.1.3","time":"...","database":true}
 ```
 
 ---

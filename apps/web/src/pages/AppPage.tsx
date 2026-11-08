@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Plus, Sparkles, X } from 'lucide-react';
+import { FileText, Plus, X } from 'lucide-react';
 import { useAuthStore } from '../stores/auth';
 import { useAppStore } from '../stores/app';
 import { useT } from '../lib/i18n';
@@ -282,7 +282,7 @@ export default function AppPage() {
               onClick={() => void useTemplate(template.id)}
               style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 12px' }}
             >
-              <span className="feature-icon" style={{ margin: 0, width: 30, height: 30 }}><Sparkles size={14} /></span>
+              <span className="feature-icon" style={{ margin: 0, width: 30, height: 30 }}><FileText size={14} /></span>
               <span style={{ flex: 1 }}>
                 <span className="backlink-title">{template.title}</span>
                 <span className="backlink-excerpt">{template.desc}</span>

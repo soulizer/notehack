@@ -970,10 +970,6 @@
   padding: 16px;
 }
 
-.setting-card + .setting-card {
-  margin-top: 10px;
-}
-
 .setting-inline-form {
   display: flex;
   align-items: flex-end;
@@ -1271,10 +1267,6 @@
   padding: 12px;
 }
 
-.admin-stats .setting-card + .setting-card {
-  margin-top: 0;
-}
-
 .admin-stat-value {
   margin-top: 6px;
   font-family: var(--font-ui);
@@ -1282,6 +1274,30 @@
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+}
+
+/* Any card grid must produce one clean row height. */
+.principles-grid {
+  display: grid;
+}
+
+.export-grid,
+.steps-grid,
+.restore-counts,
+.import-counts,
+.principles-grid,
+.admin-stats {
+  align-items: stretch;
+  grid-auto-rows: 1fr;
+}
+
+.export-grid > .setting-card,
+.steps-grid > .setting-card,
+.restore-counts > .setting-card,
+.import-counts > .setting-card,
+.principles-grid > .setting-card,
+.admin-stats > .setting-card {
+  height: 100%;
 }
 
 @media (max-width: 760px) {

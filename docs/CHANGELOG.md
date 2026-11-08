@@ -3,6 +3,30 @@
 All notable changes to NoteHack are documented here.  
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions use [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] — 2026-11-08
+
+全站控件与浮层质量修正。
+
+### Fixed
+
+- “新建笔记”按钮在浅色主题下变成黑点：改为蓝底白图标，统一 36px。
+- 通知中心/下拉菜单内部滚动或拖动滚动条时不再关闭；只有外部点击或 Esc 关闭。
+- 折叠侧栏的 `N.`、通知、展开按钮改为纵向分层；底部头像旁不再挤“更多”图标。
+- 侧栏标签改用 `#` 图标，并改为一行多个的换行标签云；标签区与设置分隔线保留 28px 间距。
+- 设置页输入框统一为 36px 标准、30px 紧凑、42px 大号、44px 认证页；不再出现 44px 普通设置输入框。
+- 移除全局 `.setting-card + .setting-card` 外边距，并补上 `.principles-grid` 缺失的 `display:grid` / `grid-auto-rows:1fr`，修复数据/备份、导入预览、恢复预览、统计等所有 Grid 卡片堆叠或不等高问题。
+- 修复多选勾选态在浅色/深色主题下的图标对比度。
+
+### Verification
+
+- 设置页全部输入框 36px；导出卡片 164.6px×3、步骤卡片 79.6px×3、管理员卡片 99.2px×6。
+- 通知浮层滚轮和滚动条滚动后保持打开。
+- 折叠侧栏三个顶部元素纵向分离，头像与更多不再同排。
+- 标签 chips 一行多个，`#` 图标，分隔线间距 28px。
+- typecheck、server 14 + web 3 tests、build 通过。
+
+---
+
 ## [0.1.2] — 2026-11-08
 
 全站体验修正：主题、折叠侧栏、字体回退、内联命名、通知深链与图标统一。

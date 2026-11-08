@@ -491,12 +491,12 @@ export function Sidebar() {
             <Plus size={13} />
           </button>
         </div>
-        <div ref={tagListRef} style={{ maxHeight: '24vh', overflowY: 'auto', flex: 'none' }}>
+        <div ref={tagListRef} className="tag-scroll">
           {editingTag || tags.length ? (
-            <div className="tag-list">
+            <div className="tag-cloud">
               {editingTag && !editingTag.id && (
                 <div className="tag-edit-row">
-                  <Hash size={13} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
+                  <Hash size={12} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
                   <InlineNameInput
                     placeholder={t('标签名称')}
                     onSubmit={(value) => saveTag(value)}
@@ -507,7 +507,7 @@ export function Sidebar() {
               {tags.slice(0, 30).map((tag) =>
                 editingTag?.id === tag.id ? (
                   <div className="tag-edit-row" key={tag.id}>
-                    <Hash size={13} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
+                    <Hash size={12} style={{ color: 'var(--sidebar-muted)', flex: 'none' }} />
                     <InlineNameInput
                       initialValue={editingTag.name}
                       placeholder={t('标签名称')}
@@ -516,22 +516,22 @@ export function Sidebar() {
                     />
                   </div>
                 ) : (
-                  <div key={tag.id} style={{ display: 'flex', alignItems: 'center' }}>
+                  <div className="tag-chip" key={tag.id}>
                     <button
                       type="button"
-                      className={cn('tag-nav-item', !settingsActive && filter === 'tag' && tagId === tag.id && 'active')}
+                      className={cn('tag-chip-main', !settingsActive && filter === 'tag' && tagId === tag.id && 'active')}
                       onClick={() => void selectFilter('tag', { tagId: tag.id })}
-                      style={{ flex: 1, minWidth: 0 }}
+                      title={`#${tag.name}`}
                     >
-                      <span className="tag-dot" style={{ ['--tag-color' as string]: tag.color ?? 'var(--sidebar-muted)' }} />
-                      <span>{tag.name}</span>
-                      <span className="tag-count">{tag.noteCount ?? 0}</span>
+                      <Hash size={11} style={{ color: tag.color ?? 'var(--sidebar-muted)', flex: 'none' }} />
+                      <span className="tag-chip-name">{tag.name}</span>
+                      <span className="tag-chip-count">{tag.noteCount ?? 0}</span>
                     </button>
                     <Dropdown
                       width={160}
                       trigger={
-                        <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
-                          <MoreHorizontal size={12} />
+                        <button type="button" className="tag-chip-more" aria-label={t('更多操作')}>
+                          <MoreHorizontal size={11} />
                         </button>
                       }
                     >
@@ -589,13 +589,13 @@ export function Sidebar() {
             width={210}
             align="start"
             trigger={
-              <button type="button" className="sidebar-user">
+              <button type="button" className="sidebar-user" aria-label={t('账户菜单')} title={t('账户菜单')}>
                 <Avatar name={user?.displayName ?? 'N'} color={user?.avatarColor} size="sm" />
                 <span className="sidebar-user-meta">
                   <span className="sidebar-user-name">{user?.displayName}</span>
                   <span className="sidebar-user-sub">{user?.email}</span>
                 </span>
-                <MoreHorizontal size={14} style={{ color: 'var(--sidebar-muted)' }} />
+                <MoreHorizontal className="sidebar-user-more" size={14} style={{ color: 'var(--sidebar-muted)' }} />
               </button>
             }
           >

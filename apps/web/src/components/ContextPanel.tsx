@@ -5,6 +5,7 @@ import {
   Download,
   ExternalLink,
   FileText,
+  Hash,
   History,
   MessageCircle,
   Paperclip,
@@ -232,7 +233,7 @@ export function ContextPanel() {
                 {note.tags.length === 0 && !tagOpen && <span className="setting-note">{t('还没有标签')}</span>}
                 {note.tags.map((tag) => (
                   <span className="context-tag" key={tag.id}>
-                    <span className="tag-dot" style={{ ['--tag-color' as string]: tag.color ?? 'var(--text-tertiary)' }} />
+                    <Hash size={11} style={{ color: tag.color ?? 'var(--text-tertiary)', flex: 'none' }} />
                     {tag.name}
                     <button type="button" onClick={() => void removeTag(tag.id)} aria-label={t('移除')}>
                       <X size={10} />
@@ -243,12 +244,12 @@ export function ContextPanel() {
               {tagOpen && (
                 <div style={{ marginTop: 8, border: '1px solid var(--line)', borderRadius: 7, background: 'var(--surface)', padding: 6 }}>
                   <input
-                    className="input"
+                    className="input input-sm"
                     value={tagQuery}
                     onChange={(event) => setTagQuery(event.target.value)}
                     placeholder={t('搜索或创建标签…')}
                     autoFocus
-                    style={{ height: 29, fontSize: 13, marginBottom: 5 }}
+                    style={{ marginBottom: 5 }}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') {
                         event.preventDefault();
