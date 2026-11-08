@@ -474,11 +474,22 @@
   position: relative;
 }
 
+.source-mode {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 300px);
+}
+
+.source-mode .markdown-source {
+  flex: 1 1 auto;
+  min-height: 340px;
+}
+
 .source-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
+  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--line-soft);
   color: var(--text-tertiary);

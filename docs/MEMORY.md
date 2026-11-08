@@ -298,3 +298,36 @@ apps/web/src/styles/tokens.css        设计 token
 ### 版本
 
 - v0.1.3；文档同步 DESIGN_SYSTEM 0.4、QUALITY、CHANGELOG。
+
+---
+
+## 2026-11-08 · 第四轮通知、菜单、空间与编辑器底栏（v0.1.4）
+
+### 反馈与根因
+
+1. **共享笔记的编辑/评论看不到**：既有通知是在深链功能之前写入数据库的，link 只有 `/app/note/<id>`；新前端虽会读 `panel`，旧通知没有参数，所以只打开笔记。
+   - 前端按通知类型补全：评论 → `?panel=comments`，共享编辑 → `?panel=history&preview=latest`；点击后同时关闭浮层，避免下次点击铃铛反而把面板关掉。
+   - 历史数据同步更新：评论通知补 `panel=comments`，共享编辑通知补 `panel=history&preview=latest`。
+   - 历史面板在 `preview=latest` 时自动预览最新版本；新通知仍带准确 `version`。
+2. **蓝点不消失**：生产库里有两类未读“新的登录设备”，来自我们自己的 Headless Playwright 登录（IP 118.26.37.116），不是用户操作。已删除测试安全通知并把剩余真实通知标记已读；以后测试结束必须清理测试会话/通知。
+3. **折叠头像热区超出头像**：`.sidebar-user` 在折叠时仍是整行宽度 + 7px 上下 padding。改为 26×26 按钮、26×26 头像、padding 0、margin auto，热区严格等于头像边界。
+4. **空间切换 popover 偏左**：`Dropdown` 用外层 `<span>` 的矩形定位，工作区触发器外层 span 从 x=0 开始，导致面板 left=0。改为使用第一个真实子元素（按钮）的 rect；x 从 0 修正为 10，宽度统一 220。
+5. **创建/管理空间同页**：侧栏两个入口都跳 `/app/settings/team`（仅 query 不同），页面没有读取 `?create=1`，所以表现一样。现在创建入口打开独立“创建团队空间”弹窗；管理入口只进入当前空间设置；关闭弹窗会移除 query。
+6. **菜单不统一**：文件夹 170、标签 160、用户 210、排序 186、编辑器 226、工作区 238。全部统一为 220px（通知中心 320 作为信息面板例外）；图标“…”右对齐，全宽触发器左对齐。
+7. **“安全”图标是标签**：Sidebar 用户菜单误用 `Tag` 图标；改为 `ShieldCheck`。
+8. **source-footer 对齐/重复统计**：原来右侧显示“字数 · 字符数”，且 footer 跟随内容高度，短内容时停在中部。改为左侧仅 Markdown、右侧仅字符数；`.source-mode` 最小高度 `calc(100dvh - 300px)`、footer `margin-top:auto`，实测底边 878px < 视口 980px。
+9. **全站附带修正**：普通菜单宽度/对齐扫描；设置页输入/卡片高度扫描；通知蓝点；空间弹窗；头像热区；源码底栏。
+
+### 验证
+
+- 通知蓝点 DOM span 数 0；旧评论通知点击后 URL `?panel=comments`，评论面板和评论内容可见。
+- 旧共享编辑通知对应链接 `?panel=history&preview=latest`，历史面板自动加载版本预览。
+- 空间 popover x=10、width=220；用户菜单 x=10、width=220；文件夹/标签/排序/编辑器菜单统一 220。
+- 创建空间：`/app/settings/team?create=1` 打开模态框；关闭后 URL 去掉 `create=1` 且模态框消失；管理空间无模态框。
+- 折叠头像按钮与头像均为 26×26，坐标完全一致。
+- Markdown source footer 文本 `Markdown | {n} 字符`，bottom 878 < viewport 980。
+- typecheck、server 14 + web 3 tests、build 通过；用户已有笔记/文件夹/标签未删除。
+
+### 版本
+
+- v0.1.4；DESIGN_SYSTEM 0.5、QUALITY、CHANGELOG 同步。

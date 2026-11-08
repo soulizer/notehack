@@ -678,6 +678,7 @@ const en: Record<string, string> = {
   '新建': 'New',
   '关闭侧栏': 'Close sidebar',
   '账户菜单': 'Account menu',
+  '你将成为空间所有者，之后可以邀请成员。': 'You will be the workspace owner and can invite members afterwards.',
   '收起侧栏': 'Collapse sidebar',
   '展开侧栏': 'Expand sidebar',
   '查看评论': 'View comments',

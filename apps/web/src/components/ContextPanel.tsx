@@ -39,6 +39,7 @@ export function ContextPanel() {
   const [searchParams] = useSearchParams();
   const requestedComment = searchParams.get('comment');
   const requestedVersion = searchParams.get('version');
+  const previewLatest = searchParams.get('preview') === 'latest';
   const note = useAppStore((state) => state.note);
   const folders = useAppStore((state) => state.folders);
   const tags = useAppStore((state) => state.tags);
@@ -104,10 +105,14 @@ export function ContextPanel() {
   }, [tab, note?.id, note?.version, requestedComment]);
 
   useEffect(() => {
-    if (tab !== 'history' || !versions || !requestedVersion) return;
-    const target = versions.versions.find((version) => String(version.version) === requestedVersion);
+    if (tab !== 'history' || !versions) return;
+    const target = requestedVersion
+      ? versions.versions.find((version) => String(version.version) === requestedVersion)
+      : previewLatest
+        ? versions.versions[0]
+        : undefined;
     if (target && versionDetail?.id !== target.id) void loadVersion(target);
-  }, [tab, versions, requestedVersion, versionDetail?.id]);
+  }, [tab, versions, requestedVersion, previewLatest, versionDetail?.id]);
 
   if (!note) return null;
 

@@ -74,7 +74,7 @@ export function EditorToolbar({
         </div>
         <div className="toolbar-divider" />
         <Dropdown
-          width={172}
+          width={220}
           trigger={
             <button type="button" className="tool-btn tool-btn-text" title={t('标题')} aria-label={t('标题')}>
               {headingLabel}

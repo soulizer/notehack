@@ -22,7 +22,10 @@ export function Dropdown({
 
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
+    // Use the actual trigger control, not the wrapper span. A full-width
+    // wrapper would otherwise report x=0 and push the popover to the edge.
+    const triggerNode = (triggerRef.current.firstElementChild as HTMLElement | null) ?? triggerRef.current;
+    const rect = triggerNode.getBoundingClientRect();
     const panelHeight = panelRef.current?.offsetHeight ?? 260;
     const top = rect.bottom + 6 + panelHeight > window.innerHeight - 12 ? Math.max(12, rect.top - panelHeight - 6) : rect.bottom + 6;
     const left = align === 'end' ? Math.max(12, rect.right - width) : Math.min(rect.left, window.innerWidth - width - 12);

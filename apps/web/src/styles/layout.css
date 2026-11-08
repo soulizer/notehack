@@ -1685,8 +1685,19 @@ kbd {
 }
 
 .app-root.sidebar-collapsed .sidebar-user {
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  margin: 0 auto;
+  padding: 0;
   justify-content: center;
-  padding: 7px 0;
+  border-radius: 8px;
+}
+
+.app-root.sidebar-collapsed .sidebar-user .avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
 }
 
 .app-root.sidebar-collapsed .sidebar-status {

@@ -6,7 +6,7 @@ NoteHack 是一个安静、快速、本地优先的笔记空间：把记录、�
 
 - 生产域名：<https://notehack.com>
 - 仓库：<https://github.com/soulizer/notehack>
-- 版本：0.1.3
+- 版本：0.1.4
 
 ---
 

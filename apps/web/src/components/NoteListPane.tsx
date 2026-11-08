@@ -233,7 +233,7 @@ export function NoteListPane() {
               </button>
             )}
             <Dropdown
-              width={186}
+              width={220}
               trigger={
                 <button type="button" className="icon-btn icon-btn-sm" title={t('排序')} aria-label={t('排序')}>
                   <ArrowDownUp size={14} />

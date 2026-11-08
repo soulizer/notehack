@@ -565,7 +565,7 @@ export function EditorPane({
             <PanelRight size={16} />
           </button>
           <Dropdown
-            width={226}
+            width={220}
             trigger={
               <button type="button" className="icon-btn" aria-label={t('更多操作')} title={t('更多操作')}>
                 <MoreHorizontal size={17} />
@@ -723,7 +723,7 @@ export function EditorPane({
           </div>
 
           {mode === 'markdown' ? (
-            <div className="animate-fade">
+            <div className="animate-fade source-mode">
               <div className="md-mode-note">
                 <span className="mono" style={{ fontWeight: 700 }}>M↓</span>
                 {t('Markdown 源码模式')} · {t('所有更改都会自动保存')}
@@ -741,7 +741,7 @@ export function EditorPane({
               />
               <div className="source-footer">
                 <span>{t('Markdown')}</span>
-                <span>{t('{n} 字', { n: words })} · {t('{n} 字符', { n: chars })}</span>
+                <span>{t('{n} 字符', { n: chars })}</span>
               </div>
             </div>
           ) : (

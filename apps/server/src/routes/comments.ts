@@ -59,7 +59,7 @@ export default async function commentRoutes(app: FastifyInstance) {
         userId: note.createdBy,
         type: 'comment',
         title: '新的笔记评论',
-        body: `${auth.user.display_name} 评论了《${note.title}》`,
+        body: `${auth.user.display_name} 评论了《${note.title}》：${body.body.length > 100 ? `${body.body.slice(0, 100)}…` : body.body}`,
         link: `/app/note/${id}?panel=comments&comment=${row!.id}`,
       });
     }

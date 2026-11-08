@@ -16,8 +16,8 @@ import {
   Plus,
   Settings,
   Star,
-  Tag as TagIcon,
   Trash2,
+  ShieldCheck,
   UserRound,
   X,
 } from 'lucide-react';
@@ -284,7 +284,7 @@ export function Sidebar() {
               <span className="tree-folder-name">{folder.name}</span>
               {folder.noteCount ? <span className="tree-folder-count">{folder.noteCount}</span> : null}
               <Dropdown
-                width={170}
+                width={220}
                 trigger={
                   <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
                     <MoreHorizontal size={13} />
@@ -376,7 +376,7 @@ export function Sidebar() {
         </div>
 
         <Dropdown
-          width={238}
+          width={220}
           align="start"
           trigger={
             <button type="button" className="workspace-switcher">
@@ -528,7 +528,7 @@ export function Sidebar() {
                       <span className="tag-chip-count">{tag.noteCount ?? 0}</span>
                     </button>
                     <Dropdown
-                      width={160}
+                      width={220}
                       trigger={
                         <button type="button" className="tag-chip-more" aria-label={t('更多操作')}>
                           <MoreHorizontal size={11} />
@@ -586,7 +586,7 @@ export function Sidebar() {
             <span>{statusLabel}</span>
           </div>
           <Dropdown
-            width={210}
+            width={220}
             align="start"
             trigger={
               <button type="button" className="sidebar-user" aria-label={t('账户菜单')} title={t('账户菜单')}>
@@ -607,7 +607,7 @@ export function Sidebar() {
                 <MenuItem icon={<Settings size={14} />} onClick={() => { close(); navigate('/app/settings/appearance'); }}>
                   {t('外观')}
                 </MenuItem>
-                <MenuItem icon={<TagIcon size={14} />} onClick={() => { close(); navigate('/app/settings/security'); }}>
+                <MenuItem icon={<ShieldCheck size={14} />} onClick={() => { close(); navigate('/app/settings/security'); }}>
                   {t('安全')}
                 </MenuItem>
                 <div className="menu-separator" />

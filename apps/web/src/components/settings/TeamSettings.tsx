@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   AlertCircle,
   Check,
@@ -27,6 +27,7 @@ const ROLES = ['admin', 'editor', 'viewer'] as const;
 export default function TeamSettings() {
   const t = useT();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const user = useAuthStore((state) => state.user);
   const workspaces = useAuthStore((state) => state.workspaces);
   const refreshAuth = useAuthStore((state) => state.refresh);
@@ -48,10 +49,15 @@ export default function TeamSettings() {
   const [removeMember, setRemoveMember] = useState<WorkspaceMember | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createName, setCreateName] = useState('');
+  const [createOpen, setCreateOpen] = useState(searchParams.get('create') === '1');
   const [creating, setCreating] = useState(false);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCreateOpen(searchParams.get('create') === '1');
+  }, [searchParams]);
 
   useEffect(() => {
     setName(workspace?.name ?? '');
@@ -169,13 +175,23 @@ export default function TeamSettings() {
       await refreshAuth();
       localStorage.setItem('nh-workspace', response.workspace.id);
       await initialize(response.workspace.id);
-      setCreateName('');
+      closeCreate();
       navigate('/app');
       toast('success', t('团队空间已创建'));
     } catch (error) {
       toast('error', t('创建失败'), (error as Error).message);
     } finally {
       setCreating(false);
+    }
+  }
+
+  function closeCreate() {
+    setCreateOpen(false);
+    setCreateName('');
+    if (searchParams.get('create') === '1') {
+      const next = new URLSearchParams(searchParams);
+      next.delete('create');
+      setSearchParams(next, { replace: true });
     }
   }
 
@@ -248,10 +264,9 @@ export default function TeamSettings() {
             <Users size={15} />
             <div>{t('团队空间让多位成员共享文件夹、标签与笔记，并拥有独立成员角色、邀请与审计日志。个人空间保持简单，只属于你。')}</div>
           </div>
-          <div className="setting-inline-form" style={{ marginTop: 12 }}>
-            <div className="field"><label>{t('团队空间名称')}</label><input className="input" value={createName} onChange={(event) => setCreateName(event.target.value)} placeholder={t('例如：产品团队')} /></div>
-            <button type="button" className="btn btn-primary btn-sm" onClick={createWorkspace} disabled={creating || !createName.trim()}>
-              {creating && <span className="spinner" />} <Users size={13} /> {t('创建团队空间')}
+          <div style={{ marginTop: 12 }}>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
+              <Users size={13} /> {t('创建团队空间')}
             </button>
           </div>
         </section>
@@ -358,10 +373,9 @@ export default function TeamSettings() {
       {workspace?.kind === 'team' && (
         <section className="settings-section">
           <div className="settings-section-head"><span className="settings-section-title">{t('创建另一个空间')}</span></div>
-          <div className="setting-inline-form">
-            <div className="field"><label>{t('名称')}</label><input className="input" value={createName} onChange={(event) => setCreateName(event.target.value)} placeholder={t('例如：研究笔记')} /></div>
-            <button type="button" className="btn btn-secondary btn-sm" onClick={createWorkspace} disabled={creating || !createName.trim()}>
-              {creating && <span className="spinner" />} <Users size={13} /> {t('创建团队空间')}
+          <div>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCreateOpen(true)}>
+              <Users size={13} /> {t('创建团队空间')}
             </button>
           </div>
         </section>
@@ -382,6 +396,41 @@ export default function TeamSettings() {
           )}
         </section>
       )}
+
+      <Modal
+        open={createOpen}
+        onClose={closeCreate}
+        title={t('创建团队空间')}
+        description={t('团队空间拥有独立成员、角色、邀请与审计。创建后可以随时切换。')}
+        size="sm"
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={closeCreate}>{t('取消')}</button>
+            <button type="button" className="btn btn-primary btn-sm" onClick={createWorkspace} disabled={creating || !createName.trim()}>
+              {creating ? <span className="spinner" /> : <Users size={13} />} {t('创建团队空间')}
+            </button>
+          </>
+        }
+      >
+        <div className="field">
+          <label>{t('团队空间名称')}</label>
+          <input
+            className="input"
+            value={createName}
+            onChange={(event) => setCreateName(event.target.value)}
+            placeholder={t('例如：产品团队')}
+            maxLength={80}
+            autoFocus
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                void createWorkspace();
+              }
+            }}
+          />
+          <span className="field-hint">{t('你将成为空间所有者，之后可以邀请成员。')}</span>
+        </div>
+      </Modal>
 
       <Modal
         open={Boolean(removeMember)}

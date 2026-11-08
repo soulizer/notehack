@@ -43,9 +43,14 @@ export function NotificationCenter() {
     );
     if (notification.link) {
       let link = notification.link;
+      // Older notifications were stored before deep links existed. Infer the
+      // relevant panel so historical notifications stay actionable too.
+      if (!/[?&]panel=/.test(link)) {
+        if (notification.type === 'comment') link += `${link.includes('?') ? '&' : '?'}panel=comments`;
+        if (notification.type === 'share_edit') link += `${link.includes('?') ? '&' : '?'}panel=history&preview=latest`;
+      }
       if (link.startsWith('/settings/')) link = `/app${link}`;
-      if (link.startsWith('/app/')) navigate(link);
-      else navigate(link);
+      navigate(link);
     }
   }
 
@@ -72,7 +77,7 @@ export function NotificationCenter() {
         </button>
       }
     >
-      {() => (
+      {(close) => (
         <div style={{ maxHeight: 430, overflowY: 'auto' }}>
           <div className="menu-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
@@ -95,7 +100,10 @@ export function NotificationCenter() {
                 key={notification.id}
                 type="button"
                 className="menu-item"
-                onClick={() => open(notification)}
+                onClick={() => {
+                  open(notification);
+                  close();
+                }}
                 style={{ alignItems: 'flex-start', paddingTop: 8, paddingBottom: 8 }}
               >
                 <span style={{ color: notification.readAt ? 'var(--text-tertiary)' : 'var(--blue)', marginTop: 1 }}>
