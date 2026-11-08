@@ -258,7 +258,7 @@ export default function SecuritySettings() {
             <label>{t('确认新密码')}</label>
             <input className="input" type="password" value={passwordForm.confirm} onChange={(event) => setPasswordForm({ ...passwordForm, confirm: event.target.value })} autoComplete="new-password" required />
           </div>
-          <button type="submit" className="btn btn-primary btn-sm" disabled={passwordBusy || !passwordForm.current || !passwordForm.next}>
+          <button type="submit" className="btn btn-primary" disabled={passwordBusy || !passwordForm.current || !passwordForm.next}>
             {passwordBusy ? <span className="spinner" /> : <LockKeyhole size={13} />} {t('修改密码')}
           </button>
         </form>

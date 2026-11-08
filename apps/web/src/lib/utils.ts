@@ -41,6 +41,11 @@ export function formatFullDate(iso: string): string {
   return format(date, getLocale() === 'en' ? 'MMM d, yyyy HH:mm' : 'yyyy年M月d日 HH:mm', { locale });
 }
 
+export function formatPrintDate(iso: string): string {
+  const date = new Date(iso);
+  return format(date, 'yyyy年MM月dd日 HH:mm');
+}
+
 export function formatRelative(iso: string): string {
   const date = new Date(iso);
   const locale = getLocale() === 'en' ? enUS : zhCN;

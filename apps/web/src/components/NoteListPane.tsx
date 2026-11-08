@@ -59,8 +59,6 @@ export function NoteListPane() {
   const deletePermanently = useAppStore((state) => state.deletePermanently);
   const emptyTrash = useAppStore((state) => state.emptyTrash);
   const batchAction = useAppStore((state) => state.batchAction);
-  const syncState = useAppStore((state) => state.syncState);
-  const offline = useAppStore((state) => state.offline);
   const setMobileSidebar = useAppStore((state) => state.setMobileSidebar);
   const [searchValue, setSearchValue] = useState(query);
   const [creating, setCreating] = useState(false);
@@ -211,11 +209,6 @@ export function NoteListPane() {
             <span className="list-count">{loading ? '…' : total}</span>
           </h1>
           <div className="list-actions">
-            <span
-              className={cn('sync-dot mobile-sync', syncState === 'saving' && 'saving', (offline || syncState === 'offline') && 'offline', syncState === 'error' && 'error')}
-              title={offline || syncState === 'offline' ? t('离线') : syncState === 'saving' ? t('保存中…') : syncState === 'error' ? t('同步失败') : t('已同步')}
-              aria-label={offline || syncState === 'offline' ? t('离线') : syncState === 'saving' ? t('保存中…') : syncState === 'error' ? t('同步失败') : t('已同步')}
-            />
             {notes.length > 0 && (
               <button
                 type="button"
@@ -233,7 +226,7 @@ export function NoteListPane() {
               </button>
             )}
             <Dropdown
-              width={220}
+              width={180}
               trigger={
                 <button type="button" className="icon-btn icon-btn-sm" title={t('排序')} aria-label={t('排序')}>
                   <ArrowDownUp size={14} />

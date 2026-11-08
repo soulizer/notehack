@@ -15,6 +15,8 @@ import {
   Info,
   Link2,
   Loader2,
+  Maximize2,
+  Minimize2,
   Mic,
   MoreHorizontal,
   PanelRight,
@@ -84,13 +86,23 @@ export function EditorPane({
   const duplicateNote = useAppStore((state) => state.duplicateNote);
   const reloadNote = useAppStore((state) => state.reloadNote);
   const setFilter = useAppStore((state) => state.setFilter);
+  const focusMode = useAppStore((state) => state.focusMode);
   const setFocusMode = useAppStore((state) => state.setFocusMode);
   const user = useAuthStore((state) => state.user);
   const instance = useAuthStore((state) => state.instance);
 
   const [title, setTitle] = useState(note?.title ?? '');
   const [content, setContent] = useState(note ? stripDuplicateTitle(note.contentMd, note.title) : '');
-  const [mode, setMode] = useState<'rich' | 'markdown'>(user?.prefs?.defaultNoteFormat === 'markdown' ? 'markdown' : 'rich');
+  const [mode, setModeState] = useState<'rich' | 'markdown'>(() => {
+    const stored = localStorage.getItem('nh-editor-mode');
+    if (stored === 'rich' || stored === 'markdown') return stored;
+    return user?.prefs?.defaultNoteFormat === 'markdown' ? 'markdown' : 'rich';
+  });
+
+  function setMode(next: 'rich' | 'markdown') {
+    localStorage.setItem('nh-editor-mode', next);
+    setModeState(next);
+  }
   const [richSeed, setRichSeed] = useState(0);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -112,6 +124,8 @@ export function EditorPane({
   const titleValueRef = useRef(title);
   const baseVersionRef = useRef(note?.version ?? 0);
   const dirtyRef = useRef(false);
+  const saveInFlightRef = useRef(false);
+  const saveQueuedRef = useRef(false);
   const saveTimer = useRef<number | null>(null);
   const draftTimer = useRef<number | null>(null);
   const saveNowRef = useRef<(reason?: 'auto' | 'manual') => Promise<void>>(async () => {});
@@ -131,7 +145,6 @@ export function EditorPane({
     baseVersionRef.current = note.version;
     dirtyRef.current = false;
     setRichSeed((value) => value + 1);
-    setMode(user?.prefs?.defaultNoteFormat === 'markdown' ? 'markdown' : 'rich');
     setExternalReload(false);
     let active = true;
     readDraft(note.id).then((stored) => {
@@ -213,24 +226,43 @@ export function EditorPane({
   const saveNow = useCallback(
     async (reason: 'auto' | 'manual' = 'auto') => {
       if (!note || note.trashedAt || !note.canEdit) return;
+      if (saveInFlightRef.current) {
+        saveQueuedRef.current = true;
+        return;
+      }
       if (!dirtyRef.current && reason === 'auto') return;
-      const currentTitle = titleValueRef.current;
-      const currentContent = contentRef.current;
-      dirtyRef.current = false;
-      const result = await saveNote({
-        title: currentTitle,
-        contentMd: currentContent,
-        baseVersion: baseVersionRef.current,
-        reason,
-      });
-      if (result.ok && result.note) {
-        baseVersionRef.current = result.note.version;
-        if (titleValueRef.current === currentTitle && contentRef.current === currentContent) {
-          dirtyRef.current = false;
-          await clearDraft(note.id);
+      saveInFlightRef.current = true;
+      try {
+        const currentTitle = titleValueRef.current;
+        const currentContent = contentRef.current;
+        dirtyRef.current = false;
+        const result = await saveNote({
+          title: currentTitle,
+          contentMd: currentContent,
+          baseVersion: baseVersionRef.current,
+          reason,
+        });
+        if (result.ok && result.note) {
+          baseVersionRef.current = result.note.version;
+          if (titleValueRef.current === currentTitle && contentRef.current === currentContent) {
+            dirtyRef.current = false;
+            await clearDraft(note.id);
+          }
+        } else if (!result.queued) {
+          dirtyRef.current = true;
         }
-      } else if (!result.queued) {
-        dirtyRef.current = true;
+      } finally {
+        saveInFlightRef.current = false;
+        if (saveQueuedRef.current) {
+          saveQueuedRef.current = false;
+          if (dirtyRef.current) {
+            if (saveTimer.current) window.clearTimeout(saveTimer.current);
+            saveTimer.current = window.setTimeout(() => {
+              saveTimer.current = null;
+              void saveNowRef.current('auto');
+            }, 0);
+          }
+        }
       }
     },
     [note?.id, note?.canEdit, note?.trashedAt, saveNote],
@@ -565,7 +597,7 @@ export function EditorPane({
             <PanelRight size={16} />
           </button>
           <Dropdown
-            width={220}
+            width={180}
             trigger={
               <button type="button" className="icon-btn" aria-label={t('更多操作')} title={t('更多操作')}>
                 <MoreHorizontal size={17} />
@@ -587,7 +619,7 @@ export function EditorPane({
                 <MenuItem icon={<History size={14} />} onClick={() => { close(); setContextTab('history'); }}>{t('版本历史')}</MenuItem>
                 <MenuItem icon={<Sparkles size={14} />} onClick={() => { close(); setShowSummary(true); }}>{t('生成摘要')}</MenuItem>
                 <MenuItem icon={<Mic size={14} />} onClick={() => { close(); startVoice(); }}>{voiceActive ? t('正在聆听…') : t('语音输入')}</MenuItem>
-                <MenuItem icon={<PanelRight size={14} />} onClick={() => { close(); setFocusMode(true); }}>{t('聚焦模式')}</MenuItem>
+                <MenuItem icon={focusMode ? <Minimize2 size={14} /> : <Maximize2 size={14} />} onClick={() => { close(); setFocusMode(!focusMode); }}>{focusMode ? t('退出聚焦') : t('聚焦模式')}</MenuItem>
                 <div className="menu-separator" />
                 <div className="menu-label">{t('导出')}</div>
                 <MenuItem icon={<FileText size={14} />} onClick={() => { close(); void exportNote('md'); }}>{t('导出为 Markdown')}</MenuItem>
@@ -724,13 +756,6 @@ export function EditorPane({
 
           {mode === 'markdown' ? (
             <div className="animate-fade source-mode">
-              <div className="md-mode-note">
-                <span className="mono" style={{ fontWeight: 700 }}>M↓</span>
-                {t('Markdown 源码模式')} · {t('所有更改都会自动保存')}
-                <button type="button" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} onClick={() => void toggleMode()}>
-                  {t('富文本模式')}
-                </button>
-              </div>
               <textarea
                 className="markdown-source"
                 value={content}
@@ -739,10 +764,6 @@ export function EditorPane({
                 spellCheck={false}
                 autoFocus
               />
-              <div className="source-footer">
-                <span>{t('Markdown')}</span>
-                <span>{t('{n} 字符', { n: chars })}</span>
-              </div>
             </div>
           ) : (
             <TipTapEditor
@@ -767,11 +788,10 @@ export function EditorPane({
           {mode === 'rich' ? t('Markdown 模式') : t('富文本模式')}
         </button>
         <span className="footbar-spacer" />
-        <span className="footbar-item">{t('{n} 字', { n: words })}</span>
         <span className="footbar-item">{t('{n} 字符', { n: chars })}</span>
         <span className="footbar-item">v{note.version}</span>
-        <button type="button" className="footbar-button" onClick={() => setFocusMode(true)} title={t('聚焦模式')}>
-          <span style={{ fontSize: 13 }}>⤢</span> {t('聚焦')}
+        <button type="button" className="footbar-button" onClick={() => setFocusMode(!focusMode)} title={focusMode ? t('退出聚焦') : t('聚焦模式')}>
+          {focusMode ? <Minimize2 size={13} /> : <Maximize2 size={13} />} {focusMode ? t('退出聚焦') : t('聚焦')}
         </button>
       </div>
 

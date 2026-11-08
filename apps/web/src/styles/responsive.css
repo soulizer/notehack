@@ -729,12 +729,4 @@
   }
 }
 
-.mobile-sync {
-  display: none;
-  margin-right: 4px;
-}
-@media (max-width: 760px) {
-  .mobile-sync {
-    display: inline-block;
-  }
 }

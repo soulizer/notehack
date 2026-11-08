@@ -16,7 +16,7 @@ export function applyTheme(preference: ThemePreference, reduceMotion?: boolean):
   document.documentElement.dataset.theme = resolved;
   document.documentElement.style.colorScheme = resolved;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', resolved === 'dark' ? '#0b0e19' : '#f8f6f1');
+  if (meta) meta.setAttribute('content', resolved === 'dark' ? '#141310' : '#f8f6f1');
   if (reduceMotion !== undefined) {
     document.documentElement.dataset.reduceMotion = reduceMotion ? 'true' : 'false';
     localStorage.setItem(MOTION_KEY, reduceMotion ? 'true' : 'false');

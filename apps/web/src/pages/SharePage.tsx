@@ -16,7 +16,7 @@ import {
 import type { PublicShare } from '@notehack/shared';
 import { api, ApiError } from '../lib/api';
 import { useT } from '../lib/i18n';
-import { formatFullDate, formatRelative } from '../lib/utils';
+import { formatFullDate, formatPrintDate, formatRelative } from '../lib/utils';
 import { renderMarkdown, stripDuplicateTitle } from '../lib/markdown';
 import { cn } from '../lib/utils';
 import { LogoLockup } from '../components/Logo';
@@ -248,7 +248,7 @@ export default function SharePage() {
           ) : (
             <>
               <h1 className="public-title">{share.note.title}</h1>
-              <div className="public-meta">
+              <div className="public-meta screen-only">
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Avatar name={share.authorName} color="#2f6feb" size="sm" />
                   {share.authorName}
@@ -267,6 +267,15 @@ export default function SharePage() {
                     </button>
                   )}
                 </span>
+              </div>
+              <div className="public-meta public-print-meta print-only">
+                <span>{share.authorName}</span>
+                <span className="dot" />
+                <span>{t('发布于')} {formatPrintDate(share.publishedAt)}</span>
+                <span className="dot" />
+                <span>{t('更新于')} {formatPrintDate(share.note.updatedAt)}</span>
+                <span className="dot" />
+                <span>{t('打印于')} {formatPrintDate(new Date().toISOString())}</span>
               </div>
               <div className="public-body prose" dangerouslySetInnerHTML={{ __html: rendered.html }} />
               {share.note.attachments.length > 0 && (

@@ -116,9 +116,6 @@ export function Sidebar() {
   const filter = useAppStore((state) => state.filter);
   const folderId = useAppStore((state) => state.folderId);
   const tagId = useAppStore((state) => state.tagId);
-  const pendingCount = useAppStore((state) => state.pendingCount);
-  const syncState = useAppStore((state) => state.syncState);
-  const offline = useAppStore((state) => state.offline);
   const collapsed = useAppStore((state) => state.sidebarCollapsed);
   const mobileOpen = useAppStore((state) => state.sidebarMobileOpen);
   const toggleSidebar = useAppStore((state) => state.toggleSidebar);
@@ -284,7 +281,7 @@ export function Sidebar() {
               <span className="tree-folder-name">{folder.name}</span>
               {folder.noteCount ? <span className="tree-folder-count">{folder.noteCount}</span> : null}
               <Dropdown
-                width={220}
+                width={180}
                 trigger={
                   <button type="button" className="sidebar-section-action" aria-label={t('更多操作')}>
                     <MoreHorizontal size={13} />
@@ -333,17 +330,6 @@ export function Sidebar() {
       });
   }
 
-  const statusLabel =
-    offline || syncState === 'offline'
-      ? pendingCount
-        ? t('待同步', { n: pendingCount })
-        : t('离线')
-      : syncState === 'saving'
-        ? t('保存中…')
-        : syncState === 'error'
-          ? t('同步失败')
-          : t('已同步');
-
   return (
     <>
       {mobileOpen && <div className="sidebar-scrim" onClick={closeMobile} />}
@@ -376,7 +362,7 @@ export function Sidebar() {
         </div>
 
         <Dropdown
-          width={220}
+          width={180}
           align="start"
           trigger={
             <button type="button" className="workspace-switcher">
@@ -528,7 +514,7 @@ export function Sidebar() {
                       <span className="tag-chip-count">{tag.noteCount ?? 0}</span>
                     </button>
                     <Dropdown
-                      width={220}
+                      width={180}
                       trigger={
                         <button type="button" className="tag-chip-more" aria-label={t('更多操作')}>
                           <MoreHorizontal size={11} />
@@ -581,12 +567,8 @@ export function Sidebar() {
             <Settings size={15} />
             <span className="nav-label">{t('设置')}</span>
           </button>
-          <div className="sidebar-status">
-            <span className={cn('sync-dot', syncState === 'saving' && 'saving', (offline || syncState === 'offline') && 'offline', syncState === 'error' && 'error')} />
-            <span>{statusLabel}</span>
-          </div>
           <Dropdown
-            width={220}
+            width={180}
             align="start"
             trigger={
               <button type="button" className="sidebar-user" aria-label={t('账户菜单')} title={t('账户菜单')}>

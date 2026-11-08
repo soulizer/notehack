@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Plus, X } from 'lucide-react';
+import { FileText, Plus } from 'lucide-react';
 import { useAuthStore } from '../stores/auth';
 import { useAppStore } from '../stores/app';
 import { useT } from '../lib/i18n';
@@ -256,12 +256,6 @@ export default function AppPage() {
       )}
 
       <CommandPalette />
-      {focusMode && (
-        <button type="button" className="focus-exit" onClick={() => setFocusMode(false)}>
-          <X size={13} /> {t('退出聚焦')}
-        </button>
-      )}
-
       <Modal
         open={showTemplates}
         onClose={() => setShowTemplates(false)}

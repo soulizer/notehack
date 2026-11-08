@@ -219,6 +219,14 @@ export default function TeamSettings() {
     }
   }
 
+  async function switchSpace(id: string) {
+    if (id === workspaceId) return;
+    localStorage.setItem('nh-workspace', id);
+    await initialize(id);
+    await refreshAuth();
+    navigate('/app');
+  }
+
   function copy(value: string, id: string) {
     void copyText(value).then(() => {
       setCopied(id);
@@ -228,8 +236,42 @@ export default function TeamSettings() {
 
   return (
     <>
-      <h1 className="settings-title">{t('团队与空间')}</h1>
-      <p className="settings-subtitle">{t('空间是内容与成员的边界。个人空间只属于你；团队空间通过角色与审计记录协作。')}</p>
+      <h1 className="settings-title">{t('空间')}</h1>
+      <p className="settings-subtitle">{t('个人空间是账户自带的私有空间；团队空间用于多人协作。每个账户始终有一个个人空间，团队空间可以创建多个。')}</p>
+
+      <section className="settings-section">
+        <div className="settings-section-head">
+          <span className="settings-section-title">{t('空间概览')}</span>
+          <span className="settings-section-desc">{workspaces.length} {t('个空间')}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {workspaces.map((entry) => (
+            <div key={entry.id} className="setting-card" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10 }}>
+              <span className="workspace-mark" style={{ background: 'var(--blue-soft)', color: 'var(--blue)', border: 0 }}>
+                {entry.name.slice(0, 1).toUpperCase()}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{entry.name}</span>
+                  <span className="badge">{entry.kind === 'team' ? t('团队空间') : t('个人空间')}</span>
+                  {entry.id === workspaceId && <span className="badge badge-blue">{t('当前')}</span>}
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                  {entry.kind === 'team' ? t('成员 {n} 人', { n: entry.memberCount ?? 1 }) : t('只有你可以访问')} · {roleLabel(t, entry.role)}
+                </div>
+              </div>
+              {entry.id !== workspaceId && (
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => void switchSpace(entry.id)}>
+                  {t('切换')}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <p className="setting-note" style={{ marginTop: 10 }}>
+          {t('个人空间随账户自动创建，只有你可见，可重命名但不能删除；团队空间可创建多个，支持成员、角色、邀请与审计。')}
+        </p>
+      </section>
 
       <section className="settings-section">
         <div className="settings-section-head">
@@ -252,8 +294,13 @@ export default function TeamSettings() {
             <Users size={12} /> {t('{n} 位成员', { n: workspace?.memberCount ?? members.length })}
             <span className="dot" />
             {t('你的角色：{role}', { role: roleLabel(t, workspace?.role ?? '') })}
-            {workspace?.kind === 'personal' && <><span className="dot" />{t('只有你可以访问')}</>}
+            {workspace?.kind === 'personal' ? <><span className="dot" />{t('只有你可以访问')}</> : <><span className="dot" />{t('可邀请成员协作')}</>}
           </div>
+          <p className="setting-note" style={{ marginTop: 10 }}>
+            {workspace?.kind === 'personal'
+              ? t('个人空间是账户自带的私有空间，不可删除，也不能邀请成员；它可以重命名。')
+              : t('团队空间用于多人协作，支持成员角色、邀请链接与审计日志，可转移所有权或删除。')}
+          </p>
         </div>
       </section>
 

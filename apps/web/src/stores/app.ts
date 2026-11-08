@@ -421,6 +421,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       tagId: opts?.tagId !== undefined ? opts.tagId : filter === 'tag' ? get().tagId : null,
       query: '',
       sidebarMobileOpen: false,
+      notes: [],
+      total: 0,
+      loadingList: true,
+      listError: null,
     });
     set({ note: get().note, commandOpen: false });
     await get().refreshList();

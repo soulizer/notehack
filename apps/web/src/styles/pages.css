@@ -679,3 +679,140 @@
     font-size: 28px;
   }
 }
+
+/* Print-only metadata is hidden on screen and shown in the print sheet. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 16mm 15mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .public-header,
+  .public-toc,
+  .public-footer,
+  .public-comments,
+  .public-share-brand,
+  .public-banner,
+  .public-kicker,
+  .screen-only,
+  .icon-btn,
+  .btn {
+    display: none !important;
+  }
+
+  .public-page {
+    min-height: 0;
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .public-layout,
+  .public-layout.no-toc {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .public-article {
+    max-width: none;
+  }
+
+  .public-print-meta {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 0 0 16pt;
+    padding-bottom: 10pt;
+    border-bottom: 1px solid #cfcfcf;
+    color: #555 !important;
+    font-size: 9.5pt;
+  }
+
+  .public-print-meta .dot {
+    background: #999 !important;
+  }
+
+  .public-title {
+    margin: 0 0 8pt;
+    color: #111 !important;
+    font-size: 26pt;
+    font-weight: 650;
+    line-height: 1.16;
+    letter-spacing: -0.035em;
+  }
+
+  .public-body {
+    padding-top: 0;
+  }
+
+  .public-body .prose {
+    max-width: none;
+    color: #111 !important;
+    font-size: 11.5pt;
+    line-height: 1.7;
+  }
+
+  .public-body .prose h1,
+  .public-body .prose h2,
+  .public-body .prose h3,
+  .public-body .prose h4,
+  .public-body .prose h5,
+  .public-body .prose h6 {
+    color: #111 !important;
+    break-after: avoid;
+  }
+
+  .public-body .prose a {
+    color: #111 !important;
+    text-decoration: none;
+  }
+
+  .public-body .prose blockquote {
+    border-left-color: #999;
+    color: #333;
+    break-inside: avoid;
+  }
+
+  .public-body .prose pre {
+    background: #f4f4f2 !important;
+    color: #111 !important;
+    border: 1px solid #d5d5d0;
+    break-inside: avoid;
+  }
+
+  .public-body .prose pre code {
+    color: #111 !important;
+  }
+
+  .public-body .prose code {
+    background: #f1f1ee !important;
+    color: #111 !important;
+    border-color: #ddd;
+  }
+
+  .public-body .prose table,
+  .public-body .prose img,
+  .public-body .prose figure,
+  .public-body .prose li {
+    break-inside: avoid;
+  }
+
+  .public-body .prose img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .public-body .prose .nh-wikilink {
+    color: #111 !important;
+    background: none !important;
+  }
+}

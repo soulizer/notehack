@@ -80,10 +80,10 @@ export default function AccountSettings() {
           <span className="settings-section-title">{t('个人资料')}</span>
           <span className="settings-section-desc">{t('显示在评论、分享与团队中')}</span>
         </div>
-        <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start', marginBottom: 22 }}>
+        <div className="profile-layout">
           <Avatar name={displayName || user?.displayName || 'N'} color={user?.avatarColor} size="xl" />
-          <div style={{ flex: 1 }}>
-            <div className="field" style={{ marginBottom: 12 }}>
+          <div className="profile-fields">
+            <div className="field">
               <label>{t('显示名称')}</label>
               <input className="input" value={displayName} onChange={(event) => setDisplayName(event.target.value)} maxLength={60} />
             </div>
@@ -92,12 +92,14 @@ export default function AccountSettings() {
               <input className="input" value={email} readOnly disabled />
               <span className="field-hint">{t('邮箱用于登录与账户识别。NoteHack 不会向它发送邮件。')}</span>
             </div>
+            {error && <div className="form-error"><AlertCircle size={14} /> {error}</div>}
+            <div className="form-actions">
+              <button type="button" className="btn btn-primary" onClick={save} disabled={saving || !displayName.trim() || displayName.trim() === user?.displayName}>
+                {saving ? <span className="spinner" /> : <Save size={13} />} {t('保存')}
+              </button>
+            </div>
           </div>
         </div>
-        {error && <div className="form-error" style={{ marginBottom: 10 }}><AlertCircle size={14} /> {error}</div>}
-        <button type="button" className="btn btn-primary btn-sm" onClick={save} disabled={saving || !displayName.trim() || displayName.trim() === user?.displayName}>
-          {saving ? <span className="spinner" /> : <Save size={13} />} {t('保存')}
-        </button>
       </section>
 
       <section className="settings-section">

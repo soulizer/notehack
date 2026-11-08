@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'NoteHack',
         short_name: 'NoteHack',
         description: 'A calm, local-first notebook for ideas, knowledge, and publishing.',
-        theme_color: '#0b1020',
+        theme_color: '#23201a',
         background_color: '#f6f4ef',
         display: 'standalone',
         start_url: '/',

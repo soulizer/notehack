@@ -4,6 +4,7 @@ import {
   Bold,
   Code,
   Code2,
+  Columns3,
   Heading1,
   Heading2,
   Heading3,
@@ -14,10 +15,13 @@ import {
   ListChecks,
   ListOrdered,
   Minus,
+  Plus,
   Quote,
   Redo2,
+  Rows3,
   Strikethrough,
   Table2,
+  Trash2,
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react';
@@ -56,6 +60,7 @@ export function EditorToolbar({
       codeBlock: current.isActive('codeBlock'),
       canUndo: current.can().undo(),
       canRedo: current.can().redo(),
+      inTable: current.isActive('table'),
     }),
   });
 
@@ -74,7 +79,7 @@ export function EditorToolbar({
         </div>
         <div className="toolbar-divider" />
         <Dropdown
-          width={220}
+          width={180}
           trigger={
             <button type="button" className="tool-btn tool-btn-text" title={t('标题')} aria-label={t('标题')}>
               {headingLabel}
@@ -161,6 +166,46 @@ export function EditorToolbar({
           }}
         />
       </div>
+      {state?.inTable && (
+        <div className="table-toolbar" role="toolbar" aria-label={t('表格操作')}>
+          <span className="table-toolbar-label">{t('表格')}</span>
+          <Dropdown
+            width={180}
+            trigger={
+              <button type="button" className="tool-btn tool-btn-text" title={t('行操作')} aria-label={t('行操作')}>
+                <Rows3 size={14} /> {t('行')}
+              </button>
+            }
+          >
+            {(close) => (
+              <>
+                <MenuItem icon={<Plus size={14} />} onClick={() => { close(); editor.chain().focus().addRowBefore().run(); }}>{t('在上方添加行')}</MenuItem>
+                <MenuItem icon={<Plus size={14} />} onClick={() => { close(); editor.chain().focus().addRowAfter().run(); }}>{t('在下方添加行')}</MenuItem>
+                <MenuItem icon={<Minus size={14} />} onClick={() => { close(); editor.chain().focus().deleteRow().run(); }}>{t('删除当前行')}</MenuItem>
+              </>
+            )}
+          </Dropdown>
+          <Dropdown
+            width={180}
+            trigger={
+              <button type="button" className="tool-btn tool-btn-text" title={t('列操作')} aria-label={t('列操作')}>
+                <Columns3 size={14} /> {t('列')}
+              </button>
+            }
+          >
+            {(close) => (
+              <>
+                <MenuItem icon={<Plus size={14} />} onClick={() => { close(); editor.chain().focus().addColumnBefore().run(); }}>{t('在左侧添加列')}</MenuItem>
+                <MenuItem icon={<Plus size={14} />} onClick={() => { close(); editor.chain().focus().addColumnAfter().run(); }}>{t('在右侧添加列')}</MenuItem>
+                <MenuItem icon={<Minus size={14} />} onClick={() => { close(); editor.chain().focus().deleteColumn().run(); }}>{t('删除当前列')}</MenuItem>
+              </>
+            )}
+          </Dropdown>
+          <button type="button" className="tool-btn tool-btn-text table-delete" title={t('删除表格')} aria-label={t('删除表格')} onClick={() => editor.chain().focus().deleteTable().run()}>
+            <Trash2 size={13} /> {t('删除表格')}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

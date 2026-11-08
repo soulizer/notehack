@@ -5,6 +5,7 @@ import {
   Copy,
   Edit3,
   Eye,
+  Info,
   Link2,
   LockKeyhole,
   MessageCircle,
@@ -59,7 +60,7 @@ export function ShareDialog({ note, open, onClose }: { note: Note; open: boolean
       });
       setShares((current) => [response.share, ...current]);
       setNewShare(response.share);
-      toast('success', t('分享链接已创建'));
+      toast('success', t('分享链接已创建'), t('访客看到的是笔记的最新版本；之后编辑会立即反映到分享页。'));
     } catch (error) {
       toast('error', t('创建分享失败'), (error as Error).message);
     } finally {
@@ -107,6 +108,12 @@ export function ShareDialog({ note, open, onClose }: { note: Note; open: boolean
         </div>
       ) : (
         <>
+          {activeShares.length > 0 && (
+            <div className="banner banner-info" style={{ marginBottom: 14 }}>
+              <Info size={15} />
+              <div>{t('此笔记已有有效分享。访客看到的是最新版本；之后继续编辑，访客刷新即可看到更新。如需固定内容，请撤销分享或导出副本。')}</div>
+            </div>
+          )}
           <div className="share-permission-list">
             {(
               [

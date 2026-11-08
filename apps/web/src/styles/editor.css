@@ -485,16 +485,6 @@
   min-height: 340px;
 }
 
-.source-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid var(--line-soft);
-  color: var(--text-tertiary);
-  font-size: 13px;
-}
 
 /* Focus mode: dim chrome while writing */
 .app-root.focus-mode .sidebar,
@@ -505,30 +495,6 @@
 
 .app-root.focus-mode .editor-page {
   max-width: 760px;
-}
-
-.focus-exit {
-  position: fixed;
-  top: 14px;
-  right: 16px;
-  z-index: 30;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  border-radius: 7px;
-  background: var(--surface-raised);
-  border: 1px solid var(--line);
-  color: var(--text-tertiary);
-  font-size: 13px;
-  box-shadow: var(--shadow-sm);
-  opacity: 0.6;
-}
-
-.focus-exit:hover {
-  opacity: 1;
-  color: var(--text);
 }
 
 /* Print: clean article for browser print / PDF */

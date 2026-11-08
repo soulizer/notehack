@@ -62,6 +62,7 @@ export function ContextPanel() {
   const [tagOpen, setTagOpen] = useState(false);
   const [tagQuery, setTagQuery] = useState('');
   const [addTagLoading, setAddTagLoading] = useState(false);
+  const [confirmAttachment, setConfirmAttachment] = useState<string | null>(null);
 
   const folderPath = useMemo(() => {
     if (!note) return [];
@@ -116,6 +117,10 @@ export function ContextPanel() {
 
   if (!note) return null;
 
+  const visibleAttachments = note.attachments.filter((attachment) =>
+    note.contentMd.includes(`/api/attachments/${attachment.id}/content`),
+  );
+
   const availableTags = tags.filter((tag) => !note.tags.some((entry) => entry.id === tag.id));
   const tagResults = availableTags.filter((tag) => !tagQuery.trim() || tag.name.toLowerCase().includes(tagQuery.trim().toLowerCase())).slice(0, 8);
 
@@ -152,6 +157,21 @@ export function ContextPanel() {
 
   async function removeTag(tagId: string) {
     await updateNoteMeta({ tagIds: note!.tags.filter((tag) => tag.id !== tagId).map((tag) => tag.id) });
+  }
+
+  async function removeAttachment(attachmentId: string) {
+    if (confirmAttachment !== attachmentId) {
+      setConfirmAttachment(attachmentId);
+      return;
+    }
+    try {
+      await api.delete(`/api/attachments/${attachmentId}`);
+      setConfirmAttachment(null);
+      await reloadNote();
+      toast('success', t('附件已删除'));
+    } catch (error) {
+      toast('error', t('删除附件失败'), (error as Error).message);
+    }
   }
 
   async function postComment() {
@@ -295,12 +315,12 @@ export function ContextPanel() {
             <div className="context-section">
               <div className="context-section-title">
                 <span>{t('附件')}</span>
-                <span style={{ fontWeight: 450, letterSpacing: 0, textTransform: 'none', color: 'var(--text-tertiary)' }}>{note.attachments.length}</span>
+                <span style={{ fontWeight: 450, letterSpacing: 0, textTransform: 'none', color: 'var(--text-tertiary)' }}>{visibleAttachments.length}</span>
               </div>
-              {note.attachments.length === 0 ? (
+              {visibleAttachments.length === 0 ? (
                 <div className="context-empty">{t('把图片或文件拖进编辑器即可上传。')}</div>
               ) : (
-                note.attachments.map((attachment) => (
+                visibleAttachments.map((attachment) => (
                   <div className="attachment-item" key={attachment.id}>
                     <div className="attachment-thumb">
                       {attachment.mime.startsWith('image/') ? (
@@ -320,6 +340,16 @@ export function ContextPanel() {
                     <a className="icon-btn icon-btn-sm" href={`/api/attachments/${attachment.id}/content`} download={attachment.filename} aria-label={t('下载')}>
                       <Download size={13} />
                     </a>
+                    <button
+                      type="button"
+                      className="icon-btn icon-btn-sm"
+                      onClick={() => void removeAttachment(attachment.id)}
+                      title={confirmAttachment === attachment.id ? t('再次点击确认') : t('删除附件')}
+                      aria-label={t('删除附件')}
+                      style={confirmAttachment === attachment.id ? { background: 'var(--red-soft)', color: 'var(--red)' } : undefined}
+                    >
+                      {confirmAttachment === attachment.id ? <Check size={13} /> : <Trash2 size={13} />}
+                    </button>
                   </div>
                 ))
               )}

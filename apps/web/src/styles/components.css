@@ -152,7 +152,7 @@
 .popover {
   position: fixed;
   z-index: var(--z-dropdown);
-  min-width: 188px;
+  min-width: 180px;
   max-width: 320px;
   background: var(--surface-raised);
   border: 1px solid var(--line);
@@ -501,11 +501,13 @@
 
 .toast {
   pointer-events: auto;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 20px;
+  align-items: start;
+  column-gap: 10px;
   width: 100%;
-  padding: 11px 13px;
+  min-height: 42px;
+  padding: 10px 12px;
   border-radius: 10px;
   background: var(--ink-900);
   color: #efede7;
@@ -517,9 +519,12 @@
 }
 
 .toast-icon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
   color: #a9c6ff;
-  margin-top: 1px;
-  flex: none;
+  margin-top: 2px;
 }
 
 .toast.success .toast-icon {
@@ -557,8 +562,8 @@
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  margin: -2px -4px 0 0;
-  flex: none;
+  margin: 0;
+  justify-self: end;
 }
 
 .toast-close:hover {
@@ -735,9 +740,10 @@
 
 /* Banners */
 .banner {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 10px;
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -747,10 +753,21 @@
   color: var(--text-soft);
 }
 
-.banner svg {
-  flex: none;
-  margin-top: 1px;
+.banner > svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
   color: var(--text-tertiary);
+}
+
+.banner > div,
+.banner > p {
+  min-width: 0;
+  grid-column: 2;
+}
+
+.banner + .settings-section {
+  margin-top: 30px;
 }
 
 .banner-warning {
@@ -789,6 +806,28 @@
   display: flex;
   gap: 7px;
   margin-top: 7px;
+}
+
+/* Account profile: fields and the action share one column and one rhythm. */
+.profile-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.profile-fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 2px;
 }
 
 /* Settings */
@@ -975,6 +1014,11 @@
   align-items: flex-end;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* Inline form actions share the input height (36px), never the 30px row tier. */
+.setting-inline-form > .btn {
+  height: 36px;
 }
 
 .setting-inline-form .field {

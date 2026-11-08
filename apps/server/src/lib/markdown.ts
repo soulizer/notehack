@@ -89,14 +89,25 @@ export function exportHtmlDocument(input: {
   footer { margin-top: 64px; padding-top: 18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; display:flex; justify-content:space-between; }
   @media (max-width: 640px) { .wrap { padding: 40px 20px 64px; } h1 { font-size: 34px; } }
   @media print {
-    body { background:#fff; }
-    .wrap { max-width:none; padding: 0; }
-    .brand { margin-bottom: 28px; }
-    h1 { font-size: 30pt; }
-    pre { break-inside: avoid; }
+    @page { size: A4; margin: 16mm 15mm; }
+    body { background:#fff; font-size: 10.5pt; line-height: 1.65; }
+    .wrap { max-width: 180mm; padding: 0; }
+    .brand { margin-bottom: 14pt; font-size: 9pt; }
+    h1 { font-size: 22pt; line-height: 1.2; margin-bottom: 8pt; }
+    h2 { font-size: 14pt; margin: 1.6em 0 .5em; }
+    h3 { font-size: 11.5pt; margin: 1.4em 0 .45em; }
+    h4 { font-size: 10.5pt; }
+    p, li { font-size: 10.5pt; }
+    .meta { font-size: 9.5pt; margin-bottom: 18pt; }
+    table { font-size: 9.5pt; }
+    th { font-size: 8.5pt; }
+    pre { font-size: 9pt; padding: 10pt 12pt; break-inside: avoid; }
+    pre code { font-size: 9pt; }
+    .attachments { margin-top: 28pt; padding-top: 12pt; }
+    .attachments h2, .attachments ul { font-size: 9.5pt; }
+    footer { margin-top: 28pt; padding-top: 10pt; font-size: 9pt; }
     a { color: inherit; }
     .nh-wikilink { border:0; }
-    @page { margin: 22mm 20mm; }
   }
 </style>
 </head>

@@ -31,7 +31,7 @@ const SECTIONS = [
   { id: 'editor', icon: Keyboard, label: '编辑器', group: '个人' },
   { id: 'security', icon: ShieldCheck, label: '安全', group: '个人' },
   { id: 'data', icon: CloudDownload, label: '数据与备份', group: '数据' },
-  { id: 'team', icon: Users, label: '团队与空间', group: '数据' },
+  { id: 'team', icon: Users, label: '空间', group: '数据' },
   { id: 'api', icon: Code2, label: 'API 与集成', group: '数据' },
   { id: 'ai', icon: Bot, label: 'AI 与隐私', group: '高级' },
   { id: 'about', icon: null, label: '关于', group: '高级' },

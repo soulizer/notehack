@@ -1,12 +1,14 @@
 :root {
   /* Brand — midnight ink, warm paper, one decisive signal blue. */
-  --ink-1000: #050815;
-  --ink-950: #070c1c;
-  --ink-900: #0b1020;
-  --ink-850: #0f1530;
-  --ink-800: #131a38;
-  --ink-700: #1b2447;
-  --ink-600: #2a355e;
+  /* Warm charcoal replaces navy: the dark surfaces belong to the paper
+     palette, not to a separate blue stage. */
+  --ink-1000: #141310;
+  --ink-950: #1b1915;
+  --ink-900: #23201a;
+  --ink-850: #2a261f;
+  --ink-800: #332e25;
+  --ink-700: #423a2e;
+  --ink-600: #584d3d;
 
   --paper-50: #fdfcf9;
   --paper-100: #f8f6f1;
