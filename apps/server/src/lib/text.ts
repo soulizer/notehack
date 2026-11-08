@@ -28,7 +28,12 @@ export function stripTitleHeading(markdown: string, title: string): string {
 }
 
 export function excerpt(markdown: string, max = 220): string {
-  const text = markdownToPlainText(markdown).replace(/\s+/g, ' ');
+  // Keep excerpts clean even for legacy notes whose content was accidentally
+  // stored as HTML by older rich-text saves.
+  const text = markdownToPlainText(markdown)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
 }
 

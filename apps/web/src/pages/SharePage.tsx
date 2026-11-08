@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Check,
   Clock,
+  Copy,
   Edit3,
   Eye,
   LockKeyhole,
@@ -16,7 +17,7 @@ import {
 import type { PublicShare } from '@notehack/shared';
 import { api, ApiError } from '../lib/api';
 import { useT } from '../lib/i18n';
-import { formatFullDate, formatPrintDate, formatRelative } from '../lib/utils';
+import { copyText, formatFullDate, formatPrintDate, formatRelative } from '../lib/utils';
 import { renderMarkdown, stripDuplicateTitle } from '../lib/markdown';
 import { cn } from '../lib/utils';
 import { LogoLockup } from '../components/Logo';
@@ -38,6 +39,7 @@ export default function SharePage() {
   const [editTitle, setEditTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   async function load() {
     if (!token) return;
@@ -79,6 +81,12 @@ export default function SharePage() {
     } finally {
       setUnlocking(false);
     }
+  }
+
+  async function copyShareLink() {
+    await copyText(window.location.href);
+    setCopiedLink(true);
+    window.setTimeout(() => setCopiedLink(false), 1600);
   }
 
   async function submitComment(event: FormEvent) {
@@ -258,6 +266,9 @@ export default function SharePage() {
                 <span className="dot" />
                 <span>{t('更新于')} {formatRelative(share.note.updatedAt)}</span>
                 <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+                  <button type="button" className="icon-btn icon-btn-sm" onClick={() => void copyShareLink()} aria-label={t('复制链接')} title={copiedLink ? t('已复制') : t('复制链接')}>
+                    {copiedLink ? <Check size={14} /> : <Copy size={14} />}
+                  </button>
                   <button type="button" className="icon-btn icon-btn-sm" onClick={() => window.print()} aria-label={t('打印')} title={t('打印')}>
                     <Printer size={14} />
                   </button>

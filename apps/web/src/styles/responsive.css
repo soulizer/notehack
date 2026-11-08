@@ -313,7 +313,7 @@
 
   .mobile-quickbar {
     display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     justify-items: center;
   }
 
@@ -569,22 +569,7 @@
   flex: none;
 }
 
-.mobile-quick-new {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: var(--blue);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(31, 111, 235, 0.26);
-  margin-top: -10px;
-}
 
-[data-theme='dark'] .mobile-quick-new {
-  background: var(--blue);
-  color: #07101f;
-}
 
 .sidebar-scrim {
   display: none;

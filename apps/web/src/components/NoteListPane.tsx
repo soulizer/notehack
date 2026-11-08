@@ -5,6 +5,7 @@ import {
   Check,
   CheckSquare,
   FilePlus2,
+  FileText,
   Loader2,
   MoreHorizontal,
   Pin,
@@ -374,7 +375,7 @@ export function NoteListPane() {
 
       <div className="mobile-quickbar">
         <button type="button" className="mobile-quick-item active" onClick={() => navigate('/app')}>
-          <FilePlus2 size={18} />
+          <FileText size={18} />
           {t('笔记')}
         </button>
         <button
@@ -386,9 +387,6 @@ export function NoteListPane() {
         >
           <Search size={18} />
           {t('搜索')}
-        </button>
-        <button type="button" className="mobile-quick-new" onClick={newNote} aria-label={t('新建笔记')}>
-          <FilePlus2 size={19} />
         </button>
         <button type="button" className="mobile-quick-item" onClick={() => void useAppStore.getState().setFilter('favorites')}>
           <Star size={18} />

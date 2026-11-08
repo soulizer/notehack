@@ -9,12 +9,9 @@ export function cn(...values: Array<string | false | null | undefined>): string 
 export function initials(name: string): string {
   const trimmed = name.trim();
   if (!trimmed) return '?';
-  const words = trimmed.split(/\s+/);
-  if (/[\u3400-\u9fff]/.test(trimmed)) return trimmed.slice(0, 1);
-  if (words.length > 1) return `${words[0][0]}${words[1][0]}`.toUpperCase();
-  const capitals = trimmed.match(/[A-Z]/g);
-  if (capitals && capitals.length >= 2) return `${capitals[0]}${capitals[1]}`;
-  return trimmed.slice(0, 2).toUpperCase();
+  // One initial reads more calmly in circles at 22–56px than two cramped
+  // letters, especially for names like "demonotehack.com".
+  return trimmed.slice(0, 1).toUpperCase();
 }
 
 export function formatBytes(bytes: number): string {

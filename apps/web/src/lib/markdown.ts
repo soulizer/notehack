@@ -21,6 +21,39 @@ turndown.addRule('highlight', {
   filter: ['mark'],
   replacement: (content) => `<mark>${content}</mark>`,
 });
+// Keep wiki links as Markdown source instead of letting Turndown escape
+// the brackets into `\[\[...\]\]`.
+turndown.addRule('nhWikilink', {
+  filter: (node) => ['A', 'SPAN'].includes(node.nodeName) && (node as HTMLElement).classList.contains('nh-wikilink'),
+  replacement: (_content, node) => {
+    const title = (node as HTMLElement).getAttribute('data-note-title')?.trim();
+    if (!title) return _content;
+    const label = (node as HTMLElement).textContent?.trim() ?? title;
+    return label && label !== title ? `[[${title}|${label}]]` : `[[${title}]]`;
+  },
+});
+
+// TipTap emits tables with colgroup/paragraph wrappers that the stock GFM
+// rule does not always recognise. Convert every table explicitly and keep
+// the markdown source canonical.
+turndown.addRule('nhTable', {
+  filter: 'table',
+  replacement: (_content, node) => {
+    const table = node as HTMLTableElement;
+    const rows = Array.from(table.rows);
+    if (!rows.length) return _content;
+    const clean = (cell: HTMLTableCellElement) =>
+      (cell.textContent ?? '').replace(/\s+/g, ' ').trim().replace(/\|/g, '\\|');
+    const header = Array.from(rows[0].cells).map(clean);
+    const body = rows.slice(1).map((row) => Array.from(row.cells).map(clean));
+    const width = Math.max(header.length, ...body.map((row) => row.length));
+    const pad = (cells: string[]) => [...cells, ...Array(Math.max(0, width - cells.length)).fill('')];
+    return `\n\n| ${pad(header).join(' | ')} |\n| ${Array(width).fill('---').join(' | ')} |\n${body
+      .map((row) => `| ${pad(row).join(' | ')} |`)
+      .join('\n')}\n\n`;
+  },
+});
+
 turndown.addRule('taskListItems', {
   filter: (node) =>
     node.nodeName === 'LI' &&
@@ -33,7 +66,13 @@ turndown.addRule('taskListItems', {
 
 export function htmlToMarkdown(html: string): string {
   if (!html || html === '<p></p>') return '';
-  return turndown.turndown(html).replace(/\n{3,}/g, '\n\n').trimEnd();
+  return turndown
+    .turndown(html)
+    // Turndown escapes brackets in inline text. Wiki links are deliberate
+    // syntax, not prose punctuation, so restore them after conversion.
+    .replace(/\\\[\\\[([^\]]+?)\\\]\\\]/g, '[[$1]]')
+    .replace(/\n{3,}/g, '\n\n')
+    .trimEnd();
 }
 
 function sanitize(html: string): string {
