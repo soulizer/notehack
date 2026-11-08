@@ -26,6 +26,10 @@ export function Modal({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
+  // Keep the latest onClose without making the focus effect restart on every
+  // parent render (which used to steal focus after the first typed character).
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
@@ -33,16 +37,17 @@ export function Modal({
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const timer = window.setTimeout(() => {
-      const focusable = panelRef.current?.querySelector<HTMLElement>(
-        'input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])',
+      const field = panelRef.current?.querySelector<HTMLElement>(
+        'input:not([type="hidden"]), textarea, select, [contenteditable="true"]',
       );
-      focusable?.focus();
+      const fallback = panelRef.current?.querySelector<HTMLElement>('button, [tabindex]:not([tabindex="-1"])');
+      (field ?? fallback)?.focus();
     }, 40);
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== 'Tab' || !panelRef.current) return;
@@ -67,7 +72,7 @@ export function Modal({
       window.clearTimeout(timer);
       lastFocused.current?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   return createPortal(

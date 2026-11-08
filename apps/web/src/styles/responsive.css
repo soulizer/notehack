@@ -312,7 +312,9 @@
   }
 
   .mobile-quickbar {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    justify-items: center;
   }
 
   .editor-mobile-actions {
@@ -541,7 +543,7 @@
   height: calc(58px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   align-items: center;
-  justify-content: space-around;
+  justify-content: stretch;
   background: color-mix(in srgb, var(--paper-50) 92%, transparent);
   border-top: 1px solid var(--line);
   backdrop-filter: blur(14px);

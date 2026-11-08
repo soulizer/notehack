@@ -17,8 +17,6 @@ import {
   Settings,
   Star,
   Trash2,
-  ShieldCheck,
-  UserRound,
   X,
 } from 'lucide-react';
 import type { Folder, Tag } from '@notehack/shared';
@@ -410,7 +408,7 @@ export function Sidebar() {
                   navigate('/app/settings/team?create=1');
                 }}
               >
-                {t('创建团队空间')}
+                {t('创建空间')}
               </MenuItem>
             </>
           )}
@@ -582,29 +580,17 @@ export function Sidebar() {
             }
           >
             {(close) => (
-              <>
-                <MenuItem icon={<UserRound size={14} />} onClick={() => { close(); navigate('/app/settings/account'); }}>
-                  {t('账户')}
-                </MenuItem>
-                <MenuItem icon={<Settings size={14} />} onClick={() => { close(); navigate('/app/settings/appearance'); }}>
-                  {t('外观')}
-                </MenuItem>
-                <MenuItem icon={<ShieldCheck size={14} />} onClick={() => { close(); navigate('/app/settings/security'); }}>
-                  {t('安全')}
-                </MenuItem>
-                <div className="menu-separator" />
-                <MenuItem
-                  danger
-                  icon={<LogOut size={14} />}
-                  onClick={async () => {
-                    close();
-                    await logout();
-                    navigate('/login');
-                  }}
-                >
-                  {t('退出登录')}
-                </MenuItem>
-              </>
+              <MenuItem
+                danger
+                icon={<LogOut size={14} />}
+                onClick={async () => {
+                  close();
+                  await logout();
+                  navigate('/login');
+                }}
+              >
+                {t('退出登录')}
+              </MenuItem>
             )}
           </Dropdown>
         </div>

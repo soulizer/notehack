@@ -55,11 +55,11 @@ export default async function workspaceRoutes(app: FastifyInstance) {
 
   app.post('/api/workspaces', async (request) => {
     const auth = requireAuth(request);
-    const body = parse(z.object({ name: z.string().trim().min(1).max(80) }), request.body);
+    const body = parse(z.object({ name: z.string().trim().min(1).max(80), kind: z.enum(['personal', 'team']).default('team') }), request.body);
     const workspace = await transaction(async (client) => {
       const row = await client.query<{ id: string; created_at: Date }>(
-        `INSERT INTO workspaces (name, kind, owner_id) VALUES ($1, 'team', $2) RETURNING id, created_at`,
-        [body.name, auth.user.id],
+        `INSERT INTO workspaces (name, kind, owner_id) VALUES ($1, $2, $3) RETURNING id, created_at`,
+        [body.name, body.kind, auth.user.id],
       );
       await client.query(`INSERT INTO workspace_members (workspace_id, user_id, role) VALUES ($1, $2, 'owner')`, [
         row.rows[0].id,
@@ -72,7 +72,7 @@ export default async function workspaceRoutes(app: FastifyInstance) {
       workspace: {
         id: workspace.id,
         name: body.name,
-        kind: 'team',
+        kind: body.kind,
         ownerId: auth.user.id,
         role: 'owner',
         memberCount: 1,
@@ -101,7 +101,11 @@ export default async function workspaceRoutes(app: FastifyInstance) {
     const role = await requireWorkspace(auth.user.id, id, 'transfer');
     void role;
     const workspace = await one<{ kind: string; name: string }>('SELECT kind, name FROM workspaces WHERE id = $1', [id]);
-    if (workspace?.kind === 'personal') throw errors.badRequest('个人空间不能删除');
+    const remaining = await one<{ count: string }>(
+      `SELECT count(*)::text AS count FROM workspace_members WHERE user_id = $1`,
+      [auth.user.id],
+    );
+    if (Number(remaining?.count ?? 0) <= 1) throw errors.badRequest('至少保留一个空间');
     const attachments = await many<{ storage_key: string }>('SELECT storage_key FROM attachments WHERE workspace_id = $1', [id]);
     const backups = await many<{ filename: string }>('SELECT filename FROM backups WHERE workspace_id = $1', [id]);
     await audit({ workspaceId: id, actorId: auth.user.id, action: 'workspace.delete', targetType: 'workspace', targetId: id, meta: { name: workspace?.name }, ip: clientIp(request) });

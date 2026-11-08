@@ -10,6 +10,7 @@ import {
   Shield,
   Trash2,
   UserMinus,
+  UserRound,
   Users,
 } from 'lucide-react';
 import type { AuditEntry, Invitation, User, WorkspaceMember } from '@notehack/shared';
@@ -49,6 +50,7 @@ export default function TeamSettings() {
   const [removeMember, setRemoveMember] = useState<WorkspaceMember | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createName, setCreateName] = useState('');
+  const [createKind, setCreateKind] = useState<'personal' | 'team'>('team');
   const [createOpen, setCreateOpen] = useState(searchParams.get('create') === '1');
   const [creating, setCreating] = useState(false);
   const [leaveOpen, setLeaveOpen] = useState(false);
@@ -171,13 +173,13 @@ export default function TeamSettings() {
     if (!createName.trim()) return;
     setCreating(true);
     try {
-      const response = await api.post<{ workspace: { id: string; name: string } }>('/api/workspaces', { name: createName.trim() });
+      const response = await api.post<{ workspace: { id: string; name: string } }>('/api/workspaces', { name: createName.trim(), kind: createKind });
       await refreshAuth();
       localStorage.setItem('nh-workspace', response.workspace.id);
       await initialize(response.workspace.id);
       closeCreate();
       navigate('/app');
-      toast('success', t('团队空间已创建'));
+      toast('success', createKind === 'personal' ? t('个人空间已创建') : t('团队空间已创建'));
     } catch (error) {
       toast('error', t('创建失败'), (error as Error).message);
     } finally {
@@ -188,6 +190,7 @@ export default function TeamSettings() {
   function closeCreate() {
     setCreateOpen(false);
     setCreateName('');
+    setCreateKind('team');
     if (searchParams.get('create') === '1') {
       const next = new URLSearchParams(searchParams);
       next.delete('create');
@@ -269,7 +272,7 @@ export default function TeamSettings() {
           ))}
         </div>
         <p className="setting-note" style={{ marginTop: 10 }}>
-          {t('个人空间随账户自动创建，只有你可见，可重命名但不能删除；团队空间可创建多个，支持成员、角色、邀请与审计。')}
+          {t('个人空间可以创建多个，只有你可见，可重命名；团队空间也支持创建多个，并带有成员、角色、邀请与审计。')}
         </p>
       </section>
 
@@ -298,7 +301,7 @@ export default function TeamSettings() {
           </div>
           <p className="setting-note" style={{ marginTop: 10 }}>
             {workspace?.kind === 'personal'
-              ? t('个人空间是账户自带的私有空间，不可删除，也不能邀请成员；它可以重命名。')
+              ? t('个人空间是只有你可见的私有空间，不能邀请成员；它可以重命名，也可以在有多个空间时删除。')
               : t('团队空间用于多人协作，支持成员角色、邀请链接与审计日志，可转移所有权或删除。')}
           </p>
         </div>
@@ -313,7 +316,7 @@ export default function TeamSettings() {
           </div>
           <div style={{ marginTop: 12 }}>
             <button type="button" className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
-              <Users size={13} /> {t('创建团队空间')}
+              <Users size={13} /> {t('创建空间')}
             </button>
           </div>
         </section>
@@ -419,25 +422,30 @@ export default function TeamSettings() {
 
       {workspace?.kind === 'team' && (
         <section className="settings-section">
-          <div className="settings-section-head"><span className="settings-section-title">{t('创建另一个空间')}</span></div>
+          <div className="settings-section-head"><span className="settings-section-title">{t('创建空间')}</span></div>
           <div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCreateOpen(true)}>
-              <Users size={13} /> {t('创建团队空间')}
+              <Users size={13} /> {t('创建空间')}
             </button>
           </div>
         </section>
       )}
 
-      {workspace?.kind === 'team' && (
+      {workspace && (workspace.kind === 'team' || workspaces.length > 1) && (
         <section className="settings-section">
           <div className="settings-section-head"><span className="settings-section-title" style={{ color: 'var(--red)' }}>{t('危险操作')}</span></div>
-          <div className="setting-row">
-            <div className="setting-row-main"><div className="setting-row-title">{t('离开空间')}</div><div className="setting-row-desc">{t('离开后，你将失去对空间内容的访问权限。你创建的笔记会保留。')}</div></div>
-            <div className="setting-row-control"><button type="button" className="btn btn-ghost btn-sm" onClick={() => setLeaveOpen(true)} disabled={isOwner}><LogOut size={13} /> {t('离开')}</button></div>
-          </div>
-          {isOwner && (
+          {workspace.kind === 'team' && (
             <div className="setting-row">
-              <div className="setting-row-main"><div className="setting-row-title">{t('删除空间')}</div><div className="setting-row-desc">{t('空间及其中的笔记、附件会被删除。此操作需要先下载备份。')}</div></div>
+              <div className="setting-row-main"><div className="setting-row-title">{t('离开空间')}</div><div className="setting-row-desc">{t('离开后，你将失去对空间内容的访问权限。你创建的笔记会保留。')}</div></div>
+              <div className="setting-row-control"><button type="button" className="btn btn-ghost btn-sm" onClick={() => setLeaveOpen(true)} disabled={isOwner}><LogOut size={13} /> {t('离开')}</button></div>
+            </div>
+          )}
+          {workspaces.length > 1 && (
+            <div className="setting-row">
+              <div className="setting-row-main">
+                <div className="setting-row-title">{workspace.kind === 'personal' ? t('删除个人空间') : t('删除空间')}</div>
+                <div className="setting-row-desc">{workspace.kind === 'personal' ? t('个人空间中的笔记、附件会被删除。删除后仍会保留其他空间。') : t('空间及其中的笔记、附件会被删除。此操作需要先下载备份。')}</div>
+              </div>
               <div className="setting-row-control"><button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => setDeleteOpen(true)}><Trash2 size={13} /> {t('删除空间')}</button></div>
             </div>
           )}
@@ -447,25 +455,46 @@ export default function TeamSettings() {
       <Modal
         open={createOpen}
         onClose={closeCreate}
-        title={t('创建团队空间')}
-        description={t('团队空间拥有独立成员、角色、邀请与审计。创建后可以随时切换。')}
+        title={t('创建空间')}
+        description={t('个人空间只有你可见；团队空间用于多人协作。创建后可以随时切换。')}
         size="sm"
         footer={
           <>
             <button type="button" className="btn btn-secondary btn-sm" onClick={closeCreate}>{t('取消')}</button>
             <button type="button" className="btn btn-primary btn-sm" onClick={createWorkspace} disabled={creating || !createName.trim()}>
-              {creating ? <span className="spinner" /> : <Users size={13} />} {t('创建团队空间')}
+              {creating ? <span className="spinner" /> : createKind === 'personal' ? <UserRound size={13} /> : <Users size={13} />}
+              {createKind === 'personal' ? t('创建个人空间') : t('创建团队空间')}
             </button>
           </>
         }
       >
+        <div className="share-permission-list" style={{ marginBottom: 16 }}>
+          {([
+            { value: 'personal' as const, icon: <UserRound size={15} />, name: t('个人空间'), desc: t('只有你可见的私有空间，可重命名。') },
+            { value: 'team' as const, icon: <Users size={15} />, name: t('团队空间'), desc: t('可邀请成员、分配角色并查看审计。') },
+          ]).map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`share-permission-option ${createKind === option.value ? 'selected' : ''}`}
+              onClick={() => setCreateKind(option.value)}
+            >
+              <span className="share-permission-radio" />
+              <span style={{ color: 'var(--text-tertiary)', marginTop: 1 }}>{option.icon}</span>
+              <span>
+                <span className="share-permission-name">{option.name}</span>
+                <span className="share-permission-desc">{option.desc}</span>
+              </span>
+            </button>
+          ))}
+        </div>
         <div className="field">
-          <label>{t('团队空间名称')}</label>
+          <label>{createKind === 'personal' ? t('个人空间名称') : t('团队空间名称')}</label>
           <input
             className="input"
             value={createName}
             onChange={(event) => setCreateName(event.target.value)}
-            placeholder={t('例如：产品团队')}
+            placeholder={createKind === 'personal' ? t('例如：阅读与写作') : t('例如：产品团队')}
             maxLength={80}
             autoFocus
             onKeyDown={(event) => {
@@ -475,7 +504,9 @@ export default function TeamSettings() {
               }
             }}
           />
-          <span className="field-hint">{t('你将成为空间所有者，之后可以邀请成员。')}</span>
+          <span className="field-hint">
+            {createKind === 'personal' ? t('只有你可以访问；之后也可以创建更多个人或团队空间。') : t('你将成为空间所有者，之后可以邀请成员。')}
+          </span>
         </div>
       </Modal>
 
